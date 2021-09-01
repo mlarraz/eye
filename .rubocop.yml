@@ -1,3 +1,8 @@
+inherit_from: .rubocop_todo.yml
+
+require:
+  - rubocop-performance
+
 AllCops:
   Include:
     - '**/*.eye'
@@ -45,7 +50,7 @@ Layout/AccessModifierIndentation:
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
 
-Layout/IndentHash:
+Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
 
 Style/Lambda:
@@ -73,7 +78,7 @@ Style/PercentLiteralDelimiters:
     '%r': '[]'
     '%': '{}'
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 142
 
 Metrics/BlockLength:
@@ -149,7 +154,7 @@ Style/SpecialGlobalVars:
 Style/RescueModifier:
   Enabled: false
 
-Lint/HandleExceptions:
+Lint/SuppressedException:
   Enabled: false
 
 Lint/LiteralInInterpolation:

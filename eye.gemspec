@@ -26,7 +26,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'kostya-sigar', '~> 2.0.0'
 
   gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'rspec', '< 2.14'
+  gem.add_development_dependency 'rspec-core', '< 2.14'
   gem.add_development_dependency 'rr', '1.1.2'
   gem.add_development_dependency 'ruby-graphviz'
   gem.add_development_dependency 'forking'
@@ -41,5 +41,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'simplecov', '>= 0.8.1'
   gem.add_development_dependency 'parallel_tests', '<= 1.3.1'
   gem.add_development_dependency 'parallel_split_test'
-  gem.add_development_dependency 'rubocop'
+  gem.add_development_dependency 'rubocop', '~> 1.20.0'
+  gem.add_development_dependency 'rubocop-performance'
 end
