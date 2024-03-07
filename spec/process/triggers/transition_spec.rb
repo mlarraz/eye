@@ -26,9 +26,9 @@ describe "Trigger Transition" do
 
     it "should delete file when stop" do
       File.open(C.tmp_file, 'w'){ |f| f.write "aaa" }
-      File.exist?(C.tmp_file).should == true
+      expect(File.exist?(C.tmp_file)).to eq true
       @process.stop
-      File.exist?(C.tmp_file).should == false
+      expect(File.exist?(C.tmp_file)).to eq false
     end
   end
 
@@ -53,10 +53,10 @@ describe "Trigger Transition" do
 
     it "should delete file when stop" do
       File.open(C.tmp_file, 'w'){ |f| f.write "aaa" }
-      File.exist?(C.tmp_file).should == true
+      expect(File.exist?(C.tmp_file)).to eq true
       force_kill_pid(@process.pid)
       sleep 5
-      File.exist?(C.tmp_file).should == false
+      expect(File.exist?(C.tmp_file)).to eq false
     end
   end
 
@@ -85,10 +85,10 @@ describe "Trigger Transition" do
 
     it "should delete file when stop" do
       File.open(C.tmp_file, 'w'){ |f| f.write "aaa" }
-      File.exist?(C.tmp_file).should == true
+      expect(File.exist?(C.tmp_file)).to eq true
       force_kill_pid(@process.pid)
       sleep 5
-      File.exist?(C.tmp_file).should == false
+      expect(File.exist?(C.tmp_file)).to eq false
     end
   end
 
@@ -113,9 +113,9 @@ describe "Trigger Transition" do
     end
 
     it "should delete file when stop" do
-      File.exist?(C.tmp_file).should == true
+      expect(File.exist?(C.tmp_file)).to eq true
       @process.stop
-      File.exist?(C.tmp_file).should == false
+      expect(File.exist?(C.tmp_file)).to eq false
     end
   end
 
@@ -144,43 +144,43 @@ describe "Trigger Transition" do
       sleep 5
       @process = @c.process_by_name("fork")
       @process.wait_for_condition(15, 0.3) { @process.children.size == 3 }
-      @process.state_name.should == :up
+      expect(@process.state_name).to eq :up
       @pid = @process.pid
       @chpids = @process.children.keys
     end
 
     it "when process crashed it should kill all children too" do
-      @process.children.size.should == 3
-      Eye::System.pid_alive?(@pid).should == true
-      @chpids.each { |pid| Eye::System.pid_alive?(pid).should == true }
+      expect(@process.children.size).to eq 3
+      expect(Eye::System.pid_alive?(@pid)).to eq true
+      @chpids.each { |pid| expect(Eye::System.pid_alive?(pid)).to eq true }
 
       die_process!(@process.pid)
       sleep 10
 
-      Eye::System.pid_alive?(@pid).should == false
-      @chpids.each { |pid| Eye::System.pid_alive?(pid).should == false }
+      expect(Eye::System.pid_alive?(@pid)).to eq false
+      @chpids.each { |pid| expect(Eye::System.pid_alive?(pid)).to eq false }
 
-      @process.state_name.should == :up
+      expect(@process.state_name).to eq :up
 
       @pids = @process.children.keys # to ensure spec kill them
-      @process.children.size.should == 3
+      expect(@process.children.size).to eq 3
     end
 
     it "when process restarted should kill children too" do
-      @process.children.size.should == 3
-      Eye::System.pid_alive?(@pid).should == true
-      @chpids.each { |pid| Eye::System.pid_alive?(pid).should == true }
+      expect(@process.children.size).to eq 3
+      expect(Eye::System.pid_alive?(@pid)).to eq true
+      @chpids.each { |pid| expect(Eye::System.pid_alive?(pid)).to eq true }
 
       @process.schedule :restart
       sleep 10
 
-      Eye::System.pid_alive?(@pid).should == false
-      @chpids.each { |pid| Eye::System.pid_alive?(pid).should == false }
+      expect(Eye::System.pid_alive?(@pid)).to eq false
+      @chpids.each { |pid| expect(Eye::System.pid_alive?(pid)).to eq false }
 
-      @process.state_name.should == :up
+      expect(@process.state_name).to eq :up
 
       @pids = @process.children.keys # to ensure spec kill them
-      @process.children.size.should == 3
+      expect(@process.children.size).to eq 3
     end
   end
 
@@ -203,8 +203,8 @@ describe "Trigger Transition" do
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
     it "catch just error in do with NoMethodError" do
@@ -225,8 +225,8 @@ describe "Trigger Transition" do
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
     it "catch error when unknown symbol" do
@@ -247,8 +247,8 @@ describe "Trigger Transition" do
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
   end
 

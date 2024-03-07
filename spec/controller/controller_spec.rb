@@ -7,25 +7,25 @@ class String
 end
 
 def app_check(app, name, gr_size)
-  app.name.should == name
-  app.class.should == Eye::Application
-  app.groups.size.should == gr_size
-  app.groups.class.should == Eye::Utils::AliveArray
+  expect(app.name).to eq name
+  expect(app.class).to eq Eye::Application
+  expect(app.groups.size).to eq gr_size
+  expect(app.groups.class).to eq Eye::Utils::AliveArray
 end
 
 def gr_check(gr, name, p_size, hidden = false)
-  gr.class.should == Eye::Group
-  gr.processes.class.should == Eye::Utils::AliveArray
-  gr.processes.size.should == p_size
-  gr.name.should == name
-  gr.hidden.should == hidden
+  expect(gr.class).to eq Eye::Group
+  expect(gr.processes.class).to eq Eye::Utils::AliveArray
+  expect(gr.processes.size).to eq p_size
+  expect(gr.name).to eq name
+  expect(gr.hidden).to eq hidden
 end
 
 def p_check(p, name, pid_file)
-  p.name.should == name
-  p.class.should == Eye::Process
-  p[:pid_file].should == "#{pid_file}"
-  p[:pid_file_ex].should == "/tmp/#{pid_file}"
+  expect(p.name).to eq name
+  expect(p.class).to eq Eye::Process
+  expect(p[:pid_file]).to eq "#{pid_file}"
+  expect(p[:pid_file_ex]).to eq "/tmp/#{pid_file}"
 end
 
 describe "Eye::Controller" do
@@ -38,7 +38,7 @@ describe "Eye::Controller" do
 
     app1 = apps.first
     app_check(app1, 'app1', 3)
-    app1.processes.map(&:name).sort.should == ["g4", "g5", "p1", "p2", "q3"]
+    expect(app1.processes.map(&:name).sort).to eq ["g4", "g5", "p1", "p2", "q3"]
 
     app2 = apps.last
     app_check(app2, 'app2', 1)
@@ -68,23 +68,23 @@ describe "Eye::Controller" do
     p6 = gr4.processes[0]
     p_check(p6, 'z1', "app2-z1.pid")
 
-    subject.wrapped_object.class.to_s.should == "Eye::Controller"
+    expect(subject.wrapped_object.class.to_s).to eq "Eye::Controller"
   end
 
   it "raise when load config" do
-    subject.load(fixture("dsl/bad.eye")).only_value.should include(:error => true, :message => "blank pid_file for: bad")
+    expect(subject.load(fixture("dsl/bad.eye")).only_value).to include(:error => true, :message => "blank pid_file for: bad")
   end
 
   it "should save cache file" do
     FileUtils.rm(Eye::Local.cache_path) rescue nil
     subject.load(fixture("dsl/load.eye"))
-    File.exist?(Eye::Local.cache_path).should == false
+    expect(File.exist?(Eye::Local.cache_path)).to eq false
   end
 
   it "should delete all apps" do
     subject.load(fixture("dsl/load.eye")).should_be_ok
     subject.apply(%w{all}, :command => :delete)
-    subject.applications.should be_empty
+    expect(subject.applications).to be_empty
   end
 
   it "[bug] delete was crashed when we have 1 process and same named app" do
@@ -96,37 +96,37 @@ describe "Eye::Controller" do
       end
     D
     subject.command('delete', 'bla')
-    subject.alive?.should == true
+    expect(subject.alive?).to eq true
   end
 
   describe "command" do
     it "should apply" do
-      mock(subject).apply(%w{samples}, :command => :restart, :signal=>nil)
+      expect(subject).to receive(:apply).with(%w{samples}, :command => :restart, :signal=>nil)
       subject.command('restart', 'samples')
     end
 
     it "should apply" do
-      mock(subject).apply(%w{samples blah}, :command => :restart, :signal=>nil)
+      expect(subject).to receive(:apply).with(%w{samples blah}, :command => :restart, :signal=>nil)
       subject.command(:restart, 'samples', 'blah')
     end
 
     it "should apply" do
-      mock(subject).apply([], :command => :restart, :signal=>nil)
+      expect(subject).to receive(:apply).with([], :command => :restart, :signal=>nil)
       subject.command(:restart)
     end
 
     it "load" do
-      mock(subject).load('/tmp/file')
+      expect(subject).to receive(:load).with('/tmp/file')
       subject.command('load', '/tmp/file')
     end
 
     it "info" do
-      mock(subject).info_data
+      expect(subject).to receive(:info_data)
       subject.command('info_data')
     end
 
     it "quit" do
-      mock(subject).quit
+      expect(subject).to receive(:quit)
       subject.command('quit')
     end
 
@@ -136,24 +136,24 @@ describe "Eye::Controller" do
     subject.load(fixture("dsl/load_dupls5.eye")).should_be_ok
 
     p = subject.find_nearest_process('app1:p1')
-    p.full_name.should == 'app1:p1'
+    expect(p.full_name).to eq 'app1:p1'
 
     p = subject.find_nearest_process('p1')
-    p.full_name.should == 'app1:a:p1'
+    expect(p.full_name).to eq 'app1:a:p1'
 
     p = subject.find_nearest_process('asdfasdfsd')
-    p.should == nil
+    expect(p).to eq nil
 
     p = subject.find_nearest_process('p1', 'a')
-    p.full_name.should == 'app1:a:p1'
+    expect(p.full_name).to eq 'app1:a:p1'
 
     p = subject.find_nearest_process('p1', '__default__', 'app2')
-    p.full_name.should == 'app2:p1'
+    expect(p.full_name).to eq 'app2:p1'
 
     p = subject.find_nearest_process('p3', 'a')
-    p.full_name.should == 'app1:p3'
+    expect(p.full_name).to eq 'app1:p3'
 
     p = subject.find_nearest_process('p4', 'a', 'app1')
-    p.full_name.should == 'app2:p4'
+    expect(p.full_name).to eq 'app2:p4'
   end
 end

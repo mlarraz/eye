@@ -12,18 +12,18 @@ describe "Process Integration checks" do
   it "should start periodical watcher" do
     start_ok_process(@c)
 
-    @process.watchers.keys.should == [:check_alive, :check_identity, :check_cpu, :check_memory, :check_ctime, :check_http]
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_cpu, :check_memory, :check_ctime, :check_http]
 
     @process.stop
 
     # after process stop should remove watcher
-    @process.watchers.keys.should == []
+    expect(@process.watchers.keys).to eq []
   end
 
   it "intergration" do
     start_ok_process(@c)
 
-    dont_allow(@process).schedule(:restart)
+    expect(@process).not_to receive(:schedule).with(:restart)
 
     # should not happens anything
     sleep 10
@@ -42,17 +42,17 @@ describe "Process Integration checks" do
 
     should_spend(10, 0.5) do
       10.times do
-        @process.name.should be_a(String) # actor should be free here
+        expect(@process.name).to be_a(String) # actor should be free here
         sleep 1
       end
     end
 
     w_http = @process.watchers[:check_http][:subject]
     w_cpu = @process.watchers[:check_cpu][:subject]
-    w_http.check_count.should <= 2
-    w_cpu.check_count.should >= 9
+    expect(w_http.check_count).to be <= 2
+    expect(w_cpu.check_count).to be >= 9
 
-    w_http.inspect.size.should > 100
+    expect(w_http.inspect.size).to be > 100
   end
 
   it "timeouted socket, should not lock actor-mailbox" do
@@ -67,15 +67,15 @@ describe "Process Integration checks" do
 
     should_spend(10, 1) do
       10.times do
-        @process.name.should be_a(String) # actor should be free here
+        expect(@process.name).to be_a(String) # actor should be free here
         sleep 1
       end
     end
 
     w_socket = @process.watchers[:check_socket][:subject]
     w_cpu = @process.watchers[:check_cpu][:subject]
-    w_socket.check_count.should <= 2
-    w_cpu.check_count.should >= 9
+    expect(w_socket.check_count).to be <= 2
+    expect(w_cpu.check_count).to be >= 9
   end
 
 end

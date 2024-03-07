@@ -11,23 +11,23 @@ describe "Eye::Checker::FileSize" do
     subject{ chfsize }
 
     it "get_value" do
-      subject.get_value.should be_within(10).of(File.size($logger_path))
+      expect(subject.get_value).to be_within(10).of(File.size($logger_path))
     end
 
     it "not good if size equal prevous" do
-      stub(subject).get_value{1001}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1001}
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{1001}
-      subject.check.should == false
+      allow(subject).to receive(:get_value) {1001}
+      expect(subject.check).to eq false
     end
 
     it "good when little different with previous" do
-      stub(subject).get_value{1001}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1001}
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{1002}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1002}
+      expect(subject.check).to eq true
     end
   end
 
@@ -35,19 +35,19 @@ describe "Eye::Checker::FileSize" do
     subject{ chfsize(:below => 10) }
 
     it "good" do
-      stub(subject).get_value{1001}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1001}
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{1005}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1005}
+      expect(subject.check).to eq true
     end
 
     it "bad" do
-      stub(subject).get_value{1001}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1001}
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{1015}
-      subject.check.should == false
+      allow(subject).to receive(:get_value) {1015}
+      expect(subject.check).to eq false
     end
 
   end
@@ -56,19 +56,19 @@ describe "Eye::Checker::FileSize" do
     subject{ chfsize(:above => 10) }
 
     it "good" do
-      stub(subject).get_value{1001}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1001}
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{1005}
-      subject.check.should == false
+      allow(subject).to receive(:get_value) {1005}
+      expect(subject.check).to eq false
     end
 
     it "bad" do
-      stub(subject).get_value{1001}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1001}
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{1015}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1015}
+      expect(subject.check).to eq true
     end
 
   end
@@ -78,27 +78,27 @@ describe "Eye::Checker::FileSize" do
     subject{ chfsize(:above => 10, :below => 30) }
 
     it "bad" do
-      stub(subject).get_value{1001}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1001}
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{1005}
-      subject.check.should == false
+      allow(subject).to receive(:get_value) {1005}
+      expect(subject.check).to eq false
     end
 
     it "good" do
-      stub(subject).get_value{1001}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1001}
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{1021}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1021}
+      expect(subject.check).to eq true
     end
 
     it "bad" do
-      stub(subject).get_value{1001}
-      subject.check.should == true
+      allow(subject).to receive(:get_value) {1001}
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{1045}
-      subject.check.should == false
+      allow(subject).to receive(:get_value) {1045}
+      expect(subject.check).to eq false
     end
 
   end

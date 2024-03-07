@@ -7,38 +7,38 @@ describe "Eye::Process::System" do
 
   it "load_pid_from_file" do
     File.open(@process[:pid_file_ex], 'w'){|f| f.write("asdf") }
-    @process.load_pid_from_file.should == 0
+    expect(@process.load_pid_from_file).to eq 0
 
     File.open(@process[:pid_file_ex], 'w'){|f| f.write(12345) }
-    @process.load_pid_from_file.should == 12345
+    expect(@process.load_pid_from_file).to eq 12345
 
     FileUtils.rm(@process[:pid_file_ex]) rescue nil
-    @process.load_pid_from_file.should == nil
+    expect(@process.load_pid_from_file).to eq nil
   end
 
   it "failsafe_load_pid" do
     File.open(@process[:pid_file_ex], 'w'){|f| f.write("asdf") }
-    @process.failsafe_load_pid.should == nil
+    expect(@process.failsafe_load_pid).to eq nil
 
     File.open(@process[:pid_file_ex], 'w'){|f| f.write(12345) }
-    @process.failsafe_load_pid.should == 12345
+    expect(@process.failsafe_load_pid).to eq 12345
 
     FileUtils.rm(@process[:pid_file_ex]) rescue nil
-    @process.failsafe_load_pid.should == nil
+    expect(@process.failsafe_load_pid).to eq nil
   end
 
   it "load_external_pid_file" do
-    @process.send(:load_external_pid_file).should == :no_pid_file
+    expect(@process.send(:load_external_pid_file)).to eq :no_pid_file
 
     File.open(@process[:pid_file_ex], 'w'){|f| f.write(123455) }
-    @process.send(:load_external_pid_file).should == :not_running
-    @process.pid.should == nil
+    expect(@process.send(:load_external_pid_file)).to eq :not_running
+    expect(@process.pid).to eq nil
 
     @pid = Eye::System.daemonize("ruby sample.rb", :working_dir => C.p1[:working_dir])[:pid]
 
     File.open(@process[:pid_file_ex], 'w'){|f| f.write(@pid) }
-    @process.send(:load_external_pid_file).should == :ok
-    @process.pid.should == @pid
+    expect(@process.send(:load_external_pid_file)).to eq :ok
+    expect(@process.pid).to eq @pid
 
     @process.pid = nil
   end
@@ -46,58 +46,58 @@ describe "Eye::Process::System" do
   it "save_pid_to_file" do
     @process.pid = 123456789
     @process.save_pid_to_file
-    File.read(@process[:pid_file_ex]).to_i.should == 123456789
+    expect(File.read(@process[:pid_file_ex]).to_i).to eq 123456789
   end
 
   it "failsafe_save_pid ok case" do
     @process.pid = 123456789
-    @process.failsafe_save_pid.should == true
-    File.read(@process[:pid_file_ex]).to_i.should == 123456789
+    expect(@process.failsafe_save_pid).to eq true
+    expect(File.read(@process[:pid_file_ex]).to_i).to eq 123456789
   end
 
   it "failsafe_save_pid bad case" do
     @process.config[:pid_file_ex] = "/asdf/adf/asd/fs/dfs/das/df.1"
     @process.pid = 123456789
-    @process.failsafe_save_pid.should == false
+    expect(@process.failsafe_save_pid).to eq false
   end
 
   it "clear_pid_file" do
     @process.pid = 123456789
     @process.save_pid_to_file
-    File.read(@process[:pid_file_ex]).to_i.should == 123456789
+    expect(File.read(@process[:pid_file_ex]).to_i).to eq 123456789
 
-    @process.clear_pid_file.should == true
-    File.exist?(@process[:pid_file_ex]).should == false
+    expect(@process.clear_pid_file).to eq true
+    expect(File.exist?(@process[:pid_file_ex])).to eq false
   end
 
   it "process_really_running?" do
     @process.pid = $$
-    @process.process_really_running?.should == true
+    expect(@process.process_really_running?).to eq true
 
     @process.pid = nil
-    @process.process_really_running?.should == nil
+    expect(@process.process_really_running?).to eq nil
 
     @process.pid = -123434
-    @process.process_really_running?.should == false
+    expect(@process.process_really_running?).to eq false
   end
 
   it "send_signal ok" do
-    mock(Eye::System).send_signal(@process.pid, :TERM){ {:result => :ok} }
-    @process.send_signal(:TERM).should == true
+    expect(Eye::System).to receive(:send_signal).with(@process.pid, :TERM){ {:result => :ok} }
+    expect(@process.send_signal(:TERM)).to eq true
   end
 
   it "send_signal not ok" do
-    mock(Eye::System).send_signal(@process.pid, :TERM){ {:error => Exception.new('bla')} }
-    @process.send_signal(:TERM).should == false
+    expect(Eye::System).to receive(:send_signal).with(@process.pid, :TERM){ {:error => Exception.new('bla')} }
+    expect(@process.send_signal(:TERM)).to eq false
   end
 
   it "pid_file_ctime" do
     File.open(@process[:pid_file_ex], 'w'){|f| f.write("asdf") }
     sleep 1
-    (Time.now - @process.pid_file_ctime).should > 1.second
+    expect(Time.now - @process.pid_file_ctime).to be > 1.second
 
     @process.clear_pid_file
-    (Time.now - @process.pid_file_ctime).should < 0.1.second
+    expect(Time.now - @process.pid_file_ctime).to be < 0.1.second
   end
 
   [C.p1, C.p2].each do |cfg|
@@ -108,7 +108,7 @@ describe "Eye::Process::System" do
         sleep 1
 
         # here mailbox should anwser without blocks
-        @process.name.should == cfg[:name]
+        expect(@process.name).to eq cfg[:name]
       end
     end
   end
@@ -117,23 +117,23 @@ describe "Eye::Process::System" do
     filename = "asdfasdfsd.tmp"
     full_filename = C.working_dir + "/" + filename
     FileUtils.rm(full_filename) rescue nil
-    File.exist?(full_filename).should == false
+    expect(File.exist?(full_filename)).to eq false
     res = @process.execute_sync("touch #{filename}")
-    File.exist?(full_filename).should == true
+    expect(File.exist?(full_filename)).to eq true
     FileUtils.rm(full_filename) rescue nil
-    res[:exitstatus].should == 0
+    expect(res[:exitstatus]).to eq 0
   end
 
   it "execute_async helper" do
     filename = "asdfasdfsd.tmp"
     full_filename = C.working_dir + "/" + filename
     FileUtils.rm(full_filename) rescue nil
-    File.exist?(full_filename).should == false
+    expect(File.exist?(full_filename)).to eq false
     res = @process.execute_async("touch #{filename}")
     sleep 0.2
-    File.exist?(full_filename).should == true
+    expect(File.exist?(full_filename)).to eq true
     FileUtils.rm(full_filename) rescue nil
-    res[:exitstatus].should == 0
+    expect(res[:exitstatus]).to eq 0
   end
 
   context "#wait_for_condition" do
@@ -141,25 +141,25 @@ describe "Eye::Process::System" do
 
     it "success" do
       should_spend(0) do
-        subject.wait_for_condition(1){ 15 }.should == 15
+        expect(subject.wait_for_condition(1){ 15 }).to eq 15
       end
     end
 
     it "success with sleep" do
       should_spend(0.3) do
-        subject.wait_for_condition(1){ sleep 0.3; :a }.should == :a
+        expect(subject.wait_for_condition(1){ sleep 0.3; :a }).to eq :a
       end
     end
 
     # it "fail by timeout" do
     #   should_spend(1) do
-    #     subject.wait_for_condition(1){ sleep 4; true }.should == false
+    #     expect(subject.wait_for_condition(1){ sleep 4; true }).to eq false
     #   end
     # end
 
     it "fail with bad result" do
       should_spend(1) do
-        subject.wait_for_condition(1){ nil }.should == false
+        expect(subject.wait_for_condition(1){ nil }).to eq false
       end
     end
   end

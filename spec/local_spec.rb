@@ -6,12 +6,12 @@ end
 
 describe "Eye::Local" do
   it "should find_eyefile" do
-    Eye::Local.find_eyefile(join_path %w[ fixtures ]).should == nil
-    Eye::Local.find_eyefile(join_path %w[]).should == nil
+    expect(Eye::Local.find_eyefile(join_path %w[ fixtures ])).to eq nil
+    expect(Eye::Local.find_eyefile(join_path %w[])).to eq nil
 
     result = join_path %w[ fixtures dsl Eyefile ]
-    Eye::Local.find_eyefile(join_path %w[ fixtures dsl ]).should == result
-    Eye::Local.find_eyefile(join_path %w[ fixtures dsl configs ]).should == result
-    Eye::Local.find_eyefile(join_path %w[ fixtures dsl subfolder3 sub ]).should == result
+    expect(Eye::Local.find_eyefile(join_path %w[ fixtures dsl ])).to eq result
+    expect(Eye::Local.find_eyefile(join_path %w[ fixtures dsl configs ])).to eq result
+    expect(Eye::Local.find_eyefile(join_path %w[ fixtures dsl subfolder3 sub ])).to eq result
   end
 end

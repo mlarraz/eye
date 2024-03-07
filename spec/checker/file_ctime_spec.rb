@@ -11,23 +11,23 @@ describe "Eye::Checker::FileCTime" do
     subject{ chctime }
 
     it "get_value" do
-      subject.get_value.should == File.ctime($logger_path)
+      expect(subject.get_value).to eq File.ctime($logger_path)
     end
 
     it "not good if size equal prevous" do
-      stub(subject).get_value{ Time.parse('00:00:01') }
-      subject.check.should == true
+      allow(subject).to receive(:get_value) { Time.parse('00:00:01') }
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{ Time.parse('00:00:01') }
-      subject.check.should == false
+      allow(subject).to receive(:get_value) { Time.parse('00:00:01') }
+      expect(subject.check).to eq false
     end
 
     it "good when little different with previous" do
-      stub(subject).get_value{ Time.parse('00:00:01') }
-      subject.check.should == true
+      allow(subject).to receive(:get_value) { Time.parse('00:00:01') }
+      expect(subject.check).to eq true
 
-      stub(subject).get_value{ Time.parse('00:00:02') }
-      subject.check.should == true
+      allow(subject).to receive(:get_value) { Time.parse('00:00:02') }
+      expect(subject.check).to eq true
     end
   end
 

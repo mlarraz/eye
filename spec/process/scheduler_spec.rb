@@ -47,50 +47,50 @@ describe "Scheduler" do
   end
 
   it "should schedule action" do
-    @process.test1.should == nil
+    expect(@process.test1).to eq nil
     @process.schedule :scheduler_test1, 1
     sleep 0.1
-    @process.scheduler_current_command.should == :scheduler_test1
-    @process.test1.should == nil
+    expect(@process.scheduler_current_command).to eq :scheduler_test1
+    expect(@process.test1).to eq nil
     sleep 0.4
-    @process.test1.should == 1
-    @process.scheduler_current_command.should == nil
+    expect(@process.test1).to eq 1
+    expect(@process.scheduler_current_command).to eq nil
   end
 
   it "should one after another" do
-    @process.test1.should == nil
-    @process.test2.should == nil
+    expect(@process.test1).to eq nil
+    expect(@process.test2).to eq nil
 
     @process.schedule :scheduler_test1, 1
     @process.schedule :scheduler_test2, 1, 2
 
     sleep 0.4
-    @process.test1.should == 1
-    @process.test2.should == nil
+    expect(@process.test1).to eq 1
+    expect(@process.test2).to eq nil
 
     sleep 0.6
-    @process.test1.should == 1
-    @process.test2.should == [1, 2]
+    expect(@process.test1).to eq 1
+    expect(@process.test2).to eq [1, 2]
   end
 
   it "should one after another2" do
-    @process.test1.should == nil
-    @process.test2.should == nil
+    expect(@process.test1).to eq nil
+    expect(@process.test2).to eq nil
 
     @process.schedule :scheduler_test2, 1, 2
     @process.schedule :scheduler_test1, 1
 
     sleep 0.4
-    @process.test1.should == nil
-    @process.test2.should == nil
+    expect(@process.test1).to eq nil
+    expect(@process.test2).to eq nil
 
     sleep 0.3
-    @process.test1.should == nil
-    @process.test2.should == [1, 2]
+    expect(@process.test1).to eq nil
+    expect(@process.test2).to eq [1, 2]
 
     sleep 0.3
-    @process.test1.should == 1
-    @process.test2.should == [1, 2]
+    expect(@process.test1).to eq 1
+    expect(@process.test2).to eq [1, 2]
   end
 
   it "should not scheduler duplicates" do
@@ -99,7 +99,7 @@ describe "Scheduler" do
     @process.schedule :scheduler_test1, 1
 
     sleep 1
-    @process.test1_call.should == 1
+    expect(@process.test1_call).to eq 1
   end
 
   it "should not scheduler duplicates for user schedules" do
@@ -108,7 +108,7 @@ describe "Scheduler" do
     @process.user_schedule :command => :scheduler_test1, :args => [1]
 
     sleep 1
-    @process.test1_call.should == 2
+    expect(@process.test1_call).to eq 2
   end
 
   it "should scheduler duplicates by with different params" do
@@ -117,13 +117,13 @@ describe "Scheduler" do
     @process.schedule :scheduler_test1, 3
 
     sleep 1
-    @process.test1_call.should == 3
+    expect(@process.test1_call).to eq 3
   end
 
   it "should terminate when actor die" do
-    @process.alive?.should == true
+    expect(@process.alive?).to eq true
     @process.terminate
-    @process.alive?.should == false
+    expect(@process.alive?).to eq false
   end
 
   it "should terminate even with tasks" do
@@ -139,48 +139,48 @@ describe "Scheduler" do
     @process.schedule(:scheduler_test1, 1) rescue nil
 
     sleep 0.4
-    @process.alive?.should == false
+    expect(@process.alive?).to eq false
   end
 
   it "schedule unexisted method should not raise and break anything" do
     @process.schedule :hahhaha
     sleep 0.2
-    @process.alive?.should == true
+    expect(@process.alive?).to eq true
   end
 
   describe "reasons" do
     it "1 param without reason" do
       @process.schedule :scheduler_test3, 1
       sleep 0.1
-      @process.scheduler_last_command.should == :scheduler_test3
-      @process.scheduler_last_reason.should == nil
-      @process.test3.should == [1]
+      expect(@process.scheduler_last_command).to eq :scheduler_test3
+      expect(@process.scheduler_last_reason).to eq nil
+      expect(@process.test3).to eq [1]
     end
 
     it "1 param with reason" do
       @process.schedule command: :scheduler_test3, args: [1], reason: "reason"
       sleep 0.1
-      @process.scheduler_last_command.should == :scheduler_test3
-      @process.scheduler_last_reason.should == 'reason'
-      @process.test3.should == [1]
+      expect(@process.scheduler_last_command).to eq :scheduler_test3
+      expect(@process.scheduler_last_reason).to eq 'reason'
+      expect(@process.test3).to eq [1]
     end
 
     it "many params with reason" do
       @process.schedule command: :scheduler_test3, args: [1, :bla, 3], reason: "reason"
       sleep 0.1
-      @process.scheduler_last_command.should == :scheduler_test3
-      @process.scheduler_last_reason.should == 'reason'
-      @process.test3.should == [1, :bla, 3]
+      expect(@process.scheduler_last_command).to eq :scheduler_test3
+      expect(@process.scheduler_last_reason).to eq 'reason'
+      expect(@process.test3).to eq [1, :bla, 3]
     end
 
     it "save history" do
       @process.schedule command: :scheduler_test3, args: [1, :bla, 3], reason: "reason"
       sleep 0.1
       h = @process.scheduler_history
-      h.size.should == 1
+      expect(h.size).to eq 1
       h = h[0]
-      h[:state].should == :scheduler_test3
-      h[:reason].to_s.should == "reason"
+      expect(h[:state]).to eq :scheduler_test3
+      expect(h[:reason].to_s).to eq "reason"
     end
   end
 
@@ -191,7 +191,7 @@ describe "Scheduler" do
         @process.schedule command: :scheduler_test1, args: [1], reason: "reason", signal: c1
         c1.wait
       end
-      @process.test1.should == 1
+      expect(@process.test1).to eq 1
     end
 
     it "work with combinations" do
@@ -203,8 +203,8 @@ describe "Scheduler" do
         c1.wait
         c2.wait
       end
-      @process.test1.should == 1
-      @process.test2.should == [1, 2]
+      expect(@process.test1).to eq 1
+      expect(@process.test2).to eq [1, 2]
     end
   end
 
@@ -212,9 +212,9 @@ describe "Scheduler" do
     it "should schedule to future" do
       @process.schedule(in: 1.second, command: :scheduler_test3, args: [1, 2, 3])
       sleep 0.5
-      @process.test3.should == nil
+      expect(@process.test3).to eq nil
       sleep 0.7
-      @process.test3.should == [1,2,3]
+      expect(@process.test3).to eq [1,2,3]
     end
   end
 
@@ -222,16 +222,16 @@ describe "Scheduler" do
     it "should schedule to future" do
       @process.schedule(:command => :scheduler_test3, :args => [1, 2, 3], :freeze => true)
       sleep 0.01
-      @process.test3.should == [1, 2, 3]
+      expect(@process.test3).to eq [1, 2, 3]
 
       @process.schedule(:command => :scheduler_test3, :args => [5])
       @process.schedule(:command => :scheduler_test3, :args => [6])
       sleep 0.1
-      @process.test3.should == [1, 2, 3]
+      expect(@process.test3).to eq [1, 2, 3]
 
       @process.schedule(:command => :scheduler_test3, :args => [7], :freeze => false)
       sleep 0.1
-      @process.test3.should == [7]
+      expect(@process.test3).to eq [7]
     end
   end
 
@@ -239,13 +239,13 @@ describe "Scheduler" do
     it "schedule block" do
       @process.schedule(command: :instance_exec, block: -> { @test3 = [1, 2] })
       sleep 0.1
-      @process.test3.should == [1, 2]
+      expect(@process.test3).to eq [1, 2]
     end
 
     it "not crashing on exception" do
       @process.schedule(command: :instance_exec, block: -> { 1 + "bla" })
       sleep 0.1
-      @process.alive?.should be_true
+      expect(@process.alive?).to be_true
     end
   end
 
@@ -261,7 +261,7 @@ describe "Scheduler" do
 
       sleep 1
 
-      @t.m.should == [:a, :b, :cu]
+      expect(@t.m).to eq [:a, :b, :cu]
     end
 
     it "should chain2" do
@@ -273,7 +273,7 @@ describe "Scheduler" do
 
       sleep 1
 
-      @t.m.should == [:cu, :a, :b]
+      expect(@t.m).to eq [:cu, :a, :b]
     end
 
     it "#clear_pending_list" do
@@ -281,7 +281,7 @@ describe "Scheduler" do
       sleep 0.5
       @t.scheduler_clear_pending_list
       sleep 0.5
-      @t.m.size.should <= 6
+      expect(@t.m.size).to be <= 6
     end
   end
 end

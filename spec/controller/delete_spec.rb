@@ -12,41 +12,41 @@ describe "Intergration Delete" do
   end
 
   it "delete group not monitoring anymore" do
-    @controller.command(:delete, "samples").should == {:result => ["int:samples"]}
+    expect(@controller.command(:delete, "samples")).to eq({:result => ["int:samples"]})
     sleep 7 # while
 
-    @controller.all_processes.should == [@p3]
-    @controller.all_groups.map(&:name).should == ['__default__']
+    expect(@controller.all_processes).to eq [@p3]
+    expect(@controller.all_groups.map(&:name)).to eq ['__default__']
 
-    Eye::System.pid_alive?(@old_pid1).should == true
-    Eye::System.pid_alive?(@old_pid2).should == true
-    Eye::System.pid_alive?(@old_pid3).should == true
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid2)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid3)).to eq true
 
     Eye::System.send_signal(@old_pid1)
     sleep 0.5
-    Eye::System.pid_alive?(@old_pid1).should == false
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq false
 
     # noone up this
     sleep 2
-    Eye::System.pid_alive?(@old_pid1).should == false
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq false
   end
 
   it "delete process not monitoring anymore" do
     @controller.command(:delete, "sample1")
     sleep 7 # while
 
-    @controller.all_processes.map(&:name).sort.should == %w{forking sample2}
-    @controller.all_groups.map(&:name).sort.should == %w{__default__ samples}
-    @controller.group_by_name('samples').processes.full_size.should == 1
-    @controller.group_by_name('samples').processes.map(&:name).should == %w{sample2}
+    expect(@controller.all_processes.map(&:name).sort).to eq %w{forking sample2}
+    expect(@controller.all_groups.map(&:name).sort).to eq %w{__default__ samples}
+    expect(@controller.group_by_name('samples').processes.full_size).to eq 1
+    expect(@controller.group_by_name('samples').processes.map(&:name)).to eq %w{sample2}
 
-    Eye::System.pid_alive?(@old_pid1).should == true
-    Eye::System.pid_alive?(@old_pid2).should == true
-    Eye::System.pid_alive?(@old_pid3).should == true
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid2)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid3)).to eq true
 
     Eye::System.send_signal(@old_pid1)
     sleep 0.5
-    Eye::System.pid_alive?(@old_pid1).should == false
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq false
   end
 
   it "delete application" do
@@ -56,43 +56,43 @@ describe "Intergration Delete" do
     @controller.command(:delete, "int")
     sleep 7 # while
 
-    @controller.all_processes.should == []
-    @controller.all_groups.should == []
-    @controller.applications.should == []
+    expect(@controller.all_processes).to eq []
+    expect(@controller.all_groups).to eq []
+    expect(@controller.applications).to eq []
 
-    Eye::System.pid_alive?(@old_pid1).should == true
-    Eye::System.pid_alive?(@old_pid2).should == true
-    Eye::System.pid_alive?(@old_pid3).should == true
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid2)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid3)).to eq true
 
     Eye::System.send_signal(@old_pid1)
     sleep 0.5
-    Eye::System.pid_alive?(@old_pid1).should == false
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq false
 
     actors = Celluloid::Actor.all.map(&:class)
-    actors.should_not include(Eye::Process)
-    actors.should_not include(Eye::Group)
-    actors.should_not include(Eye::Application)
-    actors.should_not include(Eye::Checker::Memory)
+    expect(actors).not_to include(Eye::Process)
+    expect(actors).not_to include(Eye::Group)
+    expect(actors).not_to include(Eye::Application)
+    expect(actors).not_to include(Eye::Checker::Memory)
   end
 
   it "delete by mask" do
-    @controller.command(:delete, "sam*").should == {:result => ["int:samples"]}
+    expect(@controller.command(:delete, "sam*")).to eq({:result => ["int:samples"]})
     sleep 7 # while
 
-    @controller.all_processes.should == [@p3]
-    @controller.all_groups.map(&:name).should == ['__default__']
+    expect(@controller.all_processes).to eq [@p3]
+    expect(@controller.all_groups.map(&:name)).to eq ['__default__']
 
-    Eye::System.pid_alive?(@old_pid1).should == true
-    Eye::System.pid_alive?(@old_pid2).should == true
-    Eye::System.pid_alive?(@old_pid3).should == true
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid2)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid3)).to eq true
 
     Eye::System.send_signal(@old_pid1)
     sleep 0.5
-    Eye::System.pid_alive?(@old_pid1).should == false
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq false
 
     # noone up this
     sleep 2
-    Eye::System.pid_alive?(@old_pid1).should == false
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq false
   end
 
 end

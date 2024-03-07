@@ -228,12 +228,12 @@ def start_ok_process(cfg = C.p1)
   @process.start
   sleep 0.2
 
-  @process.process_really_running?.should == true
-  @process.pid.should > 0
-  @process.watchers.keys.should == [:check_alive, :check_identity] if !cfg[:check_alive] == false
-  @process.state_name.should == :up
+  expect(@process.process_really_running?).to eq true
+  expect(@process.pid).to be > 0
+  expect(@process.watchers.keys).to eq [:check_alive, :check_identity] if !cfg[:check_alive] == false
+  expect(@process.state_name).to eq :up
   @pid = @process.pid
-  Eye::System.pid_alive?(@pid).should == true
+  expect(Eye::System.pid_alive?(@pid)).to eq true
 
   @process
 end
@@ -241,7 +241,7 @@ end
 def die_process!(pid, signal = :kill, int = 0.3)
   Eye::System.send_signal(pid, signal)
   sleep int.to_f
-  Eye::System.pid_alive?(pid).should == false
+  expect(Eye::System.pid_alive?(pid)).to eq false
 end
 
 def change_ctime(filename, t = Time.now, now = false)

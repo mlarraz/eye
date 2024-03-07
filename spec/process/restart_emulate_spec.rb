@@ -10,31 +10,31 @@ describe "Process Restart, emulate some real hard cases" do
       start_ok_process(cfg.merge(:stop_command => "kill -USR1 {PID}"))
       old_pid = @pid
 
-      dont_allow(@process).check_crash
+      expect(@process).not_to receive(:check_crash)
       @process.restart
 
       sleep 3
-      @process.pid.should_not == old_pid
+      expect(@process.pid).not_to eq old_pid
 
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(@pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.watchers.keys.should == [:check_alive, :check_identity]
+      expect(@process.state_name).to eq :up
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
 
-      @process.load_pid_from_file.should == @process.pid
-      @process.states_history.states.should end_with(:up, :restarting, :stopping, :unmonitored, :starting, :up)
+      expect(@process.load_pid_from_file).to eq @process.pid
+      expect(@process.states_history.states).to end_with(:up, :restarting, :stopping, :unmonitored, :starting, :up)
 
-      File.read(@log).should include("USR1")
+      expect(File.read(@log)).to include("USR1")
     end
 
     it "Bad restart command, invalid" do
       start_ok_process(cfg.merge(:restart_command => "asdfasdf sdf asd fasdf asdf"))
 
-      dont_allow(@process).check_crash
+      expect(@process).not_to receive(:check_crash)
 
       @process.restart
-      Eye::System.pid_alive?(@pid).should == true
-      @process.states_history.states.should seq(:up, :restarting, :up)
+      expect(Eye::System.pid_alive?(@pid)).to eq true
+      expect(@process.states_history.states).to seq(:up, :restarting, :up)
     end
 
     it "restart command timeouted" do
@@ -42,15 +42,15 @@ describe "Process Restart, emulate some real hard cases" do
       @process.restart
 
       sleep 1
-      @process.pid.should == @pid
+      expect(@process.pid).to eq @pid
 
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(@pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.watchers.keys.should == [:check_alive, :check_identity]
+      expect(@process.state_name).to eq :up
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
 
-      @process.load_pid_from_file.should == @process.pid
-      @process.states_history.states.should end_with(:up, :restarting, :up)
+      expect(@process.load_pid_from_file).to eq @process.pid
+      expect(@process.states_history.states).to end_with(:up, :restarting, :up)
     end
   end
 
@@ -58,12 +58,12 @@ describe "Process Restart, emulate some real hard cases" do
     start_ok_process(C.p4)
     @pid = @process.pid
     @process.unmonitor
-    Eye::System.pid_alive?(@pid).should == true
+    expect(Eye::System.pid_alive?(@pid)).to eq true
 
     @process.restart
-    @process.state_name.should == :up
+    expect(@process.state_name).to eq :up
 
-    Eye::System.pid_alive?(@pid).should == false
-    @process.load_pid_from_file.should_not == @pid
+    expect(Eye::System.pid_alive?(@pid)).to eq false
+    expect(@process.load_pid_from_file).not_to eq @pid
   end
 end

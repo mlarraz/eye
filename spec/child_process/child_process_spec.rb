@@ -4,16 +4,16 @@ describe "Eye::ChildProcess" do
 
   before :each do
     @pid = Eye::System.daemonize(C.p1[:start_command], C.p1)[:pid]
-    Eye::System.pid_alive?(@pid).should == true
+    expect(Eye::System.pid_alive?(@pid)).to eq true
     sleep 0.5
     @parent = OpenStruct.new(:pid => @parent, :scheduler_history => Eye::Process::StatesHistory.new(50))
   end
 
   it "some process was declared by my child" do
     @process = Eye::ChildProcess.new(@pid, {}, nil, @parent)
-    @process.pid.should == @pid
+    expect(@process.pid).to eq @pid
 
-    @process.watchers.keys.should == []
+    expect(@process.watchers.keys).to eq []
   end
 
   describe "restart" do
@@ -23,7 +23,7 @@ describe "Eye::ChildProcess" do
       @process.schedule :restart
 
       sleep 0.5
-      Eye::System.pid_alive?(@pid).should == false
+      expect(Eye::System.pid_alive?(@pid)).to eq false
     end
 
     it "kill by stop command" do
@@ -31,7 +31,7 @@ describe "Eye::ChildProcess" do
       @process.schedule :restart
 
       sleep 0.5
-      Eye::System.pid_alive?(@pid).should == false
+      expect(Eye::System.pid_alive?(@pid)).to eq false
     end
 
     it "kill by stop command with PARENT_PID" do
@@ -40,7 +40,7 @@ describe "Eye::ChildProcess" do
       @process.schedule :restart
 
       sleep 0.5
-      Eye::System.pid_alive?(@pid).should == false
+      expect(Eye::System.pid_alive?(@pid)).to eq false
     end
 
     it "should not restart with wrong command" do
@@ -48,9 +48,8 @@ describe "Eye::ChildProcess" do
       @process.schedule :restart
 
       sleep 0.5
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(@pid)).to eq true
     end
   end
 
 end
-

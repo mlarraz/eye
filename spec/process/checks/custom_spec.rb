@@ -38,16 +38,16 @@ describe "Custom checks" do
       @c.load_content(conf)
       sleep 3
       @process = @c.process_by_name("1")
-      @process.watchers.keys.should == [:check_alive, :check_identity, :check_custom_check]
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_custom_check]
     end
 
     it "should not restart" do
-      dont_allow(@process).schedule(:command => :restart)
+      expect(@process).not_to receive(:schedule).with(:command => :restart)
       sleep 4
     end
 
     it "should restart" do
-      proxy(@process).schedule(:command => :restart)
+      expect(@process).to receive(:schedule).with(:command => :restart).and_call_original
       sleep 6
     end
   end
@@ -81,7 +81,7 @@ describe "Custom checks" do
     end
 
     it "should work" do
-      @process.state_name.should == :up
+      expect(@process.state_name).to eq :up
 
       # doing touch file
       File.open(C.tmp_file, 'w')
@@ -89,9 +89,9 @@ describe "Custom checks" do
       # sleep enougth
       sleep 5
 
-      @process.state_name.should == :unmonitored
+      expect(@process.state_name).to eq :unmonitored
 
-      File.exist?(C.tmp_file).should == false
+      expect(File.exist?(C.tmp_file)).to eq false
     end
   end
 
@@ -125,8 +125,8 @@ describe "Custom checks" do
 
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
     it "when raised in get_value" do
@@ -143,8 +143,8 @@ describe "Custom checks" do
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
     it "when raised in good?" do
@@ -161,8 +161,8 @@ describe "Custom checks" do
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
     it "when raised in good? and NoMethodError" do
@@ -179,8 +179,8 @@ describe "Custom checks" do
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
     it "when raised in defer" do
@@ -197,8 +197,8 @@ describe "Custom checks" do
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
   end
@@ -232,8 +232,8 @@ describe "Custom checks" do
       sleep 2
       File.open(C.tmp_file, 'w')
       sleep 3
-      @process.state_name.should == :unmonitored
-      @process.scheduler_history.states.last.should == :stop
+      expect(@process.state_name).to eq :unmonitored
+      expect(@process.scheduler_history.states.last).to eq :stop
     end
 
     it "should execute proc on fires" do
@@ -262,12 +262,12 @@ describe "Custom checks" do
       @process = @c.process_by_name("1")
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
-      mock(@process).mock_action(1)
+      expect(@process).to receive(:mock_action).with(1)
       sleep 2
       File.open(C.tmp_file, 'w')
       sleep 3
-      @process.state_name.should == :unmonitored
-      @process.scheduler_history.states.last.should == :instance_exec
+      expect(@process.state_name).to eq :unmonitored
+      expect(@process.scheduler_history.states.last).to eq :instance_exec
     end
 
   end

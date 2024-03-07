@@ -12,51 +12,49 @@ describe "#update_config" do
   end
 
   it "update only env" do
-    @process.watchers.keys.should == [:check_alive, :check_identity, :check_children, :check_memory, :check_cpu]
-    @process.children.keys.size.should == 3
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_children, :check_memory, :check_cpu]
+    expect(@process.children.keys.size).to eq 3
     child_pids = @process.children.keys
-    @process[:environment]["PID_NAME"].should be
+    expect(@process[:environment]["PID_NAME"]).to be
 
     @process.update_config(@cfg.merge(:environment => @cfg[:environment].merge({"ENV2" => "SUPER"})))
     sleep 5
 
-    @process.state_name.should == :up
-    @process.watchers.keys.should == [:check_alive, :check_identity, :check_children, :check_memory, :check_cpu]
-    @process.children.keys.size.should == 3
-    @process.children.keys.should == child_pids
-    @process[:environment]["ENV2"].should == "SUPER"
-    @process.pid.should == @pid
+    expect(@process.state_name).to eq :up
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_children, :check_memory, :check_cpu]
+    expect(@process.children.keys.size).to eq 3
+    expect(@process.children.keys).to eq child_pids
+    expect(@process[:environment]["ENV2"]).to eq "SUPER"
+    expect(@process.pid).to eq @pid
   end
 
   it "update watchers" do
-    @process.watchers.keys.should == [:check_alive, :check_identity, :check_children, :check_memory, :check_cpu]
-    @process.children.keys.size.should == 3
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_children, :check_memory, :check_cpu]
+    expect(@process.children.keys.size).to eq 3
     child_pids = @process.children.keys
 
     @process.update_config(@cfg.merge(:checks => C.check_mem))
     sleep 5
 
-    @process.state_name.should == :up
-    @process.watchers.keys.should == [:check_alive, :check_identity, :check_children, :check_memory]
-    @process.children.keys.size.should == 3
-    @process.children.keys.should == child_pids
-    @process.pid.should == @pid
+    expect(@process.state_name).to eq :up
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_children, :check_memory]
+    expect(@process.children.keys.size).to eq 3
+    expect(@process.children.keys).to eq child_pids
+    expect(@process.pid).to eq @pid
   end
 
   it "when disable monitor_children they should remove" do
-    @process.watchers.keys.should == [:check_alive, :check_identity, :check_children, :check_memory, :check_cpu]
-    @process.children.keys.size.should == 3
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_children, :check_memory, :check_cpu]
+    expect(@process.children.keys.size).to eq 3
     child_pids = @process.children.keys
 
     @process.update_config(@cfg.merge(:monitor_children => nil))
     sleep 5
 
-    @process.state_name.should == :up
-    @process.watchers.keys.should == [:check_alive, :check_identity, :check_memory, :check_cpu]
-    @process.children.keys.size.should == 0
-    @process.pid.should == @pid
+    expect(@process.state_name).to eq :up
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_memory, :check_cpu]
+    expect(@process.children.keys.size).to eq 0
+    expect(@process.pid).to eq @pid
   end
 
 end
-
-

@@ -19,13 +19,12 @@ describe "Actor mocking" do
   end
 
   it "int" do
-    mock(@a).int{2}
-    @a.int.should == 2
+    expect(@a).to receive(:int) { 2 }
+    expect(@a.int).to eq 2
   end
 
   it "ext" do
-    mock(@a).int{2}
-    @a.ext.should == 2
+    expect(@a).to receive(:int) { 2 }
+    expect(@a.ext).to eq 2
   end
-
 end

@@ -27,37 +27,37 @@ describe "Eye::Notify" do
           "idiot2"=>{:name=>"idiot2", :type=>:mail, :contact=>"idiot2@mail.ru", :opts=>{:port=>1111}},
           "idiot3"=>{:name=>"idiot3", :type=>:jabber, :contact=>"idiot3@mail.ru", :opts=>{:host => "jabber.some.host", :port=>1111, :user => "some_user"}}}}
 
-      stub(Eye::Control).current_config{ Eye::Config.new(@config, {}) }
+      allow(Eye::Control).to receive(:current_config) { Eye::Config.new(@config, {}) }
     end
 
     it "should create right class" do
       h = {:host=>"mx.some.host.ru", :type=>:mail, :port=>25, :domain=>"some.host", :contact=>"vasya@mail.ru"}
-      mock(Eye::Notify::Mail).new(h, @message)
+      expect(Eye::Notify::Mail).to receive(:new).with(h, @message)
       Eye::Notify.notify('vasya', @message)
     end
 
     it "should create right class with additional options" do
       h = {:host=>"mx.some.host.ru", :type=>:mail, :port=>1111, :domain=>"some.host", :contact=>"petya@mail.ru"}
-      mock(Eye::Notify::Mail).new(h, @message)
+      expect(Eye::Notify::Mail).to receive(:new).with(h, @message)
       Eye::Notify.notify('petya', @message)
     end
 
     it "should create right class with group of contacts" do
       h1 = {:host=>"mx.some.host.ru", :type=>:mail, :port=>25, :domain=>"some.host", :contact=>"idiot1@mail.ru"}
       h2 = {:host=>"mx.some.host.ru", :type=>:mail, :port=>1111, :domain=>"some.host", :contact=>"idiot2@mail.ru"}
-      mock(Eye::Notify::Mail).new(h1, @message)
-      mock(Eye::Notify::Mail).new(h2, @message)
+      expect(Eye::Notify::Mail).to receive(:new).with(h1, @message)
+      expect(Eye::Notify::Mail).to receive(:new).with(h2, @message)
       Eye::Notify.notify('idiots', @message)
     end
 
     it "without contact should do nothing" do
-      dont_allow(Eye::Notify::Mail).new
+      expect(Eye::Notify::Mail).not_to receive(:new)
       Eye::Notify.notify('noperson', @message)
     end
 
     it "should also notify to jabber" do
       h = {:host=>"jabber.some.host", :port=>1111, :user=>"some_user", :contact=>"idiot3@mail.ru"}
-      mock(Eye::Notify::Jabber).new(h, @message)
+      expect(Eye::Notify::Jabber).to receive(:new).with(h, @message)
       Eye::Notify.notify('idiot3', @message)
     end
   end
@@ -71,19 +71,19 @@ describe "Eye::Notify" do
       n = Eye::Notify::Not1.new(@h, @message)
 
       $wo = nil
-      mock(n).execute do
+      expect(n).to receive(:execute) do
         $wo = n.wrapped_object
       end
 
       n.async_notify
       sleep 0.5
-      n.alive?.should == false
+      expect(n.alive?).to eq false
 
-      $wo.contact.should == 'vasya@mail.ru'
-      $wo.port.should == 25
+      expect($wo.contact).to eq 'vasya@mail.ru'
+      expect($wo.port).to eq 25
 
-      $wo.message_subject.should == '[host1] [main:default:blocking process] something'
-      $wo.message_body.should start_with('[host1] [main:default:blocking process] something at')
+      expect($wo.message_subject).to eq '[host1] [main:default:blocking process] something'
+      expect($wo.message_body).to start_with('[host1] [main:default:blocking process] something at')
     end
   end
 

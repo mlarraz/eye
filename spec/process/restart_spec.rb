@@ -6,39 +6,39 @@ describe "Process Restart" do
       start_ok_process(cfg)
       old_pid = @pid
 
-      dont_allow(@process).check_crash
+      expect(@process).not_to receive(:check_crash)
       @process.restart
 
-      @process.pid.should_not == old_pid
-      @process.pid.should > 0
+      expect(@process.pid).not_to eq old_pid
+      expect(@process.pid).to be > 0
 
-      Eye::System.pid_alive?(@pid).should == false
-      Eye::System.pid_alive?(@process.pid).should == true
+      expect(Eye::System.pid_alive?(@pid)).to eq false
+      expect(Eye::System.pid_alive?(@process.pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.states_history.states.should seq(:up, :restarting, :stopping, :down, :starting, :up)
-      @process.watchers.keys.should == [:check_alive, :check_identity]
+      expect(@process.state_name).to eq :up
+      expect(@process.states_history.states).to seq(:up, :restarting, :stopping, :down, :starting, :up)
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
 
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
 
     it "stop_command is #{cfg[:name]}" do
       start_ok_process(cfg.merge(:stop_command => "kill -9 {PID}"))
       old_pid = @pid
 
-      dont_allow(@process).check_crash
+      expect(@process).not_to receive(:check_crash)
       @process.restart
 
-      @process.pid.should_not == old_pid
-      @process.pid.should > 0
+      expect(@process.pid).not_to eq old_pid
+      expect(@process.pid).to be > 0
 
-      Eye::System.pid_alive?(@pid).should == false
-      Eye::System.pid_alive?(@process.pid).should == true
+      expect(Eye::System.pid_alive?(@pid)).to eq false
+      expect(Eye::System.pid_alive?(@process.pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.watchers.keys.should == [:check_alive, :check_identity]
+      expect(@process.state_name).to eq :up
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
 
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
 
     it "restart_command is, and not kill (USR1)" do
@@ -46,21 +46,21 @@ describe "Process Restart" do
       start_ok_process(cfg.merge(:restart_command => "kill -USR1 {PID}"))
       old_pid = @pid
 
-      dont_allow(@process).check_crash
+      expect(@process).not_to receive(:check_crash)
       @process.restart
 
       sleep 3
-      @process.pid.should == old_pid
+      expect(@process.pid).to eq old_pid
 
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(@pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.watchers.keys.should == [:check_alive, :check_identity]
+      expect(@process.state_name).to eq :up
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
 
-      @process.load_pid_from_file.should == @process.pid
-      @process.states_history.states.should end_with(:up, :restarting, :up)
+      expect(@process.load_pid_from_file).to eq @process.pid
+      expect(@process.states_history.states).to end_with(:up, :restarting, :up)
 
-      File.read(@log).should include("USR1")
+      expect(File.read(@log)).to include("USR1")
     end
 
     it "restart_command is #{cfg[:name]} and kills" do
@@ -68,12 +68,12 @@ describe "Process Restart" do
       # so monitor should see that process died, and up it
       start_ok_process(cfg.merge(:restart_command => "kill -9 {PID}"))
 
-      mock(@process).check_crash
+      expect(@process).to receive(:check_crash)
 
       @process.restart
       sleep 0.5
-      Eye::System.pid_alive?(@pid).should == false
-      @process.states_history.states.should seq(:up, :restarting, :down)
+      expect(Eye::System.pid_alive?(@pid)).to eq false
+      expect(@process.states_history.states).to seq(:up, :restarting, :down)
     end
   end
 
@@ -83,20 +83,20 @@ describe "Process Restart" do
       @process.state = st.to_s
       old_pid = @pid
 
-      dont_allow(@process).check_crash
+      expect(@process).not_to receive(:check_crash)
       @process.restart
 
-      @process.pid.should_not == old_pid
-      @process.pid.should > 0
+      expect(@process.pid).not_to eq old_pid
+      expect(@process.pid).to be > 0
 
-      Eye::System.pid_alive?(@pid).should == false
-      Eye::System.pid_alive?(@process.pid).should == true
+      expect(Eye::System.pid_alive?(@pid)).to eq false
+      expect(Eye::System.pid_alive?(@process.pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.watchers.keys.should == [:check_alive, :check_identity]
-      @process.states_history.states.should seq(:restarting, :stopping, :down, :starting, :up)
+      expect(@process.state_name).to eq :up
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
+      expect(@process.states_history.states).to seq(:restarting, :stopping, :down, :starting, :up)
 
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
   end
 
@@ -105,11 +105,11 @@ describe "Process Restart" do
       @process = process(C.p1)
       @process.state = st.to_s # force set state
 
-      dont_allow(@process).stop
-      dont_allow(@process).start
+      expect(@process).not_to receive(:stop)
+      expect(@process).not_to receive(:start)
 
-      @process.restart.should == nil
-      @process.state_name.should == st
+      expect(@process.restart).to eq nil
+      expect(@process.state_name).to eq st
     end
   end
 
@@ -117,6 +117,6 @@ describe "Process Restart" do
     @process = process(C.p2.merge(:start_command => nil))
     @process.restart
     sleep 1
-    @process.unmonitored?.should == true
+    expect(@process.unmonitored?).to eq true
   end
 end

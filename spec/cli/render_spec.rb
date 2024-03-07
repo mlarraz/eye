@@ -48,13 +48,13 @@ S
 
     controller.load(fixture("dsl/load.eye"))
     sleep 0.5
-    info_string.strip.should == (app1 + app2).strip
-    info_string('app1').should == app1.chomp
-    info_string('app2').strip.should == app2.strip
-    info_string('app3', :some_arg => :ignored).should == ''
+    expect(info_string.strip).to eq (app1 + app2).strip
+    expect(info_string('app1')).to eq app1.chomp
+    expect(info_string('app2').strip).to eq app2.strip
+    expect(info_string('app3', :some_arg => :ignored)).to eq ''
 
     # wrong arg should not crash
-    info_string(['1']).should == ''
+    expect(info_string(['1'])).to eq ''
   end
 
   it "render_info with reason" do
@@ -62,43 +62,43 @@ S
     controller.command(:start)
     controller.command(:stop)
     sleep 0.5
-    info_string.should be
+    expect(info_string).to be
   end
 
   it "info_string_debug should be" do
     controller.load(fixture("dsl/load.eye"))
-    debug_string.split("\n").size.should > 5
+    expect(debug_string.split("\n").size).to be > 5
 
     controller.load(fixture("dsl/load.eye"))
-    debug_string(:config => true, :processes => true).split("\n").size.should > 5
+    expect(debug_string(:config => true, :processes => true).split("\n").size).to be > 5
   end
 
   it "info_string_short should be" do
     controller.load(fixture("dsl/load.eye"))
-    short_string.should == "app1\n  gr1 ............................. unmonitored:2\n  gr2 ............................. unmonitored:1\n  default ......................... unmonitored:2\napp2\n  default ......................... unmonitored:1"
+    expect(short_string).to eq "app1\n  gr1 ............................. unmonitored:2\n  gr2 ............................. unmonitored:1\n  default ......................... unmonitored:2\napp2\n  default ......................... unmonitored:1"
   end
 
   it "history_string" do
     controller.load(fixture("dsl/load.eye"))
     sleep 0.3
     str = history_string('*')
-    str.should be_a(String)
-    str.size.should >= 80
+    expect(str).to be_a(String)
+    expect(str.size).to be >= 80
   end
 
   it "render_status" do
     controller.load(fixture("dsl/load.eye"))
-    status('p1').should == [3, '']
-    status('gr2').should == [1, "unknown status for :group=gr2"]
-    status('gr').should == [1, "match 2 objects ([\"gr1\", \"gr2\"]), but expected only 1 process"]
+    expect(status('p1')).to eq [3, '']
+    expect(status('gr2')).to eq [1, "unknown status for :group=gr2"]
+    expect(status('gr')).to eq [1, "match 2 objects ([\"gr1\", \"gr2\"]), but expected only 1 process"]
 
     p = controller.process_by_name('p1')
 
     p.state = :restarting
-    status('p1').should == [4, "process p1 state :restarting"]
+    expect(status('p1')).to eq [4, "process p1 state :restarting"]
 
     p.state = :up
-    status('p1').should == [0, '']
+    expect(status('p1')).to eq [0, '']
   end
 
 end

@@ -8,10 +8,10 @@ describe "Process Stop" do
 
       @process.stop_process
 
-      Eye::System.pid_alive?(@pid).should == false
-      @process.state_name.should == :down
+      expect(Eye::System.pid_alive?(@pid)).to eq false
+      expect(@process.state_name).to eq :down
 
-      @process.load_pid_from_file.should == nil
+      expect(@process.load_pid_from_file).to eq nil
     end
 
     it "stop should clear pid by default for not daemonize" do
@@ -19,10 +19,10 @@ describe "Process Stop" do
 
       @process.stop_process
 
-      Eye::System.pid_alive?(@pid).should == false
-      @process.state_name.should == :down
+      expect(Eye::System.pid_alive?(@pid)).to eq false
+      expect(@process.state_name).to eq :down
 
-      @process.load_pid_from_file.should == nil
+      expect(@process.load_pid_from_file).to eq nil
     end
 
     it "for not daemonize, but option enabled by manual" do
@@ -30,51 +30,51 @@ describe "Process Stop" do
 
       @process.stop_process
 
-      Eye::System.pid_alive?(@pid).should == false
-      @process.state_name.should == :down
+      expect(Eye::System.pid_alive?(@pid)).to eq false
+      expect(@process.state_name).to eq :down
 
-      @process.load_pid_from_file.should == @pid
+      expect(@process.load_pid_from_file).to eq @pid
     end
   end
 
   it "stop process by default command" do
     start_ok_process
 
-    dont_allow(@process).check_crash
+    expect(@process).not_to receive(:check_crash)
     @process.stop_process
 
-    Eye::System.pid_alive?(@pid).should == false
-    @process.pid.should == @pid
-    @process.state_name.should == :down
-    @process.states_history.states.should end_with(:up, :stopping, :down)
-    @process.watchers.keys.should == []
-    @process.load_pid_from_file.should == nil
+    expect(Eye::System.pid_alive?(@pid)).to eq false
+    expect(@process.pid).to eq @pid
+    expect(@process.state_name).to eq :down
+    expect(@process.states_history.states).to end_with(:up, :stopping, :down)
+    expect(@process.watchers.keys).to eq []
+    expect(@process.load_pid_from_file).to eq nil
   end
 
   it "stop process by default command, and its not die by TERM, should stop anyway" do
     start_ok_process(C.p2.merge(:start_command => C.p2[:start_command] + " -T"))
-    Eye::System.pid_alive?(@pid).should == true
+    expect(Eye::System.pid_alive?(@pid)).to eq true
 
-    dont_allow(@process).check_crash
+    expect(@process).not_to receive(:check_crash)
     @process.stop_process
 
-    Eye::System.pid_alive?(@pid).should == false
-    @process.pid.should == @pid
-    @process.state_name.should == :down
-    @process.states_history.states.should end_with(:up, :stopping, :down)
-    @process.watchers.keys.should == []
-    @process.load_pid_from_file.should == nil
+    expect(Eye::System.pid_alive?(@pid)).to eq false
+    expect(@process.pid).to eq @pid
+    expect(@process.state_name).to eq :down
+    expect(@process.states_history.states).to end_with(:up, :stopping, :down)
+    expect(@process.watchers.keys).to eq []
+    expect(@process.load_pid_from_file).to eq nil
   end
 
   it "stop process by specific command" do
     start_ok_process(C.p1.merge(:stop_command => "kill -9 {PID}"))
 
-    dont_allow(@process).check_crash
+    expect(@process).not_to receive(:check_crash)
     @process.stop_process
 
-    Eye::System.pid_alive?(@pid).should == false
-    @process.state_name.should == :down
-    @process.load_pid_from_file.should == nil
+    expect(Eye::System.pid_alive?(@pid)).to eq false
+    expect(@process.state_name).to eq :down
+    expect(@process.load_pid_from_file).to eq nil
   end
 
   it "bad command" do
@@ -82,10 +82,10 @@ describe "Process Stop" do
 
     @process.stop_process
 
-    Eye::System.pid_alive?(@pid).should == true
-    @process.state_name.should == :unmonitored # cant stop with this command, so :unmonitored
+    expect(Eye::System.pid_alive?(@pid)).to eq true
+    expect(@process.state_name).to eq :unmonitored # cant stop with this command, so :unmonitored
 
-    @process.load_pid_from_file.should == @pid # needs
+    expect(@process.load_pid_from_file).to eq @pid # needs
   end
 
   it "bad command timeouted" do
@@ -93,10 +93,10 @@ describe "Process Stop" do
 
     @process.stop_process
 
-    Eye::System.pid_alive?(@pid).should == true
-    @process.state_name.should == :unmonitored # cant stop with this command, so :unmonitored
+    expect(Eye::System.pid_alive?(@pid)).to eq true
+    expect(@process.state_name).to eq :unmonitored # cant stop with this command, so :unmonitored
 
-    @process.load_pid_from_file.should == @pid # needs
+    expect(@process.load_pid_from_file).to eq @pid # needs
   end
 
   it "watch_file" do
@@ -106,15 +106,15 @@ describe "Process Stop" do
 
     @process.stop_process
 
-    Eye::System.pid_alive?(@pid).should == false
-    @process.state_name.should == :down
+    expect(Eye::System.pid_alive?(@pid)).to eq false
+    expect(@process.state_name).to eq :down
 
-    File.exist?(wf).should == false
+    expect(File.exist?(wf)).to eq false
 
     data = File.read(@log)
-    data.should include("watch file finded")
+    expect(data).to include("watch file finded")
 
-    @process.load_pid_from_file.should == nil
+    expect(@process.load_pid_from_file).to eq nil
   end
 
   it "stop process by stop_signals" do
@@ -122,9 +122,9 @@ describe "Process Stop" do
 
     @process.schedule :stop_process
     sleep 1
-    Eye::System.pid_alive?(@pid).should == false
+    expect(Eye::System.pid_alive?(@pid)).to eq false
 
-    @process.load_pid_from_file.should == nil
+    expect(@process.load_pid_from_file).to eq nil
   end
 
   it "stop process by stop_signals" do
@@ -135,18 +135,18 @@ describe "Process Stop" do
 
     # not blocking actor
     should_spend(0) do
-      @process.name.should == 'blocking process'
+      expect(@process.name).to eq 'blocking process'
     end
 
-    Eye::System.pid_alive?(@pid).should == true
+    expect(Eye::System.pid_alive?(@pid)).to eq true
     sleep 1.3
-    Eye::System.pid_alive?(@pid).should == true
+    expect(Eye::System.pid_alive?(@pid)).to eq true
     sleep 1
-    Eye::System.pid_alive?(@pid).should == false
+    expect(Eye::System.pid_alive?(@pid)).to eq false
 
     # should capture log
     data = File.read(@log)
-    data.should include("USR1 signal")
+    expect(data).to include("USR1 signal")
   end
 
   it "long stop" do
@@ -154,11 +154,11 @@ describe "Process Stop" do
     pid = @process.pid
 
     @process.stop_process
-    @process.state_name.should == :down
+    expect(@process.state_name).to eq :down
 
-    Eye::System.pid_alive?(pid).should == false
+    expect(Eye::System.pid_alive?(pid)).to eq false
 
-    @process.load_pid_from_file.should == nil
+    expect(@process.load_pid_from_file).to eq nil
   end
 
   # it "stop process by stop_signals and commands"
@@ -168,10 +168,10 @@ describe "Process Stop" do
       @process = process(C.p1)
       @process.state = st.to_s # force set state
 
-      dont_allow(@process).kill_process
+      expect(@process).not_to receive(:kill_process)
 
       @process.stop_process
-      @process.state_name.should == st
+      expect(@process.state_name).to eq st
     end
   end
 

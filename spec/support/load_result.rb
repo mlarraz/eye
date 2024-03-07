@@ -1,7 +1,7 @@
 class Hash
   def should_be_ok(files_count = 1)
-    self.size.should == files_count
-    self.errors_count.should == 0
+    expect(self.size).to eq files_count
+    expect(self.errors_count).to eq 0
   end
 
   def ok_count

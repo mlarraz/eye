@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe "with_server feature" do
 
   it "should load matched by string process" do
-    stub(Eye::Local).host{ "server1" }
+    allow(Eye::Local).to receive(:host) { "server1" }
 
     conf = <<-E
       Eye.application("bla") do
@@ -17,11 +17,11 @@ describe "with_server feature" do
       end
     E
 
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
   end
 
   it "should another host conditions" do
-    stub(Eye::Local).host{ "server1" }
+    allow(Eye::Local).to receive(:host) { "server1" }
 
     conf = <<-E
       Eye.application("bla") do
@@ -35,11 +35,11 @@ describe "with_server feature" do
       end
     E
 
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
   end
 
   it "should behaves like scoped" do
-    stub(Eye::Local).host{ "server1" }
+    allow(Eye::Local).to receive(:host) { "server1" }
 
     conf = <<-E
       Eye.application("bla") do
@@ -53,34 +53,35 @@ describe "with_server feature" do
       end
     E
 
-    Eye::Dsl.parse_apps(conf).should == {
+    expect(Eye::Dsl.parse_apps(conf)).to eq({
       "bla" => {:name=>"bla", :environment=>{"A"=>"B"},
         :groups=>{
           "a"=>{:name=>"a", :environment=>{"A"=>"C"}, :application=>"bla"},
-          "b"=>{:name=>"b", :environment=>{"A"=>"B"}, :application=>"bla"}}}}
+          "b"=>{:name=>"b", :environment=>{"A"=>"B"}, :application=>"bla"}}}
+    })
   end
 
   describe "matches" do
     subject{ Eye::Dsl::Opts.new }
 
     it "match string" do
-      stub(Eye::Local).host{ "server1" }
-      subject.with_server("server1").should == true
-      subject.with_server("server2").should == false
-      subject.with_server('').should == true
-      subject.with_server(nil).should == true
+      allow(Eye::Local).to receive(:host) { "server1" }
+      expect(subject.with_server("server1")).to eq true
+      expect(subject.with_server("server2")).to eq false
+      expect(subject.with_server('')).to eq true
+      expect(subject.with_server(nil)).to eq true
     end
 
     it "match array" do
-      stub(Eye::Local).host{ "server1" }
-      subject.with_server(%w{ server1 server2}).should == true
-      subject.with_server(%w{ server2 server3}).should == false
+      allow(Eye::Local).to receive(:host) { "server1" }
+      expect(subject.with_server(%w{ server1 server2})).to eq true
+      expect(subject.with_server(%w{ server2 server3})).to eq false
     end
 
     it "match regexp" do
-      stub(Eye::Local).host{ "server1" }
-      subject.with_server(%r{server}).should == true
-      subject.with_server(%r{myserver}).should == false
+      allow(Eye::Local).to receive(:host) { "server1" }
+      expect(subject.with_server(%r{server})).to eq true
+      expect(subject.with_server(%r{myserver})).to eq false
     end
   end
 
@@ -94,7 +95,7 @@ describe "with_server feature" do
           end
         }
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name => "bla"}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name => "bla"}})
     end
 
     it "with_server work" do
@@ -109,7 +110,7 @@ describe "with_server feature" do
           end
         }
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :groups=>{"blo"=>{:name=>"blo", :application=>"bla", :working_dir=>"/tmp"}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :groups=>{"blo"=>{:name=>"blo", :application=>"bla", :working_dir=>"/tmp"}}}})
     end
 
     it "hostname work" do
@@ -121,14 +122,14 @@ describe "with_server feature" do
           env "HOST" => hostname
         }
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name => "bla", :working_dir=>"/tmp", :environment=>{"HOST"=>"supa_server"}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name => "bla", :working_dir=>"/tmp", :environment=>{"HOST"=>"supa_server"}}})
     end
 
   end
 
   describe "Merging groups in scoped" do
     it "double with_server (was a bug)" do
-      stub(Eye::Local).host{ "server1" }
+      allow(Eye::Local).to receive(:host) { "server1" }
 
       conf = <<-E
         Eye.application("bla") do
@@ -142,11 +143,11 @@ describe "with_server feature" do
         end
       E
 
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}, "2"=>{:name=>"2", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid"}}}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}, "2"=>{:name=>"2", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid"}}}}}})
     end
 
     it "double with_server in a group" do
-      stub(Eye::Local).host{ "server1" }
+      allow(Eye::Local).to receive(:host) { "server1" }
 
       conf = <<-E
         Eye.application("bla") do
@@ -162,11 +163,11 @@ describe "with_server feature" do
         end
       E
 
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :groups=>{"bla"=>{:name=>"bla", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"bla", :pid_file=>"1.pid"}, "2"=>{:name=>"2", :application=>"bla", :group=>"bla", :pid_file=>"2.pid"}}}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :groups=>{"bla"=>{:name=>"bla", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"bla", :pid_file=>"1.pid"}, "2"=>{:name=>"2", :application=>"bla", :group=>"bla", :pid_file=>"2.pid"}}}}}})
     end
 
     it "double with_server in a group" do
-      stub(Eye::Local).host{ "server1" }
+      allow(Eye::Local).to receive(:host) { "server1" }
 
       conf = <<-E
         Eye.application("bla") do
@@ -184,11 +185,11 @@ describe "with_server feature" do
         end
       E
 
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :groups=>{"gr1"=>{:name=>"gr1", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"gr1", :pid_file=>"1.pid"}, "2"=>{:name=>"2", :application=>"bla", :group=>"gr1", :pid_file=>"2.pid"}}}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :groups=>{"gr1"=>{:name=>"gr1", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"gr1", :pid_file=>"1.pid"}, "2"=>{:name=>"2", :application=>"bla", :group=>"gr1", :pid_file=>"2.pid"}}}}}})
     end
 
     it "double with_server in a group" do
-      stub(Eye::Local).host{ "server1" }
+      allow(Eye::Local).to receive(:host) { "server1" }
 
       conf = <<-E
         Eye.application("bla") do
@@ -200,11 +201,11 @@ describe "with_server feature" do
         end
       E
 
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}, "2"=>{:name=>"2", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid"}}}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}, "2"=>{:name=>"2", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid"}}}}}})
     end
 
     it "with scoped" do
-      stub(Eye::Local).host{ "server1" }
+      allow(Eye::Local).to receive(:host) { "server1" }
 
       conf = <<-E
         Eye.application("bla") do
@@ -216,7 +217,7 @@ describe "with_server feature" do
         end
       E
 
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}, "2"=>{:name=>"2", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid"}}}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}, "2"=>{:name=>"2", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid"}}}}}})
     end
 
   end

@@ -11,12 +11,12 @@ describe "Process Cpu check" do
   it "should start periodical watcher" do
     start_ok_process(@c)
 
-    @process.watchers.keys.should == [:check_alive, :check_identity, :check_cpu]
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_cpu]
 
     @process.stop
 
     # after process stop should remove watcher
-    @process.watchers.keys.should == []
+    expect(@process.watchers.keys).to eq []
   end
 
   describe "1 times" do
@@ -27,12 +27,12 @@ describe "Process Cpu check" do
     it "when memory exceed limit process should restart" do
       start_ok_process(@c.merge(:checks => @check))
 
-      stub(Eye::SystemResources).cpu(@process.pid){ 5 }
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 5 }
 
       sleep 3
 
-      stub(Eye::SystemResources).cpu(@process.pid){ 20 }
-      mock(@process).schedule(:command => :restart)
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 20 }
+      expect(@process).to receive(:schedule).with(:command => :restart)
 
       sleep 1
     end
@@ -40,12 +40,12 @@ describe "Process Cpu check" do
     it "else should not restart" do
       start_ok_process(@c.merge(:checks => @check))
 
-      stub(Eye::SystemResources).cpu(@process.pid){ 5 }
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 5 }
 
       sleep 3
 
-      stub(Eye::SystemResources).cpu(@process.pid){ 7 }
-      dont_allow(@process).schedule(:command => :restart)
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 7 }
+      expect(@process).not_to receive(:schedule).with(:command => :restart)
 
       sleep 1
     end
@@ -58,24 +58,24 @@ describe "Process Cpu check" do
 
     it "when memory exceed limit process should restart" do
       start_ok_process(@c.merge(:checks => @check))
-      stub(Eye::SystemResources).cpu(@process.pid){ 5 }
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 5 }
 
       sleep 3
 
-      stub(Eye::SystemResources).cpu(@process.pid){ 15 }
-      mock(@process).schedule(:command => :restart)
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 15 }
+      expect(@process).to receive(:schedule).with(:command => :restart)
 
       sleep 6
     end
 
     it "else should not restart" do
       start_ok_process(@c.merge(:checks => @check))
-      stub(Eye::SystemResources).cpu(@process.pid){ 5 }
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 5 }
 
       sleep 3
 
-      stub(Eye::SystemResources).cpu(@process.pid){ 7 }
-      dont_allow(@process).schedule(:command => :restart)
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 7 }
+      expect(@process).not_to receive(:schedule).with(:command => :restart)
 
       sleep 6
     end
@@ -88,24 +88,24 @@ describe "Process Cpu check" do
 
     it "when memory exceed limit process should restart" do
       start_ok_process(@c.merge(:checks => @check))
-      stub(Eye::SystemResources).cpu(@process.pid){ 5 }
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 5 }
 
       sleep 5
 
-      stub(Eye::SystemResources).cpu(@process.pid){ 15 }
-      mock(@process).schedule(:command => :restart)
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 15 }
+      expect(@process).to receive(:schedule).with(:command => :restart)
 
       sleep 6
     end
 
     it "else should not restart" do
       start_ok_process(@c.merge(:checks => @check))
-      stub(Eye::SystemResources).cpu(@process.pid){ 5 }
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 5 }
 
       sleep 5
 
-      stub(Eye::SystemResources).cpu(@process.pid){ 7 }
-      dont_allow(@process).schedule(:command => :restart)
+      allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 7 }
+      expect(@process).not_to receive(:schedule).with(:command => :restart)
 
       sleep 6
     end

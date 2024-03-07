@@ -17,15 +17,15 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
       sleep 5 # wait until monitor upping process
 
-      @process.pid.should == @pid
-      old_pid.should_not == @pid
+      expect(@process.pid).to eq @pid
+      expect(old_pid).not_to eq @pid
 
-      Eye::System.pid_alive?(old_pid).should == false
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(old_pid)).to eq false
+      expect(Eye::System.pid_alive?(@pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.watchers.keys.should == [:check_alive, :check_identity]
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.state_name).to eq :up
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
 
     it "EMULATE haproxy(#52), pid_file was rewritten, and old process not die, new process alive, eye should monitor new pid (only for daemonize false)" do
@@ -40,23 +40,23 @@ require File.dirname(__FILE__) + '/../spec_helper'
       sleep 5 # here eye should understand that pid-file changed
 
       if cfg[:daemonize]
-        @process.pid.should == old_pid
-        old_pid.should_not == @pid
+        expect(@process.pid).to eq old_pid
+        expect(old_pid).not_to eq @pid
 
         # because eye rewrite it
-        @process.load_pid_from_file.should == old_pid
+        expect(@process.load_pid_from_file).to eq old_pid
       else
-        @process.pid.should == @pid
-        old_pid.should_not == @pid
+        expect(@process.pid).to eq @pid
+        expect(old_pid).not_to eq @pid
 
-        @process.load_pid_from_file.should == @pid
+        expect(@process.load_pid_from_file).to eq @pid
       end
 
-      Eye::System.pid_alive?(old_pid).should == true
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(old_pid)).to eq true
+      expect(Eye::System.pid_alive?(@pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.watchers.keys.should == [:check_alive, :check_identity]
+      expect(@process.state_name).to eq :up
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
 
       @pids << old_pid # to gc this process too
     end
@@ -71,14 +71,14 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
       sleep 7 # here eye should understand that pid-file changed
 
-      @process.pid.should == old_pid
-      old_pid.should_not == @pid
-      @process.load_pid_from_file.should == old_pid
+      expect(@process.pid).to eq old_pid
+      expect(old_pid).not_to eq @pid
+      expect(@process.load_pid_from_file).to eq old_pid
 
-      Eye::System.pid_alive?(old_pid).should == true
+      expect(Eye::System.pid_alive?(old_pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.watchers.keys.should == [:check_alive, :check_identity]
+      expect(@process.state_name).to eq :up
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
 
       @pids << old_pid # to gc this process too
     end

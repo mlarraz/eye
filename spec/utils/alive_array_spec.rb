@@ -14,10 +14,10 @@ describe "Eye::Utils::AliveArray" do
 
   it "act like array" do
     a = Eye::Utils::AliveArray.new([1,2,3])
-    a.size.should == 3
-    a.empty?.should == false
+    expect(a.size).to eq 3
+    expect(a.empty?).to eq false
     a << 4
-    a.pure.should == [1,2,3,4]
+    expect(a.pure).to eq [1,2,3,4]
   end
 
   it "alive actions" do
@@ -26,22 +26,22 @@ describe "Eye::Utils::AliveArray" do
     c = AliveArrayActor.new('c')
 
     l = Eye::Utils::AliveArray.new([a,b,c])
-    l.size.should == 3
-    l.map{|a| a.name}.sort.should == %w{a c}
+    expect(l.size).to eq 3
+    expect(l.map(&:name).sort).to eq %w{a c}
 
-    l.detect{|c| c.name == 'a'}.name.should == 'a'
-    l.detect{|c| c.name == 'b'}.should == nil
+    expect(l.detect{|c| c.name == 'a'}.name).to eq 'a'
+    expect(l.detect{|c| c.name == 'b'}).to eq nil
 
-    l.any?{|c| c.name == 'a'}.should == true
-    l.any?{|c| c.name == 'b'}.should == false
+    expect(l.any?{|c| c.name == 'a'}).to eq true
+    expect(l.any?{|c| c.name == 'b'}).to eq false
 
-    l.include?(a).should == true
-    l.include?(b).should == false
+    expect(l.include?(a)).to eq true
+    expect(l.include?(b)).to eq false
 
-    l.sort_by(&:name).class.should == Eye::Utils::AliveArray
-    l.sort_by(&:name).pure.should == [a, c]
+    expect(l.sort_by(&:name).class).to eq Eye::Utils::AliveArray
+    expect(l.sort_by(&:name).pure).to eq [a, c]
 
-    l.to_a.map{|c| c.name}.sort.should == %w{a c}
+    expect(l.to_a.map(&:name).sort).to eq %w{a c}
 
     a.terminate
     c.terminate

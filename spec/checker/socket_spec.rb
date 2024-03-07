@@ -31,53 +31,53 @@ describe "Socket Checker" do
 
       it "good answer" do
         c = chsock(:addr => addr)
-        c.get_value.should == {:result => 'pong'}
-        c.check.should == true
+        expect(c.get_value).to eq({:result => 'pong'})
+        expect(c.check).to eq true
 
         c = chsock(:addr => addr, :expect_data => "pong") # string result ok too
-        c.check.should == true
+        expect(c.check).to eq true
       end
 
       it "timeouted" do
         c = chsock(:addr => addr, :send_data => "timeout")
-        c.get_value.should == {:exception => "ReadTimeout<2.0>"}
-        c.check.should == false
+        expect(c.get_value).to eq({:exception => "ReadTimeout<2.0>"})
+        expect(c.check).to eq false
       end
 
       it "bad answer" do
         c = chsock(:addr => addr, :send_data => "bad")
-        c.get_value.should == {:result => 'what'}
-        c.check.should == false
+        expect(c.get_value).to eq({:result => 'what'})
+        expect(c.check).to eq false
 
         c = chsock(:addr => addr, :send_data => "bad", :expect_data => "pong") # string result bad too
-        c.check.should == false
+        expect(c.check).to eq false
       end
 
       it "socket not found" do
         @process.stop
         c = chsock(:addr => addr + "111")
         if addr =~ /tcp/
-          c.get_value[:exception].should include("Error<")
+          expect(c.get_value[:exception]).to include("Error<")
         else
-          c.get_value[:exception].should include("No such file or directory")
+          expect(c.get_value[:exception]).to include("No such file or directory")
         end
-        c.check.should == false
+        expect(c.check).to eq false
       end
 
       it "check responding without send_data" do
         c = chsock(:addr => addr, :send_data => nil, :expect_data => nil)
-        c.get_value.should == {:result => :listen}
-        c.check.should == true
+        expect(c.get_value).to eq({:result => :listen})
+        expect(c.check).to eq true
       end
 
       it "check responding without send_data" do
         c = chsock(:addr => addr + "111", :send_data => nil, :expect_data => nil)
         if addr =~ /tcp/
-          c.get_value[:exception].should include("Error<")
+          expect(c.get_value[:exception]).to include("Error<")
         else
-          c.get_value[:exception].should include("No such file or directory")
+          expect(c.get_value[:exception]).to include("No such file or directory")
         end
-        c.check.should == false
+        expect(c.check).to eq false
       end
     end
 
@@ -88,14 +88,14 @@ describe "Socket Checker" do
 
       it "good answer" do
         c = chsock(:addr => addr, :send_data => 'raw', :expect_data => "raw_ans", :timeout => 0.5, :protocol => :raw)
-        c.get_value.should == {:result => 'raw_ans'}
-        c.check.should == true
+        expect(c.get_value).to eq({:result => 'raw_ans'})
+        expect(c.check).to eq true
       end
 
       it "timeout when using without :raw" do
         c = chsock(:addr => addr, :send_data => 'raw', :expect_data => "raw_ans", :timeout => 0.5)
-        c.get_value.should == {:exception => "ReadTimeout<0.5>"}
-        c.check.should == false
+        expect(c.get_value).to eq({:exception => "ReadTimeout<0.5>"})
+        expect(c.check).to eq false
       end
     end
   end
@@ -107,37 +107,37 @@ describe "Socket Checker" do
 
     it "good answer" do
       c = chsockb(:send_data => {:command => 'ping'}, :expect_data => 'pong')
-      c.get_value.should == {:result => 'pong'}
-      c.check.should == true
+      expect(c.get_value).to eq({:result => 'pong'})
+      expect(c.check).to eq true
 
       c = chsockb(:send_data => {:command => 'ping'}, :expect_data => /pong/)
-      c.check.should == true
+      expect(c.check).to eq true
 
       c = chsockb(:send_data => {:command => 'ping'}, :expect_data => lambda{|r| r == 'pong'})
-      c.check.should == true
+      expect(c.check).to eq true
     end
 
     it "should correctly get big message" do
       c = chsockb(:send_data => {:command => 'big'})
       res = c.get_value[:result]
-      res.size.should == 9_999_999
+      expect(res.size).to eq 9_999_999
     end
 
     it "when raised in proc, good? == false" do
       c = chsockb(:send_data => {:command => 'ping'}, :expect_data => lambda{|r| raise 'haha'})
-      c.check.should == false
+      expect(c.check).to eq false
     end
 
     it "bad answer" do
       c = chsockb(:send_data => {:command => 'bad'}, :expect_data => 'pong')
-      c.get_value.should == {:result => 'what'}
-      c.check.should == false
+      expect(c.get_value).to eq({:result => 'what'})
+      expect(c.check).to eq false
 
       c = chsockb(:send_data => {:command => 'bad'}, :expect_data => /pong/)
-      c.check.should == false
+      expect(c.check).to eq false
 
       c = chsockb(:send_data => {:command => 'bad'}, :expect_data => lambda{|r| r == 'pong'})
-      c.check.should == false
+      expect(c.check).to eq false
     end
   end
 
@@ -148,8 +148,8 @@ describe "Socket Checker" do
 
     it "should just work" do
       c = ssl_chsockb
-      c.get_value.should == {:result => 'bla:1'}
-      c.check.should == true
+      expect(c.get_value).to eq({:result => 'bla:1'})
+      expect(c.check).to eq true
     end
   end
 end

@@ -10,21 +10,21 @@ describe "Check CTime" do
   it "should start periodical watcher" do
     start_ok_process(@c)
 
-    @process.watchers.keys.should == [:check_alive, :check_identity, :check_ctime]
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_ctime]
     sbj = @process.watchers[:check_ctime][:subject]
-    sbj.file.should == "#{C.sample_dir}/#{C.log_name}"
+    expect(sbj.file).to eq "#{C.sample_dir}/#{C.log_name}"
 
     @process.stop
 
     # after process stop should remove watcher
-    @process.watchers.keys.should == []
+    expect(@process.watchers.keys).to eq []
   end
 
   it "if ctime changes should_not restart" do
     start_ok_process(@c)
-    @process.watchers.keys.should == [:check_alive, :check_identity, :check_ctime]
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_ctime]
 
-    dont_allow(@process).schedule(:restart)
+    expect(@process).not_to receive(:schedule).with(:restart)
 
     sleep 6
   end
@@ -32,7 +32,7 @@ describe "Check CTime" do
   it "if ctime not changed should restart" do
     start_ok_process(@c)
 
-    mock(@process).schedule(:command => :restart)
+    expect(@process).to receive(:schedule).with(:command => :restart)
 
     sleep 3
 
@@ -42,4 +42,3 @@ describe "Check CTime" do
   end
 
 end
-

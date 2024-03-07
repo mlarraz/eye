@@ -56,7 +56,7 @@ describe "transform dsl" do
             :start_command=>"sh -c \"ruby -e 'loop { sleep 1; STDOUT.puts \\\"b\\\"; STDERR.puts \\\"b\\\"; } ' 2>&1 | logger -t \"bla:gr:b\"\"",
             :pid_file=>"/tmp/b", :stdall=>":syslog", :stdout=>nil, :stderr=>nil, :use_leaf_child=>true}}}}}}
 
-      Eye::Dsl.parse_apps(conf).should == h
+      expect(Eye::Dsl.parse_apps(conf)).to eq h
     end
 
     it "non daemonized processes" do
@@ -76,7 +76,7 @@ describe "transform dsl" do
             :start_command=>"sh -c \"some_script -d --pid_file '/tmp/a' 2>&1 | logger -t \"bla:a\"\"",
             :pid_file=>"/tmp/a", :stdall=>":syslog", :stdout=>nil, :stderr=>nil}}}}}}
 
-      Eye::Dsl.parse_apps(conf).should == h
+      expect(Eye::Dsl.parse_apps(conf)).to eq h
     end
 
   end

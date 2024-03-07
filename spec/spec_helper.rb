@@ -64,7 +64,23 @@ RSpec.configure do |config|
     config.formatters << ParallelTests::RSpec::RuntimeLogger.new("spec/weights.txt")
   end
 
-  config.mock_with :rr
+  config.expect_with :rspec do |expectations|
+    # This option will default to `true` in RSpec 4. It makes the `description`
+    # and `failure_message` of custom matchers include text for helper methods
+    # defined using `chain`, e.g.:
+    #     be_bigger_than(2).and_smaller_than(4).description
+    #     # => "be bigger than 2 and smaller than 4"
+    # ...rather than:
+    #     # => "be bigger than 2"
+    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+  end
+
+  config.mock_with :rspec do |mocks|
+    # Prevents you from mocking or stubbing a method that does not exist on
+    # a real object. This is generally recommended, and will default to
+    # `true` in RSpec 4.
+    mocks.verify_partial_doubles = true
+  end
 
   config.before(:all) do
     Eye::SystemResources.cache.setup_expire(1.0)
@@ -80,9 +96,9 @@ RSpec.configure do |config|
     @pids = []
     Eye::Dsl::ProcessOpts.unique_num = 0
 
-    stub(Eye::Local).dir { C.sample_dir }
+    allow(Eye::Local).to receive(:dir) { C.sample_dir }
 
-    $logger.info "================== #{ self.class.description} '#{ example.description }'========================"
+    $logger.info "================== #{ self.class.description} '#{RSpec.current_example.description}'========================"
 
     Eye::Dsl
     Eye.parsed_default_app = nil
@@ -159,7 +175,7 @@ end
 def should_spend(timeout = 0, delta = 0.05, &block)
   tm1 = Time.now
   yield
-  (Time.now - tm1).should be_within(delta).of(timeout)
+  expect(Time.now - tm1).to be_within(delta).of(timeout)
 end
 
 def with_erb_file(file, &block)

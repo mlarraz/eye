@@ -33,10 +33,10 @@ describe "Trigger StartingGuard" do
 
     it "should be up" do
       sleep 5
-      @process.state_name.should == :unmonitored
+      expect(@process.state_name).to eq :unmonitored
       sleep 4
-      @process.state_name.should == :up
-      @process.states_history.states.should == [:unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :up]
+      expect(@process.state_name).to eq :up
+      expect(@process.states_history.states).to eq [:unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :up]
     end
   end
 
@@ -47,10 +47,10 @@ describe "Trigger StartingGuard" do
 
     it "should be up" do
       sleep 5
-      @process.state_name.should_not == :up
+      expect(@process.state_name).not_to eq :up
       sleep 5.5
-      @process.state_name.should_not == :up
-      @process.scheduler_history.states.count(:conditional_start).should > 15
+      expect(@process.state_name).not_to eq :up
+      expect(@process.scheduler_history.states.count(:conditional_start)).to be > 15
     end
   end
 
@@ -61,11 +61,11 @@ describe "Trigger StartingGuard" do
 
     it "should be up" do
       sleep 4
-      @process.state_name.should == :unmonitored
-      @process.states_history.states.should == [:unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored]
+      expect(@process.state_name).to eq :unmonitored
+      expect(@process.states_history.states).to eq [:unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored]
       sleep 4
-      @process.state_name.should == :unmonitored
-      @process.states_history.states.should == [:unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored]
+      expect(@process.state_name).to eq :unmonitored
+      expect(@process.states_history.states).to eq [:unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored]
     end
   end
 
@@ -76,8 +76,8 @@ describe "Trigger StartingGuard" do
 
     it "should be up" do
       sleep 8
-      @process.state_name.should == :unmonitored
-      @process.states_history.states.count { |c| c == :starting }.should <= 12
+      expect(@process.state_name).to eq :unmonitored
+      expect(@process.states_history.states.count { |c| c == :starting }).to be <= 12
     end
   end
 
@@ -88,8 +88,8 @@ describe "Trigger StartingGuard" do
 
     it "should be up" do
       sleep 13
-      @process.state_name.should == :unmonitored
-      @process.states_history.states.count { |c| c == :starting }.should <= 18
+      expect(@process.state_name).to eq :unmonitored
+      expect(@process.states_history.states.count { |c| c == :starting }).to be <= 18
     end
   end
 
@@ -100,12 +100,12 @@ describe "Trigger StartingGuard" do
 
     it "should be up" do
       sleep 3
-      @process.state_name.should_not == :up
+      expect(@process.state_name).not_to eq :up
       @process.send_call(:command => 'unmonitor')
-      @process.states_history.states.should == [:unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :unmonitored]
+      expect(@process.states_history.states).to eq [:unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :unmonitored]
       sleep 3
-      @process.state_name.should == :unmonitored
-      @process.states_history.states.should == [:unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :unmonitored]
+      expect(@process.state_name).to eq :unmonitored
+      expect(@process.states_history.states).to eq [:unmonitored, :starting, :unmonitored, :starting, :unmonitored, :starting, :unmonitored, :unmonitored]
     end
   end
 
@@ -117,7 +117,7 @@ describe "Trigger StartingGuard" do
     it "should be up" do
       should_spend(3) do
         sleep 3
-        @process.state_name.should == :starting
+        expect(@process.state_name).to eq :starting
       end
     end
   end
@@ -129,11 +129,11 @@ describe "Trigger StartingGuard" do
 
     it "should be up" do
       sleep 4
-      @process.state_name.should == :up
+      expect(@process.state_name).to eq :up
 
       @process.schedule :restart
       sleep 4
-      @process.state_name.should == :up
+      expect(@process.state_name).to eq :up
     end
   end
 

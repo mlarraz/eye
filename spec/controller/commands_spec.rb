@@ -25,73 +25,71 @@ describe "comamnd spec" do
   describe "remove objects" do
     it "remove app" do
       subject.remove_object_from_tree(@app2)
-      subject.applications.size.should == 1
-      subject.applications.first.should == @app1
+      expect(subject.applications.size).to eq 1
+      expect(subject.applications.first).to eq @app1
     end
 
     it "remove group" do
       subject.remove_object_from_tree(@gr1)
-      @app1.groups.should_not include(@gr1)
+      expect(@app1.groups).not_to include(@gr1)
 
       subject.remove_object_from_tree(@gr2)
-      @app1.groups.should_not include(@gr2)
+      expect(@app1.groups).not_to include(@gr2)
 
       subject.remove_object_from_tree(@gr3)
-      @app1.groups.should_not include(@gr3)
+      expect(@app1.groups).not_to include(@gr3)
 
-      @app1.groups.should be_empty
+      expect(@app1.groups).to be_empty
     end
 
     it "remove process" do
       subject.remove_object_from_tree(@p1)
-      @gr1.processes.should_not include(@p1)
+      expect(@gr1.processes).not_to include(@p1)
 
       subject.remove_object_from_tree(@p2)
-      @gr1.processes.should_not include(@p2)
+      expect(@gr1.processes).not_to include(@p2)
 
-      @gr1.processes.should be_empty
+      expect(@gr1.processes).to be_empty
     end
   end
 
   it "unknown" do
     subject.load(fixture("dsl/load.eye")).should_be_ok
-    subject.command(:st33art, "2341234").should == :unknown_command
+    expect(subject.command(:st33art, "2341234")).to eq :unknown_command
   end
 
   it "ping" do
-    subject.command(:ping).should == :pong
+    expect(subject.command(:ping)).to eq :pong
   end
 
   it "quit" do
-    mock(Eye::System).send_signal($$, :TERM)
-    mock(Eye::System).send_signal($$, :KILL)
+    expect(Eye::System).to receive(:send_signal).with($$, :TERM)
+    expect(Eye::System).to receive(:send_signal).with($$, :KILL)
     subject.command(:quit)
   end
 
   describe "apply" do
     it "command load" do
       res = subject.command(:load, fixture("dsl/load.eye"))
-      res.class.should == Hash
+      expect(res.class).to eq Hash
     end
 
     it "nothing" do
       subject.load(fixture("dsl/load.eye")).should_be_ok
-      subject.apply(["2341234"], :command => :start).should == {:result => []}
+      expect(subject.apply(["2341234"], :command => :start)).to eq({:result => []})
     end
 
     it "unknown" do
       subject.load(fixture("dsl/load.eye")).should_be_ok
-      subject.apply(["2341234"], :command => :st33art).should == {:result=>[]}
+      expect(subject.apply(["2341234"], :command => :st33art)).to eq({:result=>[]})
     end
 
     [:start, :stop, :restart, :unmonitor].each do |cmd|
       it "should user_schedule #{cmd}" do
         sleep 0.3
-        any_instance_of(Eye::Process) do |p|
-          dont_allow(p).user_schedule(:command => cmd)
-        end
+        expect_any_instance_of(Eye::Process).not_to receive(:user_schedule).with(:command => cmd)
 
-        mock(@p1).user_schedule(:command => cmd)
+        expect(@p1).to receive(:user_schedule).with(:command => cmd)
 
         subject.apply %w{p1}, :command => cmd, :some_flag => true
       end
@@ -104,40 +102,38 @@ describe "comamnd spec" do
       subject.apply %w{gr1}, :command => cmd
       sleep 0.5
 
-      @p1.scheduler_history.states.should == [:monitor, :unmonitor]
-      @p2.scheduler_history.states.should == [:monitor, :unmonitor]
-      @p3.scheduler_history.states.should == [:monitor]
+      expect(@p1.scheduler_history.states).to eq [:monitor, :unmonitor]
+      expect(@p2.scheduler_history.states).to eq [:monitor, :unmonitor]
+      expect(@p3.scheduler_history.states).to eq [:monitor]
     end
 
     it "stop group with skip_group_action for @p2" do
       sleep 0.5
       cmd = :stop
 
-      stub(@p2).skip_group_action?(:stop) { true }
+      allow(@p2).to receive(:skip_group_action?).with(:stop) { true }
 
       subject.apply %w{gr1}, :command => cmd
       sleep 0.5
 
-      @p1.scheduler_history.states.should == [:monitor, :stop]
-      @p2.scheduler_history.states.should == [:monitor]
-      @p3.scheduler_history.states.should == [:monitor]
+      expect(@p1.scheduler_history.states).to eq [:monitor, :stop]
+      expect(@p2.scheduler_history.states).to eq [:monitor]
+      expect(@p3.scheduler_history.states).to eq [:monitor]
     end
 
     it "delete obj" do
       sleep 0.5
-      any_instance_of(Eye::Process) do |p|
-        dont_allow(p).send_call(:command => :delete)
-      end
+      expect_any_instance_of(Eye::Process).not_to receive(:send_call).with(:command => :delete)
 
-      mock(@p1).send_call(:command => :delete)
+      expect(@p1).to receive(:send_call).with(:command => :delete)
       subject.apply %w{p1}, :command => :delete
 
-      subject.all_processes.should_not include(@p1)
-      subject.all_processes.should include(@p2)
+      expect(subject.all_processes).not_to include(@p1)
+      expect(subject.all_processes).to include(@p2)
     end
 
     it "user_command" do
-      mock(@p1).send_call(:command => :user_command, :args => %w{jopa})
+      expect(@p1).to receive(:send_call).with(:command => :user_command, :args => %w{jopa})
       subject.apply %w{p1}, :command => :user_command, :args => %w{jopa}
     end
   end

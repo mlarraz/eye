@@ -8,13 +8,13 @@ describe "Eye::Utils::Tail" do
     subject << 2
     subject << 3
     subject.push 4
-    subject.should == [1,2,3,4]
+    expect(subject).to eq [1,2,3,4]
 
     subject << 5
-    subject.should == [1,2,3,4,5]
+    expect(subject).to eq [1,2,3,4,5]
 
     subject << 6
-    subject.should == [2,3,4,5,6]
+    expect(subject).to eq [2,3,4,5,6]
   end
 
 end

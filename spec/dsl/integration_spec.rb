@@ -79,7 +79,7 @@ describe "Eye::Dsl" do
     }
 
     res = Eye::Dsl.parse_apps(conf)
-    res.should == h
+    expect(res).to eq h
   end
 
   it "merging envs inside one process" do
@@ -97,14 +97,17 @@ describe "Eye::Dsl" do
       end
     E
     res = Eye::Dsl.parse_apps(conf)
-    res["bla"][:environment].should ==
-      {"RAILS_ENV" => "test", "LANG" => "ru_RU.UTF-8"}
+    expect(res["bla"][:environment]).to eq({
+      "RAILS_ENV" => "test", "LANG" => "ru_RU.UTF-8"
+    })
 
-    res["bla"][:groups]["__default__"][:environment].should ==
-      {"RAILS_ENV" => "test", "LANG" => "ru_RU.UTF-8"}
+    expect(res["bla"][:groups]["__default__"][:environment]).to eq({
+      "RAILS_ENV" => "test", "LANG" => "ru_RU.UTF-8"
+    })
 
-    res["bla"][:groups]["__default__"][:processes]['1'][:environment].should ==
-      {"RAILS_ENV" => "test", "LANG" => "ru_RU.UTF-8", "A" => "1", "B" => "2"}
+    expect(res["bla"][:groups]["__default__"][:processes]['1'][:environment]).to eq({
+      "RAILS_ENV" => "test", "LANG" => "ru_RU.UTF-8", "A" => "1", "B" => "2"
+    })
   end
 
   it "should merge environment" do
@@ -152,7 +155,7 @@ describe "Eye::Dsl" do
                 :name=>"2"}}}}}
     }
 
-    Eye::Dsl.parse_apps(conf).should == h
+    expect(Eye::Dsl.parse_apps(conf)).to eq h
   end
 
   it "should rewrite options" do
@@ -208,7 +211,7 @@ describe "Eye::Dsl" do
                 :group=>"__default__",
                 :name=>"3"}}}}}
     }
-    Eye::Dsl.parse_apps(conf).should == h
+    expect(Eye::Dsl.parse_apps(conf)).to eq h
   end
 
   describe "requires" do
@@ -240,19 +243,19 @@ describe "Eye::Dsl" do
     it "should require other files by require" do
       file = fixture('dsl/0.rb')
       conf = File.read(file)
-      Eye::Dsl.parse_apps(conf, file).should == @h
+      expect(Eye::Dsl.parse_apps(conf, file)).to eq @h
     end
 
     it "should require other files by require" do
       file = fixture('dsl/0a.rb')
       conf = File.read(file)
-      Eye::Dsl.parse_apps(conf, file).should == @h
+      expect(Eye::Dsl.parse_apps(conf, file)).to eq @h
     end
 
     it "should load by load" do
       file = fixture('dsl/0c.rb')
       conf = File.read(file)
-      Eye::Dsl.parse_apps(conf, file).should == @h
+      expect(Eye::Dsl.parse_apps(conf, file)).to eq @h
     end
   end
 
@@ -277,13 +280,14 @@ describe "Eye::Dsl" do
       end
     E
 
-    Eye::Dsl.parse_apps(conf).should == {
+    expect(Eye::Dsl.parse_apps(conf)).to eq({
       "bla" => {:name => "bla", :working_dir=>"/tmp2", :environment=>{"A"=>"1", "B"=>"1"}, :groups=>{
         "bla"=>{:name => "bla", :application => "bla", :working_dir=>"/tmp", :environment=>{"A"=>"1", "C"=>"1", "D"=>"1"},
         :processes=>{
           "1"=>{:working_dir=>"/tmp", :environment=>{"A"=>"1", "C"=>"1"}, :group=>"bla", :application=>"bla", :name=>"1", :pid_file=>"1"},
           "2"=>{:working_dir=>"/tmp", :environment=>{"A"=>"1", "C"=>"1", "D"=>"1"}, :group=>"bla", :application=>"bla", :name=>"2", :pid_file=>"2"}}},
-        "bla2"=>{:name => "bla2", :application => "bla", :working_dir=>"/tmp2", :environment=>{"A"=>"1", "B"=>"1"}}}}}
+        "bla2"=>{:name => "bla2", :application => "bla", :working_dir=>"/tmp2", :environment=>{"A"=>"1", "B"=>"1"}}}}
+    })
   end
 
   it "join group spec" do
@@ -300,12 +304,13 @@ describe "Eye::Dsl" do
       end
     E
 
-    Eye::Dsl.parse_apps(conf).should == {
+    expect(Eye::Dsl.parse_apps(conf)).to eq({
       "bla" => {:name => "bla", :groups=>{
         "blagr"=>{:name => "blagr", :application => "bla", :processes=>{
           "1"=>{:group=>"blagr", :application=>"bla", :name=>"1", :pid_file=>"1"},
           "2"=>{:environment=>{"P"=>"1"}, :group=>"blagr", :application=>"bla", :name=>"2", :pid_file=>"2"}},
-        :environment=>{"P"=>"1"}}}}}
+        :environment=>{"P"=>"1"}}}}
+    })
   end
 
 
@@ -335,13 +340,14 @@ describe "Eye::Dsl" do
         end
       E
 
-      Eye::Dsl.parse_apps(conf).should == {
+      expect(Eye::Dsl.parse_apps(conf)).to eq({
         "bla" => {:name=>"bla", :groups=>{
           "gr"=>{:name=>"gr", :application=>"bla", :environment=>{"A"=>"1", "B"=>"2"},
             :processes=>{
               "a"=>{:name=>"a", :application=>"bla", :environment=>{"A"=>"1", "B"=>"2"}, :group=>"gr", :pid_file=>"1.pid"},
               "b"=>{:name=>"b", :application=>"bla", :environment=>{"A"=>"2", "B"=>"2"}, :group=>"gr", :pid_file=>"2.pid"},
-              "c"=>{:name=>"c", :application=>"bla", :environment=>{"A"=>"1", "B"=>"2"}, :group=>"gr", :pid_file=>"3.pid"}}}}}}
+              "c"=>{:name=>"c", :application=>"bla", :environment=>{"A"=>"1", "B"=>"2"}, :group=>"gr", :pid_file=>"3.pid"}}}}}
+      })
     end
 
     it "scoped" do
@@ -364,13 +370,12 @@ describe "Eye::Dsl" do
         end
       E
 
-      Eye::Dsl.parse_apps(conf).should == {
+      expect(Eye::Dsl.parse_apps(conf)).to eq({
         "bla" => {:name=>"bla", :start_timeout=>10, :groups=>{
           "a"=>{:name=>"a", :start_timeout=>10, :application=>"bla"},
           "b"=>{:name=>"b", :start_timeout=>15, :application=>"bla"},
-          "c"=>{:name=>"c", :start_timeout=>10, :application=>"bla"}}}}
+          "c"=>{:name=>"c", :start_timeout=>10, :application=>"bla"}}}
+      })
     end
-
   end
-
 end

@@ -5,12 +5,12 @@ describe "Eye::Checker::ChildrenMemory" do
     @process = start_ok_process(C.p1.merge(:checks => C.check_children_memory(:below => 50), :monitor_children => {}))
 
     3.times { @pids << Eye::System.daemonize("sleep 10")[:pid] }
-    stub(Eye::SystemResources).children(@process.pid){ @pids }
+    allow(Eye::SystemResources).to receive(:children).with(@process.pid){ @pids }
     @process.add_children
 
-    stub(Eye::SystemResources).memory(anything) { 1 }
+    allow(Eye::SystemResources).to receive(:memory).with(anything) { 1 }
 
-    dont_allow(@process).schedule(:command => :restart)
+    expect(@process).not_to receive(:schedule).with(:command => :restart)
 
     sleep 5
   end
@@ -19,11 +19,11 @@ describe "Eye::Checker::ChildrenMemory" do
     @process = start_ok_process(C.p1.merge(:checks => C.check_children_memory(:below => 50), :monitor_children => {}))
 
     10.times { @pids << Eye::System.daemonize("sleep 10")[:pid] }
-    stub(Eye::SystemResources).children(@process.pid){ @pids }
+    allow(Eye::SystemResources).to receive(:children).with(@process.pid){ @pids }
     @process.add_children
 
-    stub(Eye::SystemResources).memory(anything) { 11 }
-    mock(@process).schedule(:command => :restart)
+    allow(Eye::SystemResources).to receive(:memory).with(anything) { 11 }
+    expect(@process).to receive(:schedule).with(:command => :restart)
 
     sleep 5
   end

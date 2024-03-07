@@ -9,10 +9,10 @@ describe "Eye::Process::StatesHistory" do
     @h << :up
     @h.push :down, 'bla'
 
-    @h.states.should == [:up, :down]
-    @h.last_state.should == :down
-    @h.last_state_changed_at.should be_within(2.seconds).of(Time.now)
-    @h.last[:reason].should == 'bla'
+    expect(@h.states).to eq [:up, :down]
+    expect(@h.last_state).to eq :down
+    expect(@h.last_state_changed_at).to be_within(2.seconds).of(Time.now)
+    expect(@h.last[:reason]).to eq 'bla'
   end
 
   it "states for period" do
@@ -23,14 +23,14 @@ describe "Eye::Process::StatesHistory" do
     @h.push :up,    nil, 1.minutes.ago
     @h.push :down,  nil, 0.minutes.ago
 
-    @h.states_for_period(1.5.minutes).should == [:up, :down]
-    @h.states_for_period(2.5.minutes).should == [:stop, :up, :down]
-    @h.states_for_period(6.minutes).should == [:up, :down, :start, :stop, :up, :down]
+    expect(@h.states_for_period(1.5.minutes)).to eq [:up, :down]
+    expect(@h.states_for_period(2.5.minutes)).to eq [:stop, :up, :down]
+    expect(@h.states_for_period(6.minutes)).to eq [:up, :down, :start, :stop, :up, :down]
 
     # with start_point
-    @h.states_for_period(2.5.minutes, 5.minutes.ago).should == [:stop, :up, :down]
-    @h.states_for_period(2.5.minutes, nil).should == [:stop, :up, :down]
-    @h.states_for_period(2.5.minutes, 1.5.minutes.ago).should == [:up, :down]
-    @h.states_for_period(2.5.minutes, Time.now).should == []
+    expect(@h.states_for_period(2.5.minutes, 5.minutes.ago)).to eq [:stop, :up, :down]
+    expect(@h.states_for_period(2.5.minutes, nil)).to eq [:stop, :up, :down]
+    expect(@h.states_for_period(2.5.minutes, 1.5.minutes.ago)).to eq [:up, :down]
+    expect(@h.states_for_period(2.5.minutes, Time.now)).to eq []
   end
 end

@@ -20,29 +20,29 @@ describe "Flapping retry" do
     h = @process.states_history
 
     # был в unmonitored
-    h.shift[:state].should == :unmonitored
+    expect(h.shift[:state]).to eq :unmonitored
 
     # должен попытаться подняться два раза,
     h.shift(6)
 
     # затем перейти в unmonitored с причиной flapping
     flapp1 = h.shift
-    flapp1[:state].should == :unmonitored
-    flapp1[:reason].to_s.should == 'unmonitor by flapping'
+    expect(flapp1[:state]).to eq :unmonitored
+    expect(flapp1[:reason].to_s).to eq 'unmonitor by flapping'
 
     # затем снова попыться подняться два раза
     h.shift(6)
 
     # и снова перейти в unmonitored с причиной flapping
     flapp2 = h.shift
-    flapp2[:state].should == :unmonitored
-    flapp2[:reason].to_s.should == 'unmonitor by flapping'
+    expect(flapp2[:state]).to eq :unmonitored
+    expect(flapp2[:reason].to_s).to eq 'unmonitor by flapping'
 
     # интервал между переходами во flapping должен быть больше 8 сек
-    (flapp2[:at] - flapp1[:at]).should > 5.seconds
+    expect(flapp2[:at] - flapp1[:at]).to be > 5.seconds
 
     # тут снова должен пытаться подниматься так как нет лимитов
-    h.should_not be_blank
+    expect(h).not_to be_blank
   end
 
   it "flapping retry 1 times with retry_times = 1" do
@@ -55,29 +55,29 @@ describe "Flapping retry" do
     h = @process.states_history
 
     # был в unmonitored
-    h.shift[:state].should == :unmonitored
+    expect(h.shift[:state]).to eq :unmonitored
 
     # должен попытаться подняться два раза,
     h.shift(6)
 
     # затем перейти в unmonitored с причиной flapping
     flapp1 = h.shift
-    flapp1[:state].should == :unmonitored
-    flapp1[:reason].to_s.should == 'unmonitor by flapping'
+    expect(flapp1[:state]).to eq :unmonitored
+    expect(flapp1[:reason].to_s).to eq 'unmonitor by flapping'
 
     # затем снова попыться подняться два раза
     h.shift(6)
 
     # и снова перейти в unmonitored с причиной flapping
     flapp2 = h.shift
-    flapp2[:state].should == :unmonitored
-    flapp2[:reason].to_s.should == 'unmonitor by flapping'
+    expect(flapp2[:state]).to eq :unmonitored
+    expect(flapp2[:reason].to_s).to eq 'unmonitor by flapping'
 
     # интервал между переходами во flapping должен быть больше 8 сек
-    (flapp2[:at] - flapp1[:at]).should > 5.seconds
+    expect(flapp2[:at] - flapp1[:at]).to be > 5.seconds
 
     # все финал
-    h.should be_blank
+    expect(h).to be_blank
   end
 
   it "flapping than manually doing something, should not retry" do
@@ -92,23 +92,23 @@ describe "Flapping retry" do
     h = @process.states_history
 
     # был в unmonitored
-    h.shift[:state].should == :unmonitored
+    expect(h.shift[:state]).to eq :unmonitored
 
     # должен попытаться подняться два раза,
     h.shift(6)
 
     # затем перейти в unmonitored с причиной flapping
     flapp1 = h.shift
-    flapp1[:state].should == :unmonitored
-    flapp1[:reason].to_s.should == 'unmonitor by flapping'
+    expect(flapp1[:state]).to eq :unmonitored
+    expect(flapp1[:reason].to_s).to eq 'unmonitor by flapping'
 
     # затем его руками переводят в unmonitored
     unm = h.shift
-    unm[:state].should == :unmonitored
-    unm[:reason].to_s.should == 'unmonitor by user'
+    expect(unm[:state]).to eq :unmonitored
+    expect(unm[:reason].to_s).to eq 'unmonitor by user'
 
     # все финал
-    h.should be_blank
+    expect(h).to be_blank
   end
 
   it "without retry_in" do
@@ -120,18 +120,18 @@ describe "Flapping retry" do
     h = @process.states_history
 
     # был в unmonitored
-    h.shift[:state].should == :unmonitored
+    expect(h.shift[:state]).to eq :unmonitored
 
     # должен попытаться подняться два раза,
     h.shift(6)
 
     # затем перейти в unmonitored с причиной flapping
     flapp1 = h.shift
-    flapp1[:state].should == :unmonitored
-    flapp1[:reason].to_s.should == 'unmonitor by flapping'
+    expect(flapp1[:state]).to eq :unmonitored
+    expect(flapp1[:reason].to_s).to eq 'unmonitor by flapping'
 
     # все финал
-    h.should be_blank
+    expect(h).to be_blank
   end
 
   describe "reretry_in" do
@@ -142,8 +142,8 @@ describe "Flapping retry" do
 
       sleep 25
       reasons = @process.scheduler_history.map { |h| h[:reason].to_s }
-      reasons.count { |r| r == "retry start after flapping" }.should >= 2
-      reasons.count { |r| r == "reretry start after flapping" }.should >= 2
+      expect(reasons.count { |r| r == "retry start after flapping" }).to be >= 2
+      expect(reasons.count { |r| r == "reretry start after flapping" }).to be >= 2
     end
     it "reretry_in, reretry_times" do
       @process = process(@c.merge(:triggers => C.flapping(:times => 2, :within => 2.second,
@@ -152,8 +152,8 @@ describe "Flapping retry" do
 
       sleep 25
       reasons = @process.scheduler_history.map { |h| h[:reason].to_s }
-      reasons.count { |r| r == "retry start after flapping" }.should == 2
-      reasons.count { |r| r == "reretry start after flapping" }.should == 1
+      expect(reasons.count { |r| r == "retry start after flapping" }).to eq 2
+      expect(reasons.count { |r| r == "reretry start after flapping" }).to eq 1
     end
   end
 end

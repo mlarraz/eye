@@ -14,11 +14,11 @@ describe "Eye::Notify::Jabber" do
     @m = Eye::Notify::Jabber.new(@h, @message)
 
     ob = ""
-    mock(Jabber::Client).new(anything){ ob }
-    mock(ob).connect('mx.some.host.ru', 25)
-    mock(ob).auth('123')
-    mock(ob).send(is_a(Jabber::Message))
-    mock(ob).close
+    expect(Jabber::Client).to receive(:new).with(anything){ ob }
+    expect(ob).to receive(:connect).with('mx.some.host.ru', 25)
+    expect(ob).to receive(:auth).with('123')
+    expect(ob).to receive(:send).with(kind_of(Jabber::Message))
+    expect(ob).to receive(:close)
 
     @m.execute
   end
