@@ -12,4 +12,4 @@ module RR::CelluloidExt
   end
 end
 
-RSpec::Core::MockingAdapters::RR.include RR::CelluloidExt
+# RSpec::Core::MockingAdapters::RR.include RR::CelluloidExt
