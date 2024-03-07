@@ -8,6 +8,7 @@ AllCops:
     - '**/*.eye'
   Exclude:
     - 'lib/eye/utils/mini_active_support.rb'
+    - 'vendor/**/*'
 
 Performance/RedundantBlockCall:
   Exclude:
