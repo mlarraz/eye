@@ -16,8 +16,8 @@ Gem::Specification.new do |gem|
   gem.version       = Eye::VERSION
   gem.license       = 'MIT'
 
-  gem.required_ruby_version     = '>= 1.9.2'
-  gem.required_rubygems_version = '>= 1.3.6'
+  gem.required_ruby_version     = '>= 3.0.0'
+  gem.required_rubygems_version = '>= 3.0'
 
   gem.add_dependency 'celluloid',     '~> 0.17.3'
   gem.add_dependency 'celluloid-io',  '~> 0.17.0'
