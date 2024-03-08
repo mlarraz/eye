@@ -23,7 +23,7 @@ RSpec.describe "Process Integration checks" do
   it "intergration" do
     start_ok_process(@c)
 
-    expect(@process).not_to receive(:schedule).with(:restart)
+    expect(@process.wrapped_object).not_to receive(:schedule).with(:restart)
 
     # should not happens anything
     sleep 10

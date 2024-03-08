@@ -32,32 +32,32 @@ RSpec.describe "Eye::Notify" do
 
     it "should create right class" do
       h = {:host=>"mx.some.host.ru", :type=>:mail, :port=>25, :domain=>"some.host", :contact=>"vasya@mail.ru"}
-      expect(Eye::Notify::Mail).to receive(:new).with(h, @message)
+      expect(Eye::Notify::Mail.wrapped_object).to receive(:new).with(h, @message)
       Eye::Notify.notify('vasya', @message)
     end
 
     it "should create right class with additional options" do
       h = {:host=>"mx.some.host.ru", :type=>:mail, :port=>1111, :domain=>"some.host", :contact=>"petya@mail.ru"}
-      expect(Eye::Notify::Mail).to receive(:new).with(h, @message)
+      expect(Eye::Notify::Mail.wrapped_object).to receive(:new).with(h, @message)
       Eye::Notify.notify('petya', @message)
     end
 
     it "should create right class with group of contacts" do
       h1 = {:host=>"mx.some.host.ru", :type=>:mail, :port=>25, :domain=>"some.host", :contact=>"idiot1@mail.ru"}
       h2 = {:host=>"mx.some.host.ru", :type=>:mail, :port=>1111, :domain=>"some.host", :contact=>"idiot2@mail.ru"}
-      expect(Eye::Notify::Mail).to receive(:new).with(h1, @message)
-      expect(Eye::Notify::Mail).to receive(:new).with(h2, @message)
+      expect(Eye::Notify::Mail.wrapped_object).to receive(:new).with(h1, @message)
+      expect(Eye::Notify::Mail.wrapped_object).to receive(:new).with(h2, @message)
       Eye::Notify.notify('idiots', @message)
     end
 
     it "without contact should do nothing" do
-      expect(Eye::Notify::Mail).not_to receive(:new)
+      expect(Eye::Notify::Mail.wrapped_object).not_to receive(:new)
       Eye::Notify.notify('noperson', @message)
     end
 
     it "should also notify to jabber" do
       h = {:host=>"jabber.some.host", :port=>1111, :user=>"some_user", :contact=>"idiot3@mail.ru"}
-      expect(Eye::Notify::Jabber).to receive(:new).with(h, @message)
+      expect(Eye::Notify::Jabber.wrapped_object).to receive(:new).with(h, @message)
       Eye::Notify.notify('idiot3', @message)
     end
   end
@@ -71,7 +71,7 @@ RSpec.describe "Eye::Notify" do
       n = Not1.new(@h, @message)
 
       $wo = nil
-      expect(n).to receive(:execute) do
+      expect(n.wrapped_object).to receive(:execute) do
         $wo = n.wrapped_object
       end
 

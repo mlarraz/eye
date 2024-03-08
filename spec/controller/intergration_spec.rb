@@ -69,9 +69,9 @@ RSpec.describe "Intergration" do
   end
 
   it "send signal to process throught all schedules" do
-    expect(@p1).to receive(:signal).with('usr2')
-    expect(@p2).to receive(:signal).with('usr2')
-    expect(@p3).to receive(:signal).with('usr2')
+    expect(@p1.wrapped_object).to receive(:signal).with('usr2')
+    expect(@p2.wrapped_object).to receive(:signal).with('usr2')
+    expect(@p3.wrapped_object).to receive(:signal).with('usr2')
 
     expect(@controller.command(:signal, 'usr2', "int")).to eq({:result => ["int"]})
     sleep 3 # while they gettings
@@ -79,7 +79,7 @@ RSpec.describe "Intergration" do
     expect(@p1.scheduler_last_command).to eq :signal
     expect(@p1.scheduler_last_reason).to eq 'signal by user'
 
-    expect(@p1).to receive(:signal).with('usr1')
+    expect(@p1.wrapped_object).to receive(:signal).with('usr1')
     @controller.command(:signal, 'usr1', 'sample1')
     sleep 0.5
   end

@@ -15,7 +15,7 @@ RSpec.describe "Process Http check" do
   it "all ok" do
     start_ok_process(@c)
 
-    expect(@process).not_to receive(:schedule).with({ :command => :restart })
+    expect(@process.wrapped_object).not_to receive(:schedule).with({ :command => :restart })
 
     # should not happens anything
     sleep 6

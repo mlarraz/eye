@@ -92,9 +92,9 @@ RSpec.describe "Flapping" do
     @process = process(@c)
     @process.schedule :start
 
-    expect(@process).to receive(:schedule).with({ :command => :restore }).and_call_original
-    expect(@process).to receive(:schedule).with({ :command => :check_crash }).and_call_original
-    expect(@process).not_to receive(:schedule).with(:unmonitor)
+    expect(@process.wrapped_object).to receive(:schedule).with({ :command => :restore }).and_call_original
+    expect(@process.wrapped_object).to receive(:schedule).with({ :command => :check_crash }).and_call_original
+    expect(@process.wrapped_object).not_to receive(:schedule).with(:unmonitor)
 
     sleep 2
 

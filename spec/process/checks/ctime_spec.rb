@@ -24,7 +24,7 @@ RSpec.describe "Check CTime" do
     start_ok_process(@c)
     expect(@process.watchers.keys).to eq [:check_alive, :check_identity, :check_ctime]
 
-    expect(@process).not_to receive(:schedule).with(:restart)
+    expect(@process.wrapped_object).not_to receive(:schedule).with(:restart)
 
     sleep 6
   end

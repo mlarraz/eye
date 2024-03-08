@@ -45,7 +45,7 @@ RSpec.describe "Process Cpu check" do
       sleep 3
 
       allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 7 }
-      expect(@process).not_to receive(:schedule).with({ :command => :restart })
+      expect(@process.wrapped_object).not_to receive(:schedule).with({ :command => :restart })
 
       sleep 1
     end
@@ -75,7 +75,7 @@ RSpec.describe "Process Cpu check" do
       sleep 3
 
       allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 7 }
-      expect(@process).not_to receive(:schedule).with({ :command => :restart })
+      expect(@process.wrapped_object).not_to receive(:schedule).with({ :command => :restart })
 
       sleep 6
     end
@@ -105,7 +105,7 @@ RSpec.describe "Process Cpu check" do
       sleep 5
 
       allow(Eye::SystemResources).to receive(:cpu).with(@process.pid){ 7 }
-      expect(@process).not_to receive(:schedule).with({ :command => :restart })
+      expect(@process.wrapped_object).not_to receive(:schedule).with({ :command => :restart })
 
       sleep 6
     end

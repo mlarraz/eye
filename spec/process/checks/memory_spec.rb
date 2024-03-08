@@ -73,7 +73,7 @@ RSpec.describe "Process Memory check" do
       sleep 3
 
       allow(Eye::SystemResources).to receive(:memory).with(@process.pid){ 25.megabytes }
-      expect(@process).not_to receive(:schedule).with({ :command => :restart })
+      expect(@process.wrapped_object).not_to receive(:schedule).with({ :command => :restart })
 
       sleep 1
     end
@@ -103,7 +103,7 @@ RSpec.describe "Process Memory check" do
       sleep 3
 
       allow(Eye::SystemResources).to receive(:memory).with(@process.pid){ 25.megabytes }
-      expect(@process).not_to receive(:schedule).with({ :command => :restart })
+      expect(@process.wrapped_object).not_to receive(:schedule).with({ :command => :restart })
 
       sleep 6
     end
@@ -133,7 +133,7 @@ RSpec.describe "Process Memory check" do
       sleep 5
 
       allow(Eye::SystemResources).to receive(:memory).with(@process.pid){ 25.megabytes }
-      expect(@process).not_to receive(:schedule).with({ :command => :restart })
+      expect(@process.wrapped_object).not_to receive(:schedule).with({ :command => :restart })
 
       sleep 6
     end

@@ -10,7 +10,7 @@ RSpec.describe "Eye::Checker::ChildrenMemory" do
 
     allow(Eye::SystemResources).to receive(:memory).with(anything) { 1 }
 
-    expect(@process).not_to receive(:schedule).with({ :command => :restart })
+    expect(@process.wrapped_object).not_to receive(:schedule).with({ :command => :restart })
 
     sleep 5
   end

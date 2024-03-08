@@ -112,8 +112,8 @@ RSpec.describe "Eye::Controller::Load" do
     p = subject.process_by_name('e1')
     expect(p[:daemonize]).to eq false
 
-    expect(p).to receive(:schedule).with({ command: :update_config, args: kind_of(Array) }).and_call_original
-    expect(p).not_to receive(:schedule).with(:monitor)
+    expect(p.wrapped_object).to receive(:schedule).with({ command: :update_config, args: kind_of(Array) }).and_call_original
+    expect(p.wrapped_object).not_to receive(:schedule).with(:monitor)
 
     expect(p.logger.prefix).to eq 'app3:e1'
 

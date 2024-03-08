@@ -6,7 +6,7 @@ RSpec.describe "Process Controller" do
     it "monitor should call start, as the auto_start is default" do
       @process = process C.p1
 
-      expect(@process).to receive(:start).and_call_original
+      expect(@process.wrapped_object).to receive(:start).and_call_original
       @process.monitor
       sleep 1
 

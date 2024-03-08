@@ -42,12 +42,12 @@ RSpec.describe "Custom checks" do
     end
 
     it "should not restart" do
-      expect(@process).not_to receive(:schedule).with({ :command => :restart })
+      expect(@process.wrapped_object).not_to receive(:schedule).with({ :command => :restart })
       sleep 4
     end
 
     it "should restart" do
-      expect(@process).to receive(:schedule).with({ :command => :restart }).and_call_original
+      expect(@process.wrapped_object).to receive(:schedule).with({ :command => :restart }).and_call_original
       sleep 6
     end
   end
