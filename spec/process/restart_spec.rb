@@ -6,7 +6,7 @@ RSpec.describe "Process Restart" do
       start_ok_process(cfg)
       old_pid = @pid
 
-      expect(@process).not_to receive(:check_crash)
+      expect(@process.wrapped_object).not_to receive(:check_crash)
       @process.restart
 
       expect(@process.pid).not_to eq old_pid
@@ -26,7 +26,7 @@ RSpec.describe "Process Restart" do
       start_ok_process(cfg.merge(:stop_command => "kill -9 {PID}"))
       old_pid = @pid
 
-      expect(@process).not_to receive(:check_crash)
+      expect(@process.wrapped_object).not_to receive(:check_crash)
       @process.restart
 
       expect(@process.pid).not_to eq old_pid
@@ -46,7 +46,7 @@ RSpec.describe "Process Restart" do
       start_ok_process(cfg.merge(:restart_command => "kill -USR1 {PID}"))
       old_pid = @pid
 
-      expect(@process).not_to receive(:check_crash)
+      expect(@process.wrapped_object).not_to receive(:check_crash)
       @process.restart
 
       sleep 3
@@ -68,7 +68,7 @@ RSpec.describe "Process Restart" do
       # so monitor should see that process died, and up it
       start_ok_process(cfg.merge(:restart_command => "kill -9 {PID}"))
 
-      expect(@process).to receive(:check_crash)
+      expect(@process.wrapped_object).to receive(:check_crash)
 
       @process.restart
       sleep 0.5
@@ -83,7 +83,7 @@ RSpec.describe "Process Restart" do
       @process.state = st.to_s
       old_pid = @pid
 
-      expect(@process).not_to receive(:check_crash)
+      expect(@process.wrapped_object).not_to receive(:check_crash)
       @process.restart
 
       expect(@process.pid).not_to eq old_pid
@@ -105,8 +105,8 @@ RSpec.describe "Process Restart" do
       @process = process(C.p1)
       @process.state = st.to_s # force set state
 
-      expect(@process).not_to receive(:stop)
-      expect(@process).not_to receive(:start)
+      expect(@process.wrapped_object).not_to receive(:stop)
+      expect(@process.wrapped_object).not_to receive(:start)
 
       expect(@process.restart).to eq nil
       expect(@process.state_name).to eq st

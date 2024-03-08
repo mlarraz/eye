@@ -162,10 +162,10 @@ RSpec.describe "Process Controller" do
     end
 
     it "mock send_signal" do
-      expect(@process).to receive(:send_signal).with(9)
+      expect(@process.wrapped_object).to receive(:send_signal).with(9)
       @process.signal(9)
 
-      expect(@process).to receive(:send_signal).with('9')
+      expect(@process.wrapped_object).to receive(:send_signal).with('9')
       @process.signal('9')
     end
   end

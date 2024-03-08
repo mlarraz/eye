@@ -40,7 +40,7 @@ RSpec.describe "Process Stop" do
   it "stop process by default command" do
     start_ok_process
 
-    expect(@process).not_to receive(:check_crash)
+    expect(@process.wrapped_object).not_to receive(:check_crash)
     @process.stop_process
 
     expect(Eye::System.pid_alive?(@pid)).to eq false
@@ -55,7 +55,7 @@ RSpec.describe "Process Stop" do
     start_ok_process(C.p2.merge(:start_command => C.p2[:start_command] + " -T"))
     expect(Eye::System.pid_alive?(@pid)).to eq true
 
-    expect(@process).not_to receive(:check_crash)
+    expect(@process.wrapped_object).not_to receive(:check_crash)
     @process.stop_process
 
     expect(Eye::System.pid_alive?(@pid)).to eq false
@@ -69,7 +69,7 @@ RSpec.describe "Process Stop" do
   it "stop process by specific command" do
     start_ok_process(C.p1.merge(:stop_command => "kill -9 {PID}"))
 
-    expect(@process).not_to receive(:check_crash)
+    expect(@process.wrapped_object).not_to receive(:check_crash)
     @process.stop_process
 
     expect(Eye::System.pid_alive?(@pid)).to eq false
@@ -168,7 +168,7 @@ RSpec.describe "Process Stop" do
       @process = process(C.p1)
       @process.state = st.to_s # force set state
 
-      expect(@process).not_to receive(:kill_process)
+      expect(@process.wrapped_object).not_to receive(:kill_process)
 
       @process.stop_process
       expect(@process.state_name).to eq st

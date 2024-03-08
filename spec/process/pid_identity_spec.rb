@@ -226,7 +226,7 @@ RSpec.describe "check pid identity" do
       old_pid = @process.pid
       @pids << old_pid
       sleep 2
-      expect(@process).not_to receive(:execute)
+      expect(@process.wrapped_object).not_to receive(:execute)
       change_ctime(C.p1[:pid_file], 5.days.ago)
       sleep 2
       @process.restart

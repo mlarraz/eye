@@ -9,7 +9,7 @@ RSpec.describe "Process Monitoring" do
       old_pid = @pid
 
       die_process!(@pid)
-      expect(@process).to receive(:notify).with(:info, anything)
+      expect(@process.wrapped_object).to receive(:notify).with(:info, anything)
 
       sleep 7 # wait until monitor upping process
 
@@ -30,7 +30,7 @@ RSpec.describe "Process Monitoring" do
       old_pid = @pid
 
       die_process!(@pid)
-      expect(@process).to receive(:notify).with(:info, anything)
+      expect(@process.wrapped_object).to receive(:notify).with(:info, anything)
 
       sleep 10 # wait until monitor upping process
 

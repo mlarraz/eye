@@ -90,7 +90,7 @@ RSpec.describe "Process Start" do
 
     it "start with invalid command" do
       @process = process(cfg.merge(:start_command => "asdf asdf1 r f324 f324f 32f44f"))
-      expect(@process).to receive(:check_crash)
+      expect(@process.wrapped_object).to receive(:check_crash)
       res = @process.start
       expect(res[:error]).to start_with("#<Errno::ENOENT: No such file or directory")
 
@@ -104,7 +104,7 @@ RSpec.describe "Process Start" do
 
     it "start PROBLEM with stdout permissions" do
       @process = process(cfg.merge(:stdout => "/var/run/1.log"))
-      expect(@process).to receive(:check_crash)
+      expect(@process.wrapped_object).to receive(:check_crash)
       res = @process.start
       expect(res[:error]).to start_with("#<Errno::EACCES: Permission denied")
 
@@ -118,7 +118,7 @@ RSpec.describe "Process Start" do
 
     it "start PROBLEM binary permissions" do
       @process = process(cfg.merge(:start_command => "./sample.rb"))
-      expect(@process).to receive(:check_crash)
+      expect(@process.wrapped_object).to receive(:check_crash)
       res = @process.start
       expect(res[:error]).to start_with("#<Errno::EACCES: Permission denied")
 

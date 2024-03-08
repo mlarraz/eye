@@ -42,7 +42,7 @@ RSpec.describe "Controller user_command" do
 
     subject.load_content(cfg)
     @process = subject.process_by_name("proc")
-    expect(@process).to receive(:notify).with(:debug, anything)
+    expect(@process.wrapped_object).to receive(:notify).with(:debug, anything)
     sleep 0.5
     subject.command('user_command', 'abcd', 'proc')
     sleep 2.0

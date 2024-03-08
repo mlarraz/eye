@@ -103,32 +103,32 @@ RSpec.describe "Eye::Controller" do
 
   describe "command" do
     it "should apply" do
-      expect(subject).to receive(:apply).with(%w{samples}, :command => :restart, :signal=>nil)
+      expect(subject.wrapped_object).to receive(:apply).with(%w{samples}, :command => :restart, :signal=>nil)
       subject.command('restart', 'samples')
     end
 
     it "should apply" do
-      expect(subject).to receive(:apply).with(%w{samples blah}, :command => :restart, :signal=>nil)
+      expect(subject.wrapped_object).to receive(:apply).with(%w{samples blah}, :command => :restart, :signal=>nil)
       subject.command(:restart, 'samples', 'blah')
     end
 
     it "should apply" do
-      expect(subject).to receive(:apply).with([], :command => :restart, :signal=>nil)
+      expect(subject.wrapped_object).to receive(:apply).with([], :command => :restart, :signal=>nil)
       subject.command(:restart)
     end
 
     it "load" do
-      expect(subject).to receive(:load).with('/tmp/file')
+      expect(subject.wrapped_object).to receive(:load).with('/tmp/file')
       subject.command('load', '/tmp/file')
     end
 
     it "info" do
-      expect(subject).to receive(:info_data)
+      expect(subject.wrapped_object).to receive(:info_data)
       subject.command('info_data')
     end
 
     it "quit" do
-      expect(subject).to receive(:quit)
+      expect(subject.wrapped_object).to receive(:quit)
       subject.command('quit')
     end
 

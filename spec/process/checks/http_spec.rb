@@ -25,7 +25,7 @@ RSpec.describe "Process Http check" do
     start_ok_process(@c)
     sleep 2
 
-    expect(@process).to receive(:schedule).with(:command => :restart)
+    expect(@process.wrapped_object).to receive(:schedule).with(:command => :restart)
     FakeWeb.register_uri(:get, "http://localhost:3000/bla", :body => "Somebody BAD")
     sleep 2
   end
@@ -34,7 +34,7 @@ RSpec.describe "Process Http check" do
     start_ok_process(@c)
     sleep 2
 
-    expect(@process).to receive(:schedule).with(:command => :restart)
+    expect(@process.wrapped_object).to receive(:schedule).with(:command => :restart)
     FakeWeb.register_uri(:get, "http://localhost:3000/bla", :body => "Somebody OK", :status => [500, 'err'])
     sleep 2
   end
@@ -43,7 +43,7 @@ RSpec.describe "Process Http check" do
     start_ok_process(@c)
     sleep 2
 
-    expect(@process).to receive(:schedule).with(:command => :restart)
+    expect(@process.wrapped_object).to receive(:schedule).with(:command => :restart)
     FakeWeb.clean_registry
     FakeWeb.allow_net_connect = false
     sleep 2

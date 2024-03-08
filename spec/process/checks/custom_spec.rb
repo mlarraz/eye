@@ -262,7 +262,7 @@ RSpec.describe "Custom checks" do
       @process = @c.process_by_name("1")
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
-      expect(@process).to receive(:mock_action).with(1)
+      expect(@process.wrapped_object).to receive(:mock_action).with(1)
       sleep 2
       File.open(C.tmp_file, 'w')
       sleep 3

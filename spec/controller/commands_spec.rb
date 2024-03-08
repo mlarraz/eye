@@ -89,7 +89,7 @@ RSpec.describe "command spec" do
         sleep 0.3
         expect_any_instance_of(Eye::Process).not_to receive(:user_schedule).with(:command => cmd)
 
-        expect(@p1).to receive(:user_schedule).with(:command => cmd)
+        expect(@p1.wrapped_object).to receive(:user_schedule).with(:command => cmd)
 
         subject.apply %w{p1}, :command => cmd, :some_flag => true
       end
@@ -125,7 +125,7 @@ RSpec.describe "command spec" do
       sleep 0.5
       expect_any_instance_of(Eye::Process).not_to receive(:send_call).with(:command => :delete)
 
-      expect(@p1).to receive(:send_call).with(:command => :delete)
+      expect(@p1.wrapped_object).to receive(:send_call).with(:command => :delete)
       subject.apply %w{p1}, :command => :delete
 
       expect(subject.all_processes).not_to include(@p1)
@@ -133,9 +133,8 @@ RSpec.describe "command spec" do
     end
 
     it "user_command" do
-      expect(@p1).to receive(:send_call).with(:command => :user_command, :args => %w{jopa})
+      expect(@p1.wrapped_object).to receive(:send_call).with(:command => :user_command, :args => %w{jopa})
       subject.apply %w{p1}, :command => :user_command, :args => %w{jopa}
     end
   end
-
 end

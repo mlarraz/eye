@@ -10,7 +10,7 @@ RSpec.describe "Process Restart, emulate some real hard cases" do
       start_ok_process(cfg.merge(:stop_command => "kill -USR1 {PID}"))
       old_pid = @pid
 
-      expect(@process).not_to receive(:check_crash)
+      expect(@process.wrapped_object).not_to receive(:check_crash)
       @process.restart
 
       sleep 3
@@ -30,7 +30,7 @@ RSpec.describe "Process Restart, emulate some real hard cases" do
     it "Bad restart command, invalid" do
       start_ok_process(cfg.merge(:restart_command => "asdfasdf sdf asd fasdf asdf"))
 
-      expect(@process).not_to receive(:check_crash)
+      expect(@process.wrapped_object).not_to receive(:check_crash)
 
       @process.restart
       expect(Eye::System.pid_alive?(@pid)).to eq true

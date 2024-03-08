@@ -7,7 +7,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
       start_ok_process(cfg)
       die_process!(@pid)
 
-      expect(@process).to receive(:start) # stub start for clean test
+      expect(@process.wrapped_object).to receive(:start) # stub start for clean test
 
       sleep 4
 

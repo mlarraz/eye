@@ -20,7 +20,7 @@ RSpec.describe "Eye::Checker::ChildrenCount" do
     allow(Eye::SystemResources).to receive(:children).with(@process.pid){ @pids }
     @process.add_children
 
-    expect(@process).to receive(:schedule).with(:command => :restart)
+    expect(@process.wrapped_object).to receive(:schedule).with(:command => :restart)
 
     sleep 5
   end

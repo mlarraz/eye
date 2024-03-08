@@ -35,7 +35,7 @@ RSpec.describe "Flapping" do
     @process.schedule :start
 
     allow(@process).to receive(:notify).with(:info, anything)
-    expect(@process).to receive(:notify).with(:error, anything)
+    expect(@process.wrapped_object).to receive(:notify).with(:error, anything)
 
     sleep 13
 
