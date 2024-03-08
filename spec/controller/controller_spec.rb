@@ -32,7 +32,7 @@ describe "Eye::Controller" do
   subject{ Eye::Controller.new }
 
   it "should ok load config" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
 
     apps = subject.applications
 
@@ -72,7 +72,9 @@ describe "Eye::Controller" do
   end
 
   it "raise when load config" do
-    expect(subject.load(fixture("dsl/bad.eye")).only_value).to include(:error => true, :message => "blank pid_file for: bad")
+    result = subject.load(fixture("dsl/bad.eye"))
+    expect(result.size).to eq(1)
+    expect(result.values.first).to include(:error => true, :message => "blank pid_file for: bad")
   end
 
   it "should save cache file" do
@@ -82,7 +84,7 @@ describe "Eye::Controller" do
   end
 
   it "should delete all apps" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
     subject.apply(%w{all}, :command => :delete)
     expect(subject.applications).to be_empty
   end
@@ -133,7 +135,7 @@ describe "Eye::Controller" do
   end
 
   it "find_nearest_process" do
-    subject.load(fixture("dsl/load_dupls5.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load_dupls5.eye"))).to be_ok
 
     p = subject.find_nearest_process('app1:p1')
     expect(p.full_name).to eq 'app1:p1'

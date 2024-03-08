@@ -1,32 +1,12 @@
-class Hash
-  def should_be_ok(files_count = 1)
-    expect(self.size).to eq files_count
-    expect(self.errors_count).to eq 0
+RSpec::Matchers.define :be_ok do |count = 1|
+  match do |hash|
+    expect(hash.size).to eq count
+    expect(hash).to have_error_count 0
   end
+end
 
-  def ok_count
-    self.values.count{ |res| !res[:error] }
-  end
-
-  def errors_count
-    self.size - self.ok_count
-  end
-
-  def only_value
-    if self.size == 1
-      self.values.first
-    else
-      raise "request for 1 value, but there is more: #{self.size}"
-    end
-  end
-
-  def only_match(pattern)
-    keys = self.keys.grep(pattern)
-    if keys.size == 1
-      key = keys.first
-      self[key]
-    else
-      raise "incorrect pattern: matched #{keys.size} with #{pattern} (expected only 1)"
-    end
+RSpec::Matchers.define :have_error_count do |expected_count|
+  match do |hash|
+    hash.values.count{ |res| res[:error] } == expected_count
   end
 end

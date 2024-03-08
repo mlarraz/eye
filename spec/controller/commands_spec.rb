@@ -54,7 +54,7 @@ describe "comamnd spec" do
   end
 
   it "unknown" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
     expect(subject.command(:st33art, "2341234")).to eq :unknown_command
   end
 
@@ -75,12 +75,12 @@ describe "comamnd spec" do
     end
 
     it "nothing" do
-      subject.load(fixture("dsl/load.eye")).should_be_ok
+      expect(subject.load(fixture("dsl/load.eye"))).to be_ok
       expect(subject.apply(["2341234"], :command => :start)).to eq({:result => []})
     end
 
     it "unknown" do
-      subject.load(fixture("dsl/load.eye")).should_be_ok
+      expect(subject.load(fixture("dsl/load.eye"))).to be_ok
       expect(subject.apply(["2341234"], :command => :st33art)).to eq({:result=>[]})
     end
 

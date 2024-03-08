@@ -41,7 +41,7 @@ describe "Eye::Controller::Load" do
 
   it "load 1 ok app" do
     res = subject.load(fixture("dsl/load.eye"))
-    res.should_be_ok
+    expect(res).to be_ok
 
     expect(subject.short_tree).to eq({
       "app1"=>{
@@ -50,19 +50,20 @@ describe "Eye::Controller::Load" do
         "__default__"=>{"g4"=>"/tmp/app1-g4.pid", "g5"=>"/tmp/app1-g5.pid"}},
       "app2"=>{"__default__"=>{"z1"=>"/tmp/app2-z1.pid"}}})
 
-    expand(res.only_value).to eq({ :error => false, :config => nil })
+    expect(res.size).to eq(1)
+    expect(res.values.first).to eq({ :error => false, :config => nil })
   end
 
   it "can accept options" do
-    subject.load(fixture("dsl/load.eye"), :some => 1).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"), :some => 1)).to be_ok
   end
 
   it "work fine throught command" do
-    subject.command(:load, fixture("dsl/load.eye")).should_be_ok
+    expect(subject.command(:load, fixture("dsl/load.eye"))).to be_ok
   end
 
   it "load correctly application, groups for full_names processes" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
 
     p1 = subject.process_by_name('p1')
     expect(p1[:application]).to eq 'app1'
@@ -83,7 +84,7 @@ describe "Eye::Controller::Load" do
   end
 
   it "load + 1new app" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
     expect(subject.short_tree).to eq({
       "app1"=>{
         "gr1"=>{"p1"=>"/tmp/app1-gr1-p1.pid", "p2"=>"/tmp/app1-gr1-p2.pid"},
@@ -92,7 +93,7 @@ describe "Eye::Controller::Load" do
       "app2"=>{"__default__"=>{"z1"=>"/tmp/app2-z1.pid"}}
     })
 
-    subject.load(fixture("dsl/load2.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load2.eye"))).to be_ok
 
     expect(subject.short_tree).to eq({
       "app1"=>{
@@ -105,8 +106,8 @@ describe "Eye::Controller::Load" do
   end
 
   it "load 1 changed app" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
-    subject.load(fixture("dsl/load2.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
+    expect(subject.load(fixture("dsl/load2.eye"))).to be_ok
 
     p = subject.process_by_name('e1')
     expect(p[:daemonize]).to eq false
@@ -116,7 +117,7 @@ describe "Eye::Controller::Load" do
 
     expect(p.logger.prefix).to eq 'app3:e1'
 
-    subject.load(fixture("dsl/load3.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load3.eye"))).to be_ok
 
     expect(subject.short_tree).to eq({
       "app1"=>{
@@ -136,10 +137,10 @@ describe "Eye::Controller::Load" do
   end
 
   it "load -> delete -> load" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
-    subject.load(fixture("dsl/load2.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
+    expect(subject.load(fixture("dsl/load2.eye"))).to be_ok
     subject.command(:delete, 'app3')
-    subject.load(fixture("dsl/load3.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load3.eye"))).to be_ok
 
     expect(subject.short_tree).to eq({
       "app1"=>{
@@ -152,8 +153,10 @@ describe "Eye::Controller::Load" do
   end
 
   it "load + 1 app, and pid_file crossed" do
-    subject.load(fixture("dsl/load2.eye")).should_be_ok
-    expect(subject.load(fixture("dsl/load4.eye")).only_value).to include(:error => true, :message => "duplicate pid_files: {\"/tmp/app3-e1.pid\"=>2}")
+    expect(subject.load(fixture("dsl/load2.eye"))).to be_ok
+    res = subject.load(fixture("dsl/load4.eye"))
+    expect(res.size).to eq(1)
+    expect(res.values.first).to include(:error => true, :message => "duplicate pid_files: {\"/tmp/app3-e1.pid\"=>2}")
 
     expect(subject.short_tree).to eq({
       "app3"=>{"__default__"=>{"e1"=>"/tmp/app3-e1.pid"}}
@@ -161,20 +164,23 @@ describe "Eye::Controller::Load" do
   end
 
   it "check syntax" do
-    subject.command(:check, expect(fixture("dsl/load_dup_ex_names3.eye")).only_value).to include(:error => true)
+    res = subject.command(:check, fixture("dsl/load_dup_ex_names3.eye"))
+    expect(res.size).to eq(1)
+    expect(res.values.first).to include(:error => true)
   end
 
   it "check explain" do
-    res = subject.command(:explain, fixture("dsl/load2.eye")).only_value
-    expect(res[:error]).to eq false
-    expect(res[:config].is_a?(Hash)).to eq true
+    res = subject.command(:explain, fixture("dsl/load2.eye"))
+    expect(res.size).to eq(1)
+    expect(res.values[0][:error]).to eq false
+    expect(res.values[0][:config].is_a?(Hash)).to eq true
   end
 
   it "process and groups disappears" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
     expect(subject.group_by_name('gr1').processes.full_size).to eq 2
 
-    subject.load(fixture("dsl/load5.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load5.eye"))).to be_ok
     sleep 0.5
 
     group_actors = Celluloid::Actor.all.select{|c| c.class == Eye::Group }
@@ -196,8 +202,8 @@ describe "Eye::Controller::Load" do
   end
 
   it "swap groups" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
-    subject.load(fixture("dsl/load6.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
+    expect(subject.load(fixture("dsl/load6.eye"))).to be_ok
 
     expect(subject.short_tree).to eq({
       "app1" => {
@@ -209,36 +215,41 @@ describe "Eye::Controller::Load" do
   end
 
   it "two configs with same pids (should validate final config)" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
     res = subject.load(fixture("dsl/load2{,_dup_pid,_dup2}.eye"))
-    expect(res.ok_count).to eq 2
-    expect(res.errors_count).to eq 1
-    expect(res.only_match(/load2_dup_pid\.eye/)).to include(:error => true, :message=>"duplicate pid_files: {\"/tmp/app3-e1.pid\"=>2}")
+    expect(res.size).to eq 3
+    expect(res).to have_error_count 1
+    expect(res.keys.grep(/load2_dup_pid\.eye/).values).to eq([
+      hash_including(:error => true, :message=>"duplicate pid_files: {\"/tmp/app3-e1.pid\"=>2}"),
+    ])
   end
 
   it "two configs with same pids (should validate final config)" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
-    subject.load(fixture("dsl/load2.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
+    expect(subject.load(fixture("dsl/load2.eye"))).to be_ok
     res = subject.load(fixture("dsl/load2_*.eye"))
     expect(res.size).to be > 1
-    expect(res.errors_count).to eq 1
-    expect(res.only_match(/load2_dup_pid\.eye/)).to include(:error => true, :message=>"duplicate pid_files: {\"/tmp/app3-e1.pid\"=>2}")
+    expect(res).to have_error_count 1
+
+    expect(res.keys.grep(/load2_dup_pid\.eye/).values).to eq([
+      hash_including(:error => true, :message=>"duplicate pid_files: {\"/tmp/app3-e1.pid\"=>2}"),
+    ])
   end
 
   it "dups of pid_files, but they different with expand" do
-    subject.load(fixture("dsl/load2_dup2.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load2_dup2.eye"))).to be_ok
   end
 
   it "dups of names but in different scopes" do
-    subject.load(fixture("dsl/load_dup_ex_names.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load_dup_ex_names.eye"))).to be_ok
   end
 
   it "processes with same names in different scopes should not create new processes on just update" do
-    subject.load(fixture("dsl/load_dup_ex_names.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load_dup_ex_names.eye"))).to be_ok
     p1 = subject.process_by_full_name('app1:p1:server')
     p2 = subject.process_by_full_name('app1:p2:server')
 
-    subject.load(fixture("dsl/load_dup_ex_names2.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load_dup_ex_names2.eye"))).to be_ok
 
     t = subject.short_tree
     expect(t['app1']['p1']['server']).to match('server1.pid')
@@ -252,16 +263,16 @@ describe "Eye::Controller::Load" do
   end
 
   it "same processes crossed in apps duplicate pids" do
-    expect(subject.load(fixture("dsl/load_dup_ex_names3.eye")).errors_count).to eq 1
+    expect(subject.load(fixture("dsl/load_dup_ex_names3.eye"))).to have_error_count 1
   end
 
   it "same processes crossed in apps" do
-    subject.load(fixture("dsl/load_dup_ex_names4.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load_dup_ex_names4.eye"))).to be_ok
     p1 = subject.process_by_full_name('app1:gr:server')
     p2 = subject.process_by_full_name('app2:gr:server')
     expect(p1.object_id).not_to eq p2.object_id
 
-    subject.load(fixture("dsl/load_dup_ex_names4.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load_dup_ex_names4.eye"))).to be_ok
     p12 = subject.process_by_full_name('app1:gr:server')
     p22 = subject.process_by_full_name('app2:gr:server')
 
@@ -289,12 +300,12 @@ describe "Eye::Controller::Load" do
     after(:each){ set_glogger }
 
     it "load logger" do
-      subject.load(fixture("dsl/load_logger.eye")).should_be_ok
+      expect(subject.load(fixture("dsl/load_logger.eye"))).to be_ok
       expect(Eye::Logger.dev).to eq "/tmp/1.loG"
     end
 
     it "set logger when load multiple configs" do
-      subject.load(fixture("dsl/load_logger{,2}.eye")).should_be_ok(2)
+      expect(subject.load(fixture("dsl/load_logger{,2}.eye"))).to be_ok(2)
       expect(Eye::Logger.dev).to eq "/tmp/1.loG"
     end
 
@@ -306,7 +317,7 @@ describe "Eye::Controller::Load" do
     end
 
     it "not set bad logger" do
-      subject.load(fixture("dsl/load_logger.eye")).should_be_ok
+      expect(subject.load(fixture("dsl/load_logger.eye"))).to be_ok
       expect(Eye::Logger.dev).to eq "/tmp/1.loG"
 
       res = subject.load_content(<<-S)
@@ -337,31 +348,31 @@ describe "Eye::Controller::Load" do
     end
 
     it "should corrent load config section" do
-      subject.load(fixture("dsl/configs/{1,2}.eye")).should_be_ok(2)
+      expect(subject.load(fixture("dsl/configs/{1,2}.eye"))).to be_ok(2)
       expect(Eye::Logger.dev).to eq "/tmp/a.log"
       expect(subject.current_config.settings).to eq({:logger=>["/tmp/a.log"], :http=>{:enable=>true}})
 
-      subject.load(fixture("dsl/configs/3.eye")).should_be_ok
+      expect(subject.load(fixture("dsl/configs/3.eye"))).to be_ok
       expect(Eye::Logger.dev).to eq "/tmp/a.log"
       expect(subject.current_config.settings).to eq({:logger=>["/tmp/a.log"], :http=>{:enable=>false}})
 
-      subject.load(fixture("dsl/configs/4.eye")).should_be_ok
+      expect(subject.load(fixture("dsl/configs/4.eye"))).to be_ok
       expect(Eye::Logger.dev).to eq nil
       expect(subject.current_config.settings).to eq({:logger=>[nil], :http=>{:enable=>false}})
 
-      subject.load(fixture("dsl/configs/2.eye")).should_be_ok
+      expect(subject.load(fixture("dsl/configs/2.eye"))).to be_ok
       expect(Eye::Logger.dev).to eq nil
       expect(subject.current_config.settings).to eq({:logger=>[nil], :http=>{:enable=>true}})
     end
 
     it "should load not settled config option" do
-      subject.load(fixture("dsl/configs/5.eye")).should_be_ok
+      expect(subject.load(fixture("dsl/configs/5.eye"))).to be_ok
     end
   end
 
 
   it "load folder" do
-    subject.load(fixture("dsl/load_folder/")).should_be_ok(2)
+    expect(subject.load(fixture("dsl/load_folder/"))).to be_ok(2)
     expect(subject.short_tree).to eq({
       "app3" => {"wow"=>{"e1"=>"/tmp/app3-e1.pid"}},
       "app4" => {"__default__"=>{"e2"=>"/tmp/app4-e2.pid"}}
@@ -369,11 +380,11 @@ describe "Eye::Controller::Load" do
   end
 
   it "load folder with error" do
-    expect(subject.load(fixture("dsl/load_error_folder/")).errors_count).to eq 1
+    expect(subject.load(fixture("dsl/load_error_folder/"))).to have_error_count 1
   end
 
   it "load files by mask" do
-    subject.load(fixture("dsl/load_folder/*.eye")).should_be_ok(2)
+    expect(subject.load(fixture("dsl/load_folder/*.eye"))).to be_ok(2)
     expect(subject.short_tree).to eq({
       "app3" => {"wow"=>{"e1"=>"/tmp/app3-e1.pid"}},
       "app4" => {"__default__"=>{"e2"=>"/tmp/app4-e2.pid"}}
@@ -381,11 +392,11 @@ describe "Eye::Controller::Load" do
   end
 
   it "load files by mask with error" do
-    expect(subject.load(fixture("dsl/load_error_folder/*.eye")).errors_count).to eq 1
+    expect(subject.load(fixture("dsl/load_error_folder/*.eye"))).to have_error_count 1
   end
 
   it "load not files with mask" do
-    expect(subject.load(fixture("dsl/load_folder/*.bla")).errors_count).to eq 1
+    expect(subject.load(fixture("dsl/load_folder/*.bla"))).to have_error_count 1
   end
 
   it "bad mask" do
@@ -396,19 +407,19 @@ describe "Eye::Controller::Load" do
   end
 
   it "group update it settings" do
-    subject.load(fixture("dsl/load.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load.eye"))).to be_ok
     app = subject.application_by_name('app1')
     gr = subject.group_by_name('gr2')
     expect(gr.config[:chain]).to eq({:restart => {:grace=>0.5, :action=>:restart}, :start => {:grace=>0.5, :action=>:start}})
 
-    subject.load(fixture("dsl/load6.eye")).should_be_ok
+    expect(subject.load(fixture("dsl/load6.eye"))).to be_ok
     sleep 1
 
     expect(gr.config[:chain]).to eq({:restart => {:grace=>1.0, :action=>:restart}, :start => {:grace=>1.0, :action=>:start}})
   end
 
   it "load multiple apps with cross constants" do
-    subject.load(fixture('dsl/subfolder{2,3}.eye')).should_be_ok(2)
+    expect(subject.load(fixture('dsl/subfolder{2,3}.eye'))).to be_ok(2)
     expect(subject.process_by_name('e1')[:working_dir]).to eq '/tmp'
     expect(subject.process_by_name('e2')[:working_dir]).to eq '/var'
 
@@ -417,15 +428,16 @@ describe "Eye::Controller::Load" do
   end
 
   it "raised load" do
-    res = subject.load(fixture("dsl/load_error.eye")).only_value
-    expect(res[:error]).to eq true
-    expect(res[:message]).to include("/asd/fasd/fas/df/asd/fas/df/d")
+    res = subject.load(fixture("dsl/load_error.eye"))
+    expect(res.size).to eq(1)
+    expect(res.values[0][:error]).to eq true
+    expect(res.values[0][:message]).to include("/asd/fasd/fas/df/asd/fas/df/d")
     set_glogger
   end
 
   describe "synchronize groups" do
     it "correctly schedule monitor for groups and processes" do
-      subject.load(fixture("dsl/load_int.eye")).should_be_ok
+      expect(subject.load(fixture("dsl/load_int.eye"))).to be_ok
       sleep 0.5
 
       p0 = subject.process_by_name 'p0'
@@ -440,7 +452,7 @@ describe "Eye::Controller::Load" do
       expect(gr1.scheduler_history.states).to eq [:monitor]
       expect(gr_.scheduler_history.states).to eq [:monitor]
 
-      subject.load(fixture("dsl/load_int2.eye")).should_be_ok
+      expect(subject.load(fixture("dsl/load_int2.eye"))).to be_ok
       sleep 0.5
 
       expect(p1.alive?).to eq false
@@ -509,7 +521,7 @@ describe "Eye::Controller::Load" do
     it "load config, then delete app, and load it with changed app-name" do
       subject.load(fixture('dsl/load3.eye'))
       subject.command(:delete, "app3"); sleep 0.1
-      subject.load(fixture('dsl/load4.eye')).should_be_ok
+      expect(subject.load(fixture('dsl/load4.eye'))).to be_ok
     end
 
     it "delete from empty app (was an exception)" do
@@ -540,19 +552,19 @@ describe "Eye::Controller::Load" do
     after(:each){ set_glogger }
 
     it "ok load 2 configs" do
-      subject.load(fixture("dsl/configs/1.eye"), fixture("dsl/configs/2.eye")).should_be_ok(2)
+      expect(subject.load(fixture("dsl/configs/1.eye"), fixture("dsl/configs/2.eye"))).to be_ok(2)
     end
 
     it "load 2 configs, 1 not exists" do
       res = subject.load(fixture("dsl/configs/1.eye"), fixture("dsl/configs/dddddd.eye"))
       expect(res.size).to be > 1
-      expect(res.errors_count).to eq 1
+      expect(res).to have_error_count 1
     end
 
     it "multiple + folder" do
       res = subject.load(fixture("dsl/load.eye"), fixture("dsl/load_folder/"))
-      expect(res.ok_count).to eq 3
-      expect(res.errors_count).to eq 0
+      expect(res.size).to eq 3
+      expect(res.values.count{ |res| res[:error] }).to eq 0
     end
   end
 
@@ -746,7 +758,7 @@ describe "Eye::Controller::Load" do
           end
         end
       E
-      subject.load_content(conf).should_be_ok
+      expect(subject.load_content(conf)).to be_ok
 
       conf = <<-E
         Eye.application("bla") do
@@ -756,7 +768,7 @@ describe "Eye::Controller::Load" do
           end
         end
       E
-      expect(subject.load_content(conf).errors_count).to eq 1
+      expect(subject.load_content(conf)).to have_error_count 1
       expect{ Eye::Dsl.parse_apps(conf) }.not_to raise_error
     end
 
@@ -769,7 +781,7 @@ describe "Eye::Controller::Load" do
           end
         end
       E
-      subject.load_content(conf).should_be_ok
+      expect(subject.load_content(conf)).to be_ok
 
       # patch here controller config, to emulate spec
       subject.current_config.applications['bla'][:groups]['__default__'][:processes]['1'][:working_dir] = '/tmp2'
@@ -782,7 +794,7 @@ describe "Eye::Controller::Load" do
           end
         end
       E
-      subject.load_content(conf).should_be_ok
+      expect(subject.load_content(conf)).to be_ok
     end
 
     [:uid, :gid].each do |s|
@@ -796,9 +808,9 @@ describe "Eye::Controller::Load" do
           end
         E
         if RUBY_VERSION < '2.0' || (s == :gid && RUBY_PLATFORM.include?('darwin'))
-          expect(subject.load_content(conf).errors_count).to eq 1
+          expect(subject.load_content(conf)).to have_error_count 1
         else
-          subject.load_content(conf).should_be_ok
+          expect(subject.load_content(conf)).to be_ok
         end
 
         conf = <<-E
@@ -809,7 +821,7 @@ describe "Eye::Controller::Load" do
             end
           end
         E
-        expect(subject.load_content(conf).errors_count).to eq 1
+        expect(subject.load_content(conf)).to have_error_count 1
       end
     end
 
