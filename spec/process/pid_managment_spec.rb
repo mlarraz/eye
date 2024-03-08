@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 [C.p1, C.p2].each do |cfg|
-  describe "Process Pid Managment '#{cfg[:name]}'" do
+  RSpec.describe "Process Pid Managment '#{cfg[:name]}'" do
 
     it "crashed of process should remove pid_file for daemonize only" do
       start_ok_process(cfg)

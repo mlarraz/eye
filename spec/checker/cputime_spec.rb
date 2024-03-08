@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Checker::Cputime" do
+RSpec.describe "Eye::Checker::Cputime" do
 
   subject do
     Eye::Checker.create(123, {:type => :cputime, :every => 5.seconds, :times => 1, :below => 10.minutes})

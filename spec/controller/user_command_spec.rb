@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Controller user_command" do
+RSpec.describe "Controller user_command" do
   subject { Eye::Controller.new }
 
   it "should execute string cmd" do

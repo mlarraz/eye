@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Process::Config" do
+RSpec.describe "Eye::Process::Config" do
 
   it "should use throught [], c" do
     @p = Eye::Process.new({:pid_file => '1.pid', :start_command => "a", :working_dir => "/tmp"})

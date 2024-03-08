@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Controller::Load" do
+RSpec.describe "Eye::Controller::Load" do
   subject{ Eye::Controller.new }
 
   it "command load exclusive" do

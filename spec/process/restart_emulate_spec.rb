@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Process Restart, emulate some real hard cases" do
+RSpec.describe "Process Restart, emulate some real hard cases" do
   [C.p1, C.p2].each do |cfg|
     it "emulate restart as stop,start where stop command does not kill" do
       # should send command, than wait grace time,

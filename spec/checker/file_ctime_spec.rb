@@ -5,7 +5,7 @@ def chctime(cfg = {})
         :file => $logger_path, :times => 1}.merge(cfg))
 end
 
-describe "Eye::Checker::FileCTime" do
+RSpec.describe "Eye::Checker::FileCTime" do
 
   describe "" do
     subject{ chctime }

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Custom checks" do
+RSpec.describe "Custom checks" do
   before :each do
     @c = Eye::Controller.new
   end

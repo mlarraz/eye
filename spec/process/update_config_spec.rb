@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "#update_config" do
+RSpec.describe "#update_config" do
   before :each do
     @cfg = C.p3.merge(:checks => join(C.check_mem, C.check_cpu), :monitor_children => {})
     start_ok_process(@cfg)

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "find_objects" do
+RSpec.describe "find_objects" do
   describe "simple matching" do
     subject{ new_controller(fixture("dsl/load.eye")) }
 

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl" do
+RSpec.describe "Eye::Dsl" do
 
   it "fully empty config" do
     conf = <<-E

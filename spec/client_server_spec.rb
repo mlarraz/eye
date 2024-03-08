@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 [:old, :new].each do |prot_type|
-  describe "Eye::Client, Eye::Server - #{prot_type}" do
+  RSpec.describe "Eye::Client, Eye::Server - #{prot_type}" do
     before :each do
       @socket_path = C.socket_path
       @client = Eye::Client.new(@socket_path, prot_type)

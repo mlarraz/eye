@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Process Stop" do
+RSpec.describe "Process Stop" do
 
   describe "clear_pid_file" do
     it "stop should clear pid by default for daemonize" do

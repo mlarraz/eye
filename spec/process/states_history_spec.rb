@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Process::StatesHistory" do
+RSpec.describe "Eye::Process::StatesHistory" do
   before :each do
     @h = Eye::Process::StatesHistory.new
   end

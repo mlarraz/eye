@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Check CTime" do
+RSpec.describe "Check CTime" do
   before :each do
     @c = C.p1.merge(
       :checks => C.check_ctime(:times => 3)

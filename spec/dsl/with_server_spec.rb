@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "with_server feature" do
+RSpec.describe "with_server feature" do
 
   it "should load matched by string process" do
     allow(Eye::Local).to receive(:host) { "server1" }

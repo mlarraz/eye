@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Process Start" do
+RSpec.describe "Process Start" do
 
   it "process already runned, started new process" do
     # something already started process

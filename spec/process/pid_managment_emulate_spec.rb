@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 [C.p1, C.p2].each do |cfg|
-  describe "Process Pid Managment emulate '#{cfg[:name]}'" do
+  RSpec.describe "Process Pid Managment emulate '#{cfg[:name]}'" do
 
     it "EMULATE UNICORN someone rewrite pid_file and process die (should read actual pid from file)" do
       start_ok_process(cfg)

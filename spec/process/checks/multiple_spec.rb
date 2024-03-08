@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Multiple checks" do
+RSpec.describe "Multiple checks" do
   it "should create many checks with the same type" do
     @c = Eye::Controller.new
     r = @c.load(fixture("dsl/multiple_checks.eye"))

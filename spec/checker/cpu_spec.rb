@@ -5,7 +5,7 @@ def chcpu(cfg = {})
         :times => 1}.merge(cfg))
 end
 
-describe "Eye::Checker::Cpu" do
+RSpec.describe "Eye::Checker::Cpu" do
 
   describe "without below" do
     subject{ chcpu }

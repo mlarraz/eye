@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Checker::FileTouched" do
+RSpec.describe "Eye::Checker::FileTouched" do
 
   subject do
     Eye::Checker.create(123, {:type => :file_touched, :every => 5.seconds, :times => 1, :file => "1"})

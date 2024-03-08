@@ -5,7 +5,7 @@ def chmem(cfg = {})
         :times => 1}.merge(cfg))
 end
 
-describe "Eye::Checker::Memory" do
+RSpec.describe "Eye::Checker::Memory" do
 
   describe "without below" do
     subject{ chmem }

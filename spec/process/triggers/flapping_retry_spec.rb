@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Flapping retry" do
+RSpec.describe "Flapping retry" do
   before :each do
     @c = C.p1.merge(
       :triggers => C.flapping(:times => 2, :within => 3),

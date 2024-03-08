@@ -4,7 +4,7 @@ def join_path(arr)
   File.join(File.dirname(__FILE__), arr)
 end
 
-describe "Eye::Local" do
+RSpec.describe "Eye::Local" do
   it "should find_eyefile" do
     expect(Eye::Local.find_eyefile(join_path %w[ fixtures ])).to eq nil
     expect(Eye::Local.find_eyefile(join_path %w[])).to eq nil

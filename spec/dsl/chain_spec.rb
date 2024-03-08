@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl::Chain" do
+RSpec.describe "Eye::Dsl::Chain" do
 
   it "should understand chain options" do
     conf = <<-E

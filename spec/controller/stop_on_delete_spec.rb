@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "StopOnDelete behaviour" do
+RSpec.describe "StopOnDelete behaviour" do
   before :each do
     start_controller do
       @controller.load_erb(fixture("dsl/integration_sor.erb"))

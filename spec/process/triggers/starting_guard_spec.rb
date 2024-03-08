@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Trigger StartingGuard" do
+RSpec.describe "Trigger StartingGuard" do
   def process(trigger)
     @c = Eye::Controller.new
     cfg = <<-D

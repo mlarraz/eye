@@ -82,6 +82,8 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
+  config.disable_monkey_patching!
+
   config.before(:all) do
     Eye::SystemResources.cache.setup_expire(1.0)
   end

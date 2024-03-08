@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Process Monitoring" do
+RSpec.describe "Process Monitoring" do
 
   [C.p1, C.p2].each do |cfg|
 

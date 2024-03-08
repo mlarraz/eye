@@ -28,7 +28,7 @@ def p_check(p, name, pid_file)
   expect(p[:pid_file_ex]).to eq "/tmp/#{pid_file}"
 end
 
-describe "Eye::Controller" do
+RSpec.describe "Eye::Controller" do
   subject{ Eye::Controller.new }
 
   it "should ok load config" do

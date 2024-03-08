@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Process Restart" do
+RSpec.describe "Process Restart" do
   [C.p1, C.p2].each do |cfg|
     it "restart by default command #{cfg[:name]}" do
       start_ok_process(cfg)

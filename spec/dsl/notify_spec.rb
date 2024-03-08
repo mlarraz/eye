@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl notify" do
+RSpec.describe "Eye::Dsl notify" do
   it "integration" do
     conf = <<-E
       Eye.config do

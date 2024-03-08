@@ -7,7 +7,7 @@ class Not1 < Eye::Notify
   end
 end
 
-describe "Eye::Notify" do
+RSpec.describe "Eye::Notify" do
   before :each do
     @message = {:message=>"something", :name=>"blocking process",
         :full_name=>"main:default:blocking process", :pid=>123,

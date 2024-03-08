@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl::Config" do
+RSpec.describe "Eye::Dsl::Config" do
 
   it "logger" do
     conf = <<-E

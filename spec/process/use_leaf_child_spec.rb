@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Process with use_leaf_child" do
+RSpec.describe "Process with use_leaf_child" do
 
   before { @process = process(C.p6) }
 

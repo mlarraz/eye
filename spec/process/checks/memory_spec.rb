@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Process Memory check" do
+RSpec.describe "Process Memory check" do
 
   before :each do
     @c = C.p1.merge(

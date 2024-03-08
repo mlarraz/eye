@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-describe "Eye::SystemResources" do
+RSpec.describe "Eye::SystemResources" do
   before :each do
     Eye::SystemResources.cache.clear
   end

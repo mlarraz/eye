@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "ChildProcess" do
+RSpec.describe "ChildProcess" do
 
   describe "starting, monitoring" do
     after :each do

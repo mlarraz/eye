@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Process Controller" do
+RSpec.describe "Process Controller" do
 
   describe "monitor" do
     it "monitor should call start, as the auto_start is default" do

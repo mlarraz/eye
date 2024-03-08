@@ -10,7 +10,7 @@ class AliveArrayActor
   end
 end
 
-describe "Eye::Utils::AliveArray" do
+RSpec.describe "Eye::Utils::AliveArray" do
 
   it "act like array" do
     a = Eye::Utils::AliveArray.new([1,2,3])

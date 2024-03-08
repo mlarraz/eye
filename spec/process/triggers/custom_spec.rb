@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Trigger Custom" do
+RSpec.describe "Trigger Custom" do
   before :each do
     @c = Eye::Controller.new
   end

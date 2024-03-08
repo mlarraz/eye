@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Some crazy situations on load config" do
+RSpec.describe "Some crazy situations on load config" do
 
   before :each do
     start_controller do

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Eye::Checker::ChildrenCount" do
+RSpec.describe "Eye::Checker::ChildrenCount" do
   it "should not restart because all is ok" do
     @process = start_ok_process(C.p1.merge(:checks => C.check_children_count(:below => 5), :monitor_children => {}))
 

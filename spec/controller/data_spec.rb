@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Controller data spec" do
+RSpec.describe "Eye::Controller data spec" do
   subject{ Eye::Controller.new }
   before { subject.load(fixture("dsl/load.eye")) }
 

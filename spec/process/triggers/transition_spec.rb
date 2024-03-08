@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Trigger Transition" do
+RSpec.describe "Trigger Transition" do
   before :each do
     @c = Eye::Controller.new
   end

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Notify::Jabber" do
+RSpec.describe "Eye::Notify::Jabber" do
   before :each do
     @message = {:message=>"something", :name=>"blocking process",
         :full_name=>"main:default:blocking process", :pid=>123,

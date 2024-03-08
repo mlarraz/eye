@@ -6,7 +6,7 @@ class String
   end
 end
 
-describe "Eye::Cli" do
+RSpec.describe "Eye::Cli" do
   let(:controller) { Eye::Controller.new }
   let(:cli) { Eye::Cli.new }
 

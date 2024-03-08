@@ -18,7 +18,7 @@ class Checker2 < Eye::Checker
   param :bla5, [Integer, Float]
 end
 
-describe "Eye::Checker" do
+RSpec.describe "Eye::Checker" do
 
   it "defaults" do
     @c = Checker1.new(1, {:times => 3})

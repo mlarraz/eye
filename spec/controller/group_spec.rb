@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Group" do
+RSpec.describe "Eye::Group" do
 
   describe "Chain calls" do
 

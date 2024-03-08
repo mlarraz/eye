@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Behaviour" do
+RSpec.describe "Behaviour" do
   before :each do
     @process = process C.p1
   end

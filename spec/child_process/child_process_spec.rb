@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::ChildProcess" do
+RSpec.describe "Eye::ChildProcess" do
 
   before :each do
     @pid = Eye::System.daemonize(C.p1[:start_command], C.p1)[:pid]

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Notify::Slack" do
+RSpec.describe "Eye::Notify::Slack" do
   before :each do
     @time = Time.new 2015, 2, 25, 12
     @message = {:message=>"something", :name=>"blocking process",

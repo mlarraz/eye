@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Process Integration checks" do
+RSpec.describe "Process Integration checks" do
   before :each do
     @c = C.p1.merge(
       :checks => join(C.check_cpu, C.check_mem, C.check_ctime, C.check_http)

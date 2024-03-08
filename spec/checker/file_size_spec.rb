@@ -5,7 +5,7 @@ def chfsize(cfg = {})
         :file => $logger_path, :times => 1}.merge(cfg))
 end
 
-describe "Eye::Checker::FileSize" do
+RSpec.describe "Eye::Checker::FileSize" do
 
   describe "" do
     subject{ chfsize }

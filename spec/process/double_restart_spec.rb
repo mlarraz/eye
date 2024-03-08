@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe Eye::Process do
+RSpec.describe Eye::Process do
   before :each do
     @process = process(C.p1)
   end

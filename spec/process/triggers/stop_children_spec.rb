@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "StopChildren State" do
+RSpec.describe "StopChildren State" do
   before :each do
     @c = Eye::Controller.new
     cfg = <<-D

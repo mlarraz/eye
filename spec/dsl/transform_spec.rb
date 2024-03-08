@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "transform dsl" do
+RSpec.describe "transform dsl" do
 
   describe "syslog" do
 

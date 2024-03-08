@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl" do
+RSpec.describe "Eye::Dsl" do
 
   it "process without pid_file should raise" do
     conf = <<-E

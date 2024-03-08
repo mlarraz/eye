@@ -18,7 +18,7 @@ def ssl_chsockb(cfg = {})
         :expect_data => /bla:1/, :timeout => 2}.merge(cfg))
 end
 
-describe "Socket Checker" do
+RSpec.describe "Socket Checker" do
   after :each do
     FileUtils.rm(C.p4_sock) rescue nil
   end

@@ -41,7 +41,7 @@ class Eye::Process
 
 end
 
-describe "Scheduler" do
+RSpec.describe "Scheduler" do
   before :each do
     @process = process C.p1
   end

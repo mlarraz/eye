@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl getters" do
+RSpec.describe "Eye::Dsl getters" do
 
   it "should get param from scope with =" do
     conf = <<-E

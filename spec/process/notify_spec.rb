@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Process::Notify" do
+RSpec.describe "Eye::Process::Notify" do
   before :each do
     allow(Eye::Local).to receive(:host) { 'host1' }
     @process = process(C.p1.merge(:notify => {'vasya' => :info,

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-describe "Eye::System" do
+RSpec.describe "Eye::System" do
 
   it "pid_alive?" do
     expect(Eye::System.pid_alive?($$)).to eq true

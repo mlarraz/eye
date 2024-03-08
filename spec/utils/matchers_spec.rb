@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Custom rspec matchers" do
+RSpec.describe "Custom rspec matchers" do
   it "contain_only" do
     expect([1,2,9]).to contain_only(1, 9, 2)
     expect([1,2,9]).to contain_only(1, 2, 9)

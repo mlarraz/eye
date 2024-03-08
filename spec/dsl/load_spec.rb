@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Subfolder load spec" do
+RSpec.describe "Subfolder load spec" do
 
   it "should load file with full_path" do
     f = fixture("dsl/subfolder1/proc1.rb")

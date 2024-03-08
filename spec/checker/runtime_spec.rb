@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Checker::Runtime" do
+RSpec.describe "Eye::Checker::Runtime" do
 
   subject do
     Eye::Checker.create(123, {:type => :runtime, :every => 5.seconds, :times => 1, :below => 10.minutes})

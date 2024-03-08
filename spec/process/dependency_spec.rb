@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "dependency" do
+RSpec.describe "dependency" do
   after :each do
     @pids << @process_a.pid if @process_a && @process_a.alive?
     @pids << @process_b.pid if @process_b && @process_b.alive?

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "comamnd spec" do
+RSpec.describe "command spec" do
   subject{ c = Eye::Controller.new; c.load(fixture("dsl/load.eye")); c }
 
   before :each do

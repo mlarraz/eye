@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-describe "Eye::Utils" do
+RSpec.describe "Eye::Utils" do
   it "human_time" do
     s = Eye::Utils.human_time(Time.now.to_i)
     expect(s.size).to eq 5

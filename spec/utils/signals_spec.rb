@@ -9,7 +9,7 @@ class TestEnumerable
   end
 end
 
-describe "signals methods" do
+RSpec.describe "signals methods" do
   before(:each) do
     @actor = TestEnumerable.new
   end

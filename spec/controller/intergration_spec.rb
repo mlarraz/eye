@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Intergration" do
+RSpec.describe "Intergration" do
   before :each do
     start_controller do
       res = @controller.load_erb(fixture("dsl/integration.erb"))

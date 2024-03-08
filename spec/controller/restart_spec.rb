@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Intergration restart" do
+RSpec.describe "Intergration restart" do
   before :each do
     start_controller do
       @controller.load_erb(fixture("dsl/integration.erb"))

@@ -13,7 +13,7 @@ class Aaa
 
 end
 
-describe "Actor mocking" do
+RSpec.describe "Actor mocking" do
   before :each do
     @a = Aaa.new
   end

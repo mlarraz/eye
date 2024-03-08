@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Utils::Tail" do
+RSpec.describe "Eye::Utils::Tail" do
   subject{ Eye::Utils::Tail.new(5) }
 
   it "should rotate" do

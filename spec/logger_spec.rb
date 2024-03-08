@@ -8,7 +8,7 @@ class A22 # duck
   end
 end
 
-describe "Eye::Logger" do
+RSpec.describe "Eye::Logger" do
   it "should use smart logger with auto prefix" do
     expect(Eye::Process.logger.prefix).to eq "Eye::Process"
     expect(Eye.logger.prefix).to eq "Eye"

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "sub procs" do
+RSpec.describe "sub procs" do
   it "use lambda" do
     conf = <<-E
       proc = lambda do |proxy|

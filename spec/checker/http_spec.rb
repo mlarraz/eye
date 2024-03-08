@@ -6,7 +6,7 @@ def chhttp(cfg = {})
         :pattern => /OK/, :timeout => 2}.merge(cfg))
 end
 
-describe "Eye::Checker::Http" do
+RSpec.describe "Eye::Checker::Http" do
 
   after :each do
     FakeWeb.clean_registry

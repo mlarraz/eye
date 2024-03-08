@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Check FSize" do
+RSpec.describe "Check FSize" do
   before :each do
     @c = C.p1.merge(
       :checks => C.check_fsize(:times => 3)

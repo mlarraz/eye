@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "check pid identity" do
+RSpec.describe "check pid identity" do
   it "check_identity method" do
     @process = process(C.p1)
     @process.start

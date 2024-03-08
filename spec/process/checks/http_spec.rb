@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Process Http check" do
+RSpec.describe "Process Http check" do
   before :each do
     @c = C.p1.merge(
       :checks => C.check_http

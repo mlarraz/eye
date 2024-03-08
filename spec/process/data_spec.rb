@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Process::Data" do
+RSpec.describe "Eye::Process::Data" do
   subject { process(C.p1) }
 
   it "shell_string" do
