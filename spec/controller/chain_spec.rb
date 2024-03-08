@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Intergration chains" do
+RSpec.describe "Intergration chains" do
   before :each do
     start_controller do
       @controller.load_erb(fixture("dsl/integration.erb"))
@@ -20,42 +20,42 @@ describe "Intergration chains" do
     @controller.command(:restart, 'samples')
     sleep 15 # while they restarting
 
-    @processes.map{|c| c.state_name}.uniq.should == [:up]
-    @p1.pid.should_not == @old_pid1
-    @p2.pid.should_not == @old_pid2
-    @p3.pid.should == @old_pid3
+    expect(@processes.map(&:state_name).uniq).to eq [:up]
+    expect(@p1.pid).not_to eq @old_pid1
+    expect(@p2.pid).not_to eq @old_pid2
+    expect(@p3.pid).to eq @old_pid3
 
     r1 = @p1.states_history.detect{|c| c[:state] == :restarting}[:at]
     r2 = @p2.states_history.detect{|c| c[:state] == :restarting}[:at]
 
     # >8 because, grace start, and grace stop added
-    (r2 - r1).should >= 8
+    expect(r2 - r1).to be >= 8
   end
 
   it "restart group with chain async" do
     @controller.command(:restart, 'samples')
     sleep 15 # while they restarting
 
-    @processes.map{|c| c.state_name}.uniq.should == [:up]
-    @p1.pid.should_not == @old_pid1
-    @p2.pid.should_not == @old_pid2
-    @p3.pid.should == @old_pid3
+    expect(@processes.map(&:state_name).uniq).to eq [:up]
+    expect(@p1.pid).not_to eq @old_pid1
+    expect(@p2.pid).not_to eq @old_pid2
+    expect(@p3.pid).to eq @old_pid3
 
     r1 = @p1.states_history.detect{|c| c[:state] == :restarting}[:at]
     r2 = @p2.states_history.detect{|c| c[:state] == :restarting}[:at]
 
     # restart sent, in 5 seconds to each
-    (r2 - r1).should be_within(0.2).of(5)
+    expect(r2 - r1).to be_within(0.2).of(5)
   end
 
   it "process have skip_group_action, skip that action" do
-    stub(@p2).skip_group_action?(:restart) { true }
+    allow(@p2).to receive(:skip_group_action?).with(:restart) { true }
 
     @controller.command(:restart, 'samples')
     sleep 9
 
-    @p1.scheduler_history.states.should == [:monitor, :restart]
-    @p2.scheduler_history.states.should == [:monitor]
+    expect(@p1.scheduler_history.states).to eq [:monitor, :restart]
+    expect(@p2.scheduler_history.states).to eq [:monitor]
   end
 
   it "if processes dead in chain restart, nothing raised" do
@@ -70,7 +70,7 @@ describe "Intergration chains" do
     sleep 3
 
     # nothing happens
-    @samples.alive?.should == true
+    expect(@samples.alive?).to eq true
   end
 
   it "chain breaker breaks current chain and all pending requests" do
@@ -78,21 +78,21 @@ describe "Intergration chains" do
     @controller.command(:stop, 'samples')
     sleep 0.5
 
-    @samples.scheduler_current_command.should == :restart
-    @samples.scheduler_commands_list.should == [:stop]
+    expect(@samples.scheduler_current_command).to eq :restart
+    expect(@samples.scheduler_commands_list).to eq [:stop]
 
     @controller.command(:break_chain, 'samples')
     sleep 3
-    @samples.scheduler_current_command.should == :restart
+    expect(@samples.scheduler_current_command).to eq :restart
     sleep 2
-    @samples.scheduler_current_command.should == nil
-    @samples.scheduler_commands_list.should == []
+    expect(@samples.scheduler_current_command).to eq nil
+    expect(@samples.scheduler_commands_list).to eq []
 
     sleep 1
 
     # only first process should be restarted
-    @p1.scheduler_last_command.should == :restart
-    @p2.scheduler_last_command.should == :monitor
+    expect(@p1.scheduler_last_command).to eq :restart
+    expect(@p2.scheduler_last_command).to eq :monitor
   end
 
 end

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "dependency multi" do
+RSpec.describe "dependency multi" do
   after :each do
     @pids << @process_a.pid if @process_a && @process_a.alive?
     @pids << @process_b.pid if @process_b && @process_b.alive?
@@ -45,73 +45,73 @@ describe "dependency multi" do
       @c.load_content(conf)
       sleep 2.5
       @process_a = @c.process_by_name("a")
-      @process_a.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
       @pid_a = @process_a.pid
       @process_b = @c.process_by_name("b")
-      @process_b.state_name.should == :up
+      expect(@process_b.state_name).to eq :up
       @pid_b = @process_b.pid
       @process_c = @c.process_by_name("c")
-      @process_c.state_name.should == :up
+      expect(@process_c.state_name).to eq :up
       @pid_c = @process_c.pid
 
-      Eye::System.pid_alive?(@pid_a).should == true
-      Eye::System.pid_alive?(@pid_b).should == true
-      Eye::System.pid_alive?(@pid_c).should == true
+      expect(Eye::System.pid_alive?(@pid_a)).to eq true
+      expect(Eye::System.pid_alive?(@pid_b)).to eq true
+      expect(Eye::System.pid_alive?(@pid_c)).to eq true
     end
 
     it "restart :a" do
       @process_a.schedule :restart
       sleep 5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
-      @process_c.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
+      expect(@process_c.state_name).to eq :up
 
-      Eye::System.pid_alive?(@pid_a).should == false
-      Eye::System.pid_alive?(@pid_b).should == false
-      Eye::System.pid_alive?(@pid_c).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
+      expect(Eye::System.pid_alive?(@pid_c)).to eq false
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_c.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_c.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start, :restart, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :start, :restart, :start]
-      @process_c.scheduler_history.states.should == [:monitor, :restart]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start, :restart, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :start, :restart, :start]
+      expect(@process_c.scheduler_history.states).to eq [:monitor, :restart]
     end
 
     it "restart :b" do
       @process_b.schedule :restart
       sleep 5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
-      @process_c.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
+      expect(@process_c.state_name).to eq :up
 
-      Eye::System.pid_alive?(@pid_a).should == true
-      Eye::System.pid_alive?(@pid_b).should == false
-      Eye::System.pid_alive?(@pid_c).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq true
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
+      expect(Eye::System.pid_alive?(@pid_c)).to eq false
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_c.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_c.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :start, :restart, :start]
-      @process_c.scheduler_history.states.should == [:monitor, :restart]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :start, :restart, :start]
+      expect(@process_c.scheduler_history.states).to eq [:monitor, :restart]
     end
 
     it "stop :a" do
       @process_a.schedule :stop
       sleep 5
 
-      @process_a.state_name.should == :unmonitored
-      @process_b.state_name.should == :unmonitored
-      @process_c.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :unmonitored
+      expect(@process_b.state_name).to eq :unmonitored
+      expect(@process_c.state_name).to eq :unmonitored
 
-      Eye::System.pid_alive?(@pid_a).should == false
-      Eye::System.pid_alive?(@pid_b).should == false
-      Eye::System.pid_alive?(@pid_c).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
+      expect(Eye::System.pid_alive?(@pid_c)).to eq false
     end
 
     it "start :c should up other processes" do
@@ -120,16 +120,16 @@ describe "dependency multi" do
       @process_c.schedule :stop
       sleep 1
 
-      @process_a.state_name.should == :unmonitored
-      @process_b.state_name.should == :unmonitored
-      @process_c.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :unmonitored
+      expect(@process_b.state_name).to eq :unmonitored
+      expect(@process_c.state_name).to eq :unmonitored
 
       @process_c.schedule :start
       sleep 5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
-      @process_c.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
+      expect(@process_c.state_name).to eq :up
     end
   end
 
@@ -170,52 +170,52 @@ describe "dependency multi" do
       @c.load_content(conf)
       sleep 2.0
       @process_a = @c.process_by_name("a")
-      @process_a.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
       @pid_a = @process_a.pid
       @process_b = @c.process_by_name("b")
-      @process_b.state_name.should == :up
+      expect(@process_b.state_name).to eq :up
       @pid_b = @process_b.pid
       @process_c = @c.process_by_name("c")
-      @process_c.state_name.should == :up
+      expect(@process_c.state_name).to eq :up
       @pid_c = @process_c.pid
 
-      Eye::System.pid_alive?(@pid_a).should == true
-      Eye::System.pid_alive?(@pid_b).should == true
-      Eye::System.pid_alive?(@pid_c).should == true
+      expect(Eye::System.pid_alive?(@pid_a)).to eq true
+      expect(Eye::System.pid_alive?(@pid_b)).to eq true
+      expect(Eye::System.pid_alive?(@pid_c)).to eq true
     end
 
     it "restart :a" do
       @process_a.schedule :restart
       sleep 5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
-      @process_c.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
+      expect(@process_c.state_name).to eq :up
 
-      Eye::System.pid_alive?(@pid_a).should == false
-      Eye::System.pid_alive?(@pid_b).should == true
-      Eye::System.pid_alive?(@pid_c).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(Eye::System.pid_alive?(@pid_b)).to eq true
+      expect(Eye::System.pid_alive?(@pid_c)).to eq false
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up]
-      @process_c.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up]
+      expect(@process_c.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start, :restart, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :start]
-      @process_c.scheduler_history.states.should == [:monitor, :restart]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start, :restart, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :start]
+      expect(@process_c.scheduler_history.states).to eq [:monitor, :restart]
     end
 
     it "stop :a" do
       @process_a.schedule :stop
       sleep 4
 
-      @process_a.state_name.should == :unmonitored
-      @process_b.state_name.should == :up
-      @process_c.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :unmonitored
+      expect(@process_b.state_name).to eq :up
+      expect(@process_c.state_name).to eq :unmonitored
 
-      Eye::System.pid_alive?(@pid_a).should == false
-      Eye::System.pid_alive?(@pid_b).should == true
-      Eye::System.pid_alive?(@pid_c).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(Eye::System.pid_alive?(@pid_b)).to eq true
+      expect(Eye::System.pid_alive?(@pid_c)).to eq false
     end
 
     it "start :c" do
@@ -224,16 +224,16 @@ describe "dependency multi" do
       @process_c.schedule :stop
       sleep 1
 
-      @process_a.state_name.should == :unmonitored
-      @process_b.state_name.should == :unmonitored
-      @process_c.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :unmonitored
+      expect(@process_b.state_name).to eq :unmonitored
+      expect(@process_c.state_name).to eq :unmonitored
 
       @process_c.schedule :start
       sleep 5.5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
-      @process_c.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
+      expect(@process_c.state_name).to eq :up
     end
   end
 
@@ -275,39 +275,39 @@ describe "dependency multi" do
       @c.load_content(conf)
       sleep 2.0
       @process_a = @c.process_by_name("a")
-      @process_a.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
       @pid_a = @process_a.pid
       @process_b = @c.process_by_name("b")
-      @process_b.state_name.should == :up
+      expect(@process_b.state_name).to eq :up
       @pid_b = @process_b.pid
       @process_c = @c.process_by_name("c")
-      @process_c.state_name.should == :up
+      expect(@process_c.state_name).to eq :up
       @pid_c = @process_c.pid
 
-      Eye::System.pid_alive?(@pid_a).should == true
-      Eye::System.pid_alive?(@pid_b).should == true
-      Eye::System.pid_alive?(@pid_c).should == true
+      expect(Eye::System.pid_alive?(@pid_a)).to eq true
+      expect(Eye::System.pid_alive?(@pid_b)).to eq true
+      expect(Eye::System.pid_alive?(@pid_c)).to eq true
     end
 
     it "restart :a" do
       @process_a.schedule :restart
       sleep 5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
-      @process_c.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
+      expect(@process_c.state_name).to eq :up
 
-      Eye::System.pid_alive?(@pid_a).should == false
-      Eye::System.pid_alive?(@pid_b).should == false
-      Eye::System.pid_alive?(@pid_c).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
+      expect(Eye::System.pid_alive?(@pid_c)).to eq false
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_c.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_c.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start, :restart, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :restart]
-      @process_c.scheduler_history.states.should == [:monitor, :restart]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start, :restart, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :restart]
+      expect(@process_c.scheduler_history.states).to eq [:monitor, :restart]
     end
   end
 end

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Process Http check" do
+RSpec.describe "Process Http check" do
   before :each do
     @c = C.p1.merge(
       :checks => C.check_http
@@ -15,7 +15,7 @@ describe "Process Http check" do
   it "all ok" do
     start_ok_process(@c)
 
-    dont_allow(@process).schedule(:command => :restart)
+    expect(@process.wrapped_object).not_to receive(:schedule).with({ :command => :restart })
 
     # should not happens anything
     sleep 6
@@ -25,7 +25,7 @@ describe "Process Http check" do
     start_ok_process(@c)
     sleep 2
 
-    mock(@process).schedule(:command => :restart)
+    expect(@process.wrapped_object).to receive(:schedule).with({ :command => :restart })
     FakeWeb.register_uri(:get, "http://localhost:3000/bla", :body => "Somebody BAD")
     sleep 2
   end
@@ -34,7 +34,7 @@ describe "Process Http check" do
     start_ok_process(@c)
     sleep 2
 
-    mock(@process).schedule(:command => :restart)
+    expect(@process.wrapped_object).to receive(:schedule).with({ :command => :restart })
     FakeWeb.register_uri(:get, "http://localhost:3000/bla", :body => "Somebody OK", :status => [500, 'err'])
     sleep 2
   end
@@ -43,7 +43,7 @@ describe "Process Http check" do
     start_ok_process(@c)
     sleep 2
 
-    mock(@process).schedule(:command => :restart)
+    expect(@process.wrapped_object).to receive(:schedule).with({ :command => :restart })
     FakeWeb.clean_registry
     FakeWeb.allow_net_connect = false
     sleep 2

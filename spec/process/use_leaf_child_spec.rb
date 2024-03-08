@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Process with use_leaf_child" do
+RSpec.describe "Process with use_leaf_child" do
 
   before { @process = process(C.p6) }
 
@@ -13,28 +13,28 @@ describe "Process with use_leaf_child" do
   it "start" do
     @process.start
     ps = `ps ax | grep #{@process.pid} | grep -v grep`
-    ps.should include('sleep 10')
-    ps.should_not include('sh -c')
-    @process.pid.should be
-    @process.parent_pid.should be
-    @process.parent_pid.should_not == @process.pid
-    @process.state_name.should == :up
+    expect(ps).to include('sleep 10')
+    expect(ps).not_to include('sh -c')
+    expect(@process.pid).to be
+    expect(@process.parent_pid).to be
+    expect(@process.parent_pid).not_to eq @process.pid
+    expect(@process.state_name).to eq :up
 
-    Eye::System.pid_alive?(@process.pid).should == true
-    Eye::System.pid_alive?(@process.parent_pid).should == true
+    expect(Eye::System.pid_alive?(@process.pid)).to eq true
+    expect(Eye::System.pid_alive?(@process.parent_pid)).to eq true
   end
 
   it "stop" do
     @process.start
-    Eye::System.pid_alive?(@process.pid).should == true
-    Eye::System.pid_alive?(@process.parent_pid).should == true
-    `ps ax | grep #{C.p6_word} | grep -v grep`.should_not be_blank
+    expect(Eye::System.pid_alive?(@process.pid)).to eq true
+    expect(Eye::System.pid_alive?(@process.parent_pid)).to eq true
+    expect(`ps ax | grep #{C.p6_word} | grep -v grep`).not_to be_blank
 
     @process.stop
-    `ps ax | grep #{C.p6_word} | grep -v grep`.should be_blank
+    expect(`ps ax | grep #{C.p6_word} | grep -v grep`).to be_blank
 
     # parent_pid also should die by itself
-    Eye::System.pid_alive?(@process.pid).should == nil
-    Eye::System.pid_alive?(@process.parent_pid).should == false
+    expect(Eye::System.pid_alive?(@process.pid)).to eq nil
+    expect(Eye::System.pid_alive?(@process.parent_pid)).to eq false
   end
 end

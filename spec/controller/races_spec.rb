@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Some crazy situations on load config" do
+RSpec.describe "Some crazy situations on load config" do
 
   before :each do
     start_controller do
@@ -28,18 +28,18 @@ describe "Some crazy situations on load config" do
     @p2_ = procs.detect{|c| c.name == 'sample2_'}
     @p3_ = procs.detect{|c| c.name == 'forking'}
 
-    @p3.object_id.should == @p3_.object_id
-    @p1.alive?.should == false
-    @p1_.alive?.should == true
+    expect(@p3.object_id).to eq @p3_.object_id
+    expect(@p1.alive?).to eq false
+    expect(@p1_.alive?).to eq true
 
-    @p2.alive?.should == false
-    @p2_.alive?.should == true
+    expect(@p2.alive?).to eq false
+    expect(@p2_.alive?).to eq true
 
-    @p1_.pid.should == @old_pid1
-    @p2_.pid.should == @old_pid2
-    @p3_.pid.should == @old_pid3
+    expect(@p1_.pid).to eq @old_pid1
+    expect(@p2_.pid).to eq @old_pid2
+    expect(@p3_.pid).to eq @old_pid3
 
-    @p1_.state_name.should == :up
+    expect(@p1_.state_name).to eq :up
   end
 
 end

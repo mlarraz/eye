@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "sub procs" do
+RSpec.describe "sub procs" do
   it "use lambda" do
     conf = <<-E
       proc = lambda do |proxy|
@@ -11,7 +11,7 @@ describe "sub procs" do
         use proc
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:working_dir=>"/tmp", :name => "bla"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:working_dir=>"/tmp", :name => "bla"}})
   end
 
   it "use lambda with arg" do
@@ -24,7 +24,7 @@ describe "sub procs" do
         use proc, "1"
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :working_dir=>"1"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :working_dir=>"1"}})
   end
 
   it "use proc" do
@@ -37,7 +37,7 @@ describe "sub procs" do
         use proc
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:working_dir=>"/tmp", :name => "bla"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:working_dir=>"/tmp", :name => "bla"}})
   end
 
   it "use proc with arg" do
@@ -50,7 +50,7 @@ describe "sub procs" do
         use proc, "1"
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :working_dir=>"1"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :working_dir=>"1"}})
   end
 
   it "use method" do
@@ -64,7 +64,7 @@ describe "sub procs" do
         use method(:add_process)
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:working_dir=>"/tmp", :name => "bla"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:working_dir=>"/tmp", :name => "bla"}})
   end
 
   it "use method with arg" do
@@ -77,18 +77,19 @@ describe "sub procs" do
         use method(:add_process), "1"
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :working_dir=>"1"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :working_dir=>"1"}})
   end
 
   it "use part of code" do
-    Eye::Dsl.parse_apps(nil, fixture("dsl/include_test.eye")).should == {
+    expect(Eye::Dsl.parse_apps(nil, fixture("dsl/include_test.eye"))).to eq({
       "test" => {:name=>"test", :environment=>{"a"=>"b"},
       :groups=>{"__default__"=>{:name=>"__default__", :environment=>{"a"=>"b"}, :application=>"test",
-      :processes=>{"bla"=>{:name=>"bla", :environment=>{"a"=>"b"}, :application=>"test", :group=>"__default__", :pid_file=>"10"}}}}}}
+      :processes=>{"bla"=>{:name=>"bla", :environment=>{"a"=>"b"}, :application=>"test", :group=>"__default__", :pid_file=>"10"}}}}}
+    })
   end
 
   it "use part of code 2 times" do
-    Eye::Dsl.parse_apps(nil, fixture("dsl/include_test2.eye")).should == {"test2" => {:name=>"test2", :groups=>{"ha"=>{:name=>"ha", :application=>"test2", :environment=>{"a"=>"b"}, :processes=>{"bla"=>{:name=>"bla", :application=>"test2", :environment=>{"a"=>"b"}, :group=>"ha", :pid_file=>"10"}}}}}}
+    expect(Eye::Dsl.parse_apps(nil, fixture("dsl/include_test2.eye"))).to eq({"test2" => {:name=>"test2", :groups=>{"ha"=>{:name=>"ha", :application=>"test2", :environment=>{"a"=>"b"}, :processes=>{"bla"=>{:name=>"bla", :application=>"test2", :environment=>{"a"=>"b"}, :group=>"ha", :pid_file=>"10"}}}}}})
   end
 
   describe "test extend with module" do
@@ -105,7 +106,7 @@ describe "sub procs" do
           bla
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:working_dir=>"/tmp/11", :name => "bla"}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:working_dir=>"/tmp/11", :name => "bla"}})
     end
   end
 

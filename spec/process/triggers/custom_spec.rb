@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Trigger Custom" do
+RSpec.describe "Trigger Custom" do
   before :each do
     @c = Eye::Controller.new
   end
@@ -40,16 +40,16 @@ end
 
     it "should delete file when stop" do
       File.open(C.tmp_file, 'w'){ |f| f.write "aaa" }
-      File.exist?(C.tmp_file).should == true
+      expect(File.exist?(C.tmp_file)).to eq true
       @process.send_call :command => :stop
       sleep 3
-      File.exist?(C.tmp_file).should == false
+      expect(File.exist?(C.tmp_file)).to eq false
 
       # check that reason is
       t = @process.triggers.first
       res = t.instance_variable_get(:@rr)
-      res[:by].should == :user
-      res[:command].should == :stop
+      expect(res[:by]).to eq :user
+      expect(res[:command]).to eq :stop
     end
   end
 
@@ -86,10 +86,10 @@ end
 
     it "should delete file when stop" do
       File.open(C.tmp_file, 'w'){ |f| f.write "aaa" }
-      File.exist?(C.tmp_file).should == true
+      expect(File.exist?(C.tmp_file)).to eq true
       force_kill_pid(@process.pid)
       sleep 5
-      File.exist?(C.tmp_file).should == false
+      expect(File.exist?(C.tmp_file)).to eq false
     end
   end
 
@@ -99,7 +99,7 @@ end
 class DeleteFileEventA2 < Eye::Trigger::Custom
   param :file, [String], true
   param :on, [Symbol]
-  param :what, [Fixnum]
+  param :what, [Integer]
 
   def check(transition)
     if transition.to_name == on
@@ -132,9 +132,9 @@ end
     end
 
     it "should delete file when stop" do
-      File.exist?(C.tmp_file).should == true
+      expect(File.exist?(C.tmp_file)).to eq true
       @process.stop
-      File.exist?(C.tmp_file).should == false
+      expect(File.exist?(C.tmp_file)).to eq false
     end
   end
 
@@ -166,8 +166,8 @@ end
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
     it "when raised in check" do
@@ -183,8 +183,8 @@ end
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
     it "when raised in check NoMethodError" do
@@ -200,8 +200,8 @@ end
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
     it "raises in defer" do
@@ -217,8 +217,8 @@ end
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
 
     it "raises in future" do
@@ -234,8 +234,8 @@ end
       @process.wait_for_condition(3, 0.3) { @process.state_name == :up }
 
       sleep 2
-      @process.alive?.should == true
-      @process.state_name.should == :up
+      expect(@process.alive?).to eq true
+      expect(@process.state_name).to eq :up
     end
   end
 

@@ -1,13 +1,13 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl" do
+RSpec.describe "Eye::Dsl" do
 
   it "fully empty config" do
     conf = <<-E
       # haha
     E
-    Eye::Dsl.parse(conf).to_h.should == {:applications => {}, :settings => {}, :defaults => {}}
-    Eye::Dsl.parse_apps(conf).should == {}
+    expect(Eye::Dsl.parse(conf).to_h).to eq({:applications => {}, :settings => {}, :defaults => {}})
+    expect(Eye::Dsl.parse_apps(conf)).to eq({})
   end
 
   it "empty config" do
@@ -15,7 +15,7 @@ describe "Eye::Dsl" do
       Eye.application("bla") do
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {'bla' => {:name => "bla"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({'bla' => {:name => "bla"}})
   end
 
   it "should set param " do
@@ -24,7 +24,7 @@ describe "Eye::Dsl" do
         start_timeout 10.seconds
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:start_timeout => 10.seconds, :name => "bla"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:start_timeout => 10.seconds, :name => "bla"}})
   end
 
   it "should set param, with self and =" do
@@ -33,14 +33,14 @@ describe "Eye::Dsl" do
         self.start_timeout = 10.seconds
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:start_timeout => 10.seconds, :name => "bla"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:start_timeout => 10.seconds, :name => "bla"}})
   end
 
   it "another block syntax" do
     conf = <<-E
       Eye.application("bla"){ start_timeout 10.seconds }
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:start_timeout => 10.seconds, :name => "bla"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:start_timeout => 10.seconds, :name => "bla"}})
   end
 
   it "should raise on unknown option" do
@@ -64,10 +64,10 @@ describe "Eye::Dsl" do
       end
     E
     cfg = Eye::Dsl.parse_apps(conf)
-    cfg[:something].should == nil
-    cfg['bla'][:something].should == nil
-    cfg['bla'][:groups]['__default__'][:some].should == nil
-    cfg['bla'][:groups]['__default__'][:processes][:some].should == nil
+    expect(cfg[:something]).to eq nil
+    expect(cfg['bla'][:something]).to eq nil
+    expect(cfg['bla'][:groups]['__default__'][:some]).to eq nil
+    expect(cfg['bla'][:groups]['__default__'][:processes][:some]).to eq nil
   end
 
   it "should set application defaults" do
@@ -82,8 +82,8 @@ describe "Eye::Dsl" do
       end
     E
     cfg = Eye::Dsl.parse_apps(conf)
-    cfg['bla'][:environment].should == {"A"=>"B", "B"=>"C"}
-    cfg['bla'][:groups]['__default__'][:processes]['11'][:environment].should == {"A"=>"B", "B"=>"C"}
+    expect(cfg['bla'][:environment]).to eq({"A"=>"B", "B"=>"C"})
+    expect(cfg['bla'][:groups]['__default__'][:processes]['11'][:environment]).to eq({"A"=>"B", "B"=>"C"})
   end
 
   it "set uid option" do
@@ -107,7 +107,7 @@ describe "Eye::Dsl" do
   it "should set clear_bundler_env" do
     conf = " Eye.app(:bla){  clear_bundler_env; env 'A' => 1 }"
     cfg = Eye::Dsl.parse_apps(conf)
-    cfg['bla'][:environment].should == {"GEM_PATH"=>nil, "GEM_HOME"=>nil, "RUBYOPT"=>nil, "BUNDLE_BIN_PATH"=>nil, "BUNDLE_GEMFILE"=>nil, "A" => 1}
+    expect(cfg['bla'][:environment]).to eq({"GEM_PATH"=>nil, "GEM_HOME"=>nil, "RUBYOPT"=>nil, "BUNDLE_BIN_PATH"=>nil, "BUNDLE_GEMFILE"=>nil, "A" => 1})
   end
 
 

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe Eye::Process do
+RSpec.describe Eye::Process do
   before :each do
     @process = process(C.p1)
   end
@@ -11,7 +11,7 @@ describe Eye::Process do
 
     sleep 3
 
-    @process.states_history.count { |c| c[:state] == :restarting }.should == 1
+    expect(@process.states_history.count { |c| c[:state] == :restarting }).to eq 1
   end
 
   it "should double restart if second is by hands" do
@@ -20,7 +20,7 @@ describe Eye::Process do
 
     sleep 3
 
-    @process.states_history.count { |c| c[:state] == :restarting }.should == 2
+    expect(@process.states_history.count { |c| c[:state] == :restarting }).to eq 2
   end
 
   it "double restart by hands should pass both" do
@@ -29,7 +29,7 @@ describe Eye::Process do
 
     sleep 3
 
-    @process.states_history.count { |c| c[:state] == :restarting }.should == 2
+    expect(@process.states_history.count { |c| c[:state] == :restarting }).to eq 2
   end
 
   it "triple restart by hands should pass only 2" do
@@ -39,7 +39,7 @@ describe Eye::Process do
 
     sleep 6
 
-    @process.states_history.count { |c| c[:state] == :restarting }.should == 2
+    expect(@process.states_history.count { |c| c[:state] == :restarting }).to eq 2
   end
 
 end

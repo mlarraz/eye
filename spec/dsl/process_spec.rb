@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl" do
+RSpec.describe "Eye::Dsl" do
 
   it "process without pid_file should raise" do
     conf = <<-E
@@ -21,7 +21,7 @@ describe "Eye::Dsl" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
   end
 
   it "process return Object" do
@@ -31,7 +31,7 @@ describe "Eye::Dsl" do
       env "A" => p.pid_file
     end
     E
-    Eye::Dsl.parse_apps(conf)['bla'][:environment].should == {'A' => '1.pid'}
+    expect(Eye::Dsl.parse_apps(conf)['bla'][:environment]).to eq({'A' => '1.pid'})
   end
 
   it "not allowed : in names" do
@@ -54,7 +54,7 @@ describe "Eye::Dsl" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:environment=>{"a"=>"b"}, :name => "bla"}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:environment=>{"a"=>"b"}, :name => "bla"}})
   end
 
   it "process with times" do
@@ -67,7 +67,7 @@ describe "Eye::Dsl" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"0"=>{:pid_file=>"0.pid", :application=>"bla", :group=>"__default__", :name=>"0"}, "1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"0"=>{:pid_file=>"0.pid", :application=>"bla", :group=>"__default__", :name=>"0"}, "1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
   end
 
   it "process with def" do
@@ -83,7 +83,7 @@ describe "Eye::Dsl" do
         add_process(self, "2")
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}, "2"=>{:pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"2"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}, "2"=>{:pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"2"}}}}}})
   end
 
   it "process with def and without proxy, O_o this works!!!" do
@@ -99,7 +99,7 @@ describe "Eye::Dsl" do
         group(:gr){ add_process("2") }
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}}}, "gr"=>{:name=>"gr", :application=>"bla", :processes=>{"2"=>{:name=>"2", :application=>"bla", :group=>"gr", :pid_file=>"2.pid"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}}}, "gr"=>{:name=>"gr", :application=>"bla", :processes=>{"2"=>{:name=>"2", :application=>"bla", :group=>"gr", :pid_file=>"2.pid"}}}}}})
   end
 
   it "process with constant" do
@@ -112,7 +112,7 @@ describe "Eye::Dsl" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
   end
 
   it "when 2 processes with same pid_file, its ERROR" do
@@ -138,7 +138,7 @@ describe "Eye::Dsl" do
         process("1"){pid_file "12"}
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {'bla' => {:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"12", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({'bla' => {:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"12", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
   end
 
   describe "stdout, stder, stdall" do
@@ -152,7 +152,7 @@ describe "Eye::Dsl" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:stdout=>"1.log", :stderr=>"2.log", :pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:stdout=>"1.log", :stderr=>"2.log", :pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
     end
 
     it "stdall" do
@@ -164,7 +164,7 @@ describe "Eye::Dsl" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:stdout=>"1.log", :stderr=>"1.log", :stdall => "1.log", :pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:stdout=>"1.log", :stderr=>"1.log", :stdall => "1.log", :pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
     end
 
   end
@@ -206,7 +206,7 @@ describe "Eye::Dsl" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
   end
 
   it "valid process with proxies" do
@@ -217,7 +217,7 @@ describe "Eye::Dsl" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla"=>{:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
   end
 
   describe "blank envs" do
@@ -255,7 +255,7 @@ describe "Eye::Dsl" do
           env "SOME" => nil
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :environment=>{"SOME"=>nil}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :environment=>{"SOME"=>nil}}})
     end
 
   end
@@ -266,13 +266,13 @@ describe "Eye::Dsl" do
         Eye.app("bla") { process('1') { pid_file '1'; stop_signals :Quit, 1 } }
       E
       r = Eye::Dsl.parse_apps(conf)
-      r['bla'][:groups]['__default__'][:processes]['1'][:stop_signals].should == [:Quit, 1]
+      expect(r['bla'][:groups]['__default__'][:processes]['1'][:stop_signals]).to eq [:Quit, 1]
 
       conf = <<-E
         Eye.app("bla") { process('1') { pid_file '1'; stop_signals [:Quit, 1] } }
       E
       r = Eye::Dsl.parse_apps(conf)
-      r['bla'][:groups]['__default__'][:processes]['1'][:stop_signals].should == [:Quit, 1]
+      expect(r['bla'][:groups]['__default__'][:processes]['1'][:stop_signals]).to eq [:Quit, 1]
     end
 
     it "get" do
@@ -282,7 +282,7 @@ describe "Eye::Dsl" do
         }
       E
       r = Eye::Dsl.parse_apps(conf)
-      r['bla'][:groups]['__default__'][:processes]['2'][:stop_signals].should == [:Quit, 1]
+      expect(r['bla'][:groups]['__default__'][:processes]['2'][:stop_signals]).to eq [:Quit, 1]
     end
   end
 
@@ -454,14 +454,16 @@ describe "Eye::Dsl" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla",
+      expect(Eye::Dsl.parse_apps(conf)).to eq({
+        "bla" => {:name=>"bla",
         :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla",
           :processes=>{
             "1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid",
               :triggers=>{
                 :check_dependency_2=>{:names=>["2"], :type=>:check_dependency}}},
             "2"=>{:name=>"2", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid",
-              :triggers=>{:wait_dependency_1=>{:names=>["1"], :type=>:wait_dependency}}, :skip_group_actions => {:restart => [:up, :down, :starting, :stopping, :restarting]}}}}}}}
+              :triggers=>{:wait_dependency_1=>{:names=>["1"], :type=>:wait_dependency}}, :skip_group_actions => {:restart => [:up, :down, :starting, :stopping, :restarting]}}}}}}
+      })
   end
 
   it "depend_on reverse" do
@@ -476,13 +478,15 @@ describe "Eye::Dsl" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla",
+      expect(Eye::Dsl.parse_apps(conf)).to eq({
+        "bla" => {:name=>"bla",
         :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla",
           :processes=>{
             "1"=>{:name=>"1", :application=>"bla", :group=>"__default__",
               :triggers=>{:check_dependency_2=>{:names=>["2"], :type=>:check_dependency}}, :pid_file=>"1.pid"},
             "2"=>{:name=>"2", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid",
-              :triggers=>{:wait_dependency_1=>{:names=>["1"], :type=>:wait_dependency}}, :skip_group_actions => {:restart => [:up, :down, :starting, :stopping, :restarting]}}}}}}}
+              :triggers=>{:wait_dependency_1=>{:names=>["1"], :type=>:wait_dependency}}, :skip_group_actions => {:restart => [:up, :down, :starting, :stopping, :restarting]}}}}}}
+      })
   end
 
   it "bug in depend_on #60" do
@@ -520,7 +524,7 @@ Eye.app :dependency do
 end
     E
 
-    Eye::Dsl.parse_apps(conf).should == {
+    expect(Eye::Dsl.parse_apps(conf)).to eq({
       "dependency" => {:name=>"dependency", :groups=>{
         "bla"=>{:name=>"bla", :application=>"dependency",
           :checks=>{:memory=>{:below=>100, :type=>:memory}}, :processes=>{
@@ -532,7 +536,8 @@ end
               :triggers=>{:wait_dependency_1=>{:names=>["a"], :type=>:wait_dependency}}, :skip_group_actions => {:restart => [:up, :down, :starting, :stopping, :restarting]}},
             "c"=>{:name=>"c", :application=>"dependency",
               :checks=>{:memory=>{:below=>100, :type=>:memory}}, :group=>"bla", :start_command=>"sleep 100", :daemonize=>true, :pid_file=>"/tmp/test_process_c.pid",
-              :triggers=>{:wait_dependency_3=>{:names=>["a"], :type=>:wait_dependency}}, :skip_group_actions => {:restart => [:up, :down, :starting, :stopping, :restarting]}}}}}}}
+              :triggers=>{:wait_dependency_3=>{:names=>["a"], :type=>:wait_dependency}}, :skip_group_actions => {:restart => [:up, :down, :starting, :stopping, :restarting]}}}}}}
+    })
   end
 
   it "skip_group_action" do
@@ -541,7 +546,7 @@ end
         skip_group_action :restart
       end
     E
-    Eye::Dsl.parse_apps(conf)['bla'][:skip_group_actions].should == {:restart => true}
+    expect(Eye::Dsl.parse_apps(conf)['bla'][:skip_group_actions]).to eq({:restart => true})
   end
 
   describe "load_env" do
@@ -551,7 +556,7 @@ end
           load_env "#{fixture('dsl/env1')}"
         end
       E
-      Eye::Dsl.parse_apps(conf)['bla'][:environment].should == {"A"=>"11", "B" => "12=13", "E" => "55", "F" => "stuff", "G" => "more"}
+      expect(Eye::Dsl.parse_apps(conf)['bla'][:environment]).to eq({"A"=>"11", "B" => "12=13", "E" => "55", "F" => "stuff", "G" => "more"})
     end
 
     it "file not found" do
@@ -569,7 +574,7 @@ end
           load_env "#{fixture('dsl/env2')}", false
         end
       E
-      Eye::Dsl.parse_apps(conf)['bla'][:environment].should == nil
+      expect(Eye::Dsl.parse_apps(conf)['bla'][:environment]).to eq nil
     end
 
     it "expand path from working_dir" do
@@ -579,7 +584,7 @@ end
           load_env "env1"
         end
       E
-      Eye::Dsl.parse_apps(conf)['bla'][:environment].should == {"A"=>"11", "B" => "12=13", "E" => "55", "F" => "stuff", "G" => "more"}
+      expect(Eye::Dsl.parse_apps(conf)['bla'][:environment]).to eq({"A"=>"11", "B" => "12=13", "E" => "55", "F" => "stuff", "G" => "more"})
     end
   end
 

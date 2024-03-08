@@ -1,7 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 class Checker1 < Eye::Checker
-
   def get_value
     true
   end
@@ -16,27 +15,27 @@ class Checker2 < Eye::Checker
   param :bla2, [String, Symbol], true
   param :bla3, [String, Symbol], true, "hi"
   param :bla4, [String, Symbol], false, "hi2"
-  param :bla5, [Fixnum, Float]
+  param :bla5, [Integer, Float]
 end
 
-describe "Eye::Checker" do
+RSpec.describe "Eye::Checker" do
 
   it "defaults" do
     @c = Checker1.new(1, {:times => 3})
-    @c.max_tries.should == 3
-    @c.min_tries.should == 3
+    expect(@c.max_tries).to eq 3
+    expect(@c.min_tries).to eq 3
   end
 
   it "defaults" do
     @c = Checker1.new(1, {:times => [3, 5]})
-    @c.max_tries.should == 5
-    @c.min_tries.should == 3
+    expect(@c.max_tries).to eq 5
+    expect(@c.min_tries).to eq 3
   end
 
   it "defaults" do
     @c = Checker1.new(1, {})
-    @c.max_tries.should == 1
-    @c.min_tries.should == 1
+    expect(@c.max_tries).to eq 1
+    expect(@c.min_tries).to eq 1
   end
 
   describe "one digit" do
@@ -45,34 +44,34 @@ describe "Eye::Checker" do
     end
 
     it "times 3 from 3" do
-      @c.check.should == true
-      @c.check.should == true
-      @c.check.should == true
-      @c.check.should == true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
     end
 
     it "times 3 from 3" do
-      stub(@c).get_value{true}
-      @c.check.should == true
-      stub(@c).get_value{false}
-      @c.check.should == true
-      stub(@c).get_value{false}
-      @c.check.should == true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
+      allow(@c).to receive(:get_value).and_return(false)
+      expect(@c.check).to eq true
+      allow(@c).to receive(:get_value).and_return(false)
+      expect(@c.check).to eq true
 
-      stub(@c).get_value{true}
-      @c.check.should == true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
     end
 
     it "times 3 from 3" do
-      stub(@c).get_value{true}
-      @c.check.should == true
-      stub(@c).get_value{false}
-      @c.check.should == true
-      stub(@c).get_value{false}
-      @c.check.should == true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
+      allow(@c).to receive(:get_value).and_return(false)
+      expect(@c.check).to eq true
+      allow(@c).to receive(:get_value).and_return(false)
+      expect(@c.check).to eq true
 
-      stub(@c).get_value{false}
-      @c.check.should == false
+      allow(@c).to receive(:get_value).and_return(false)
+      expect(@c.check).to eq false
     end
 
   end
@@ -83,52 +82,52 @@ describe "Eye::Checker" do
     end
 
     it "2 from 5" do
-      @c.check.should == true
-      @c.check.should == true
-      @c.check.should == true
-      @c.check.should == true
-      @c.check.should == true
-      @c.check.should == true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
     end
 
     it "times 2 from 5" do
-      stub(@c).get_value{true}
-      @c.check.should == true
-      stub(@c).get_value{false}
-      @c.check.should == true
-      stub(@c).get_value{true}
-      @c.check.should == true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
+      allow(@c).to receive(:get_value).and_return(false)
+      expect(@c.check).to eq true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
 
-      stub(@c).get_value{true}
-      @c.check.should == true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
 
-      stub(@c).get_value{true}
-      @c.check.should == true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
 
-      stub(@c).get_value{true}
-      @c.check.should == true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
     end
 
 
     it "times 2 from 5" do
-      stub(@c).get_value{true}
-      @c.check.should == true
-      stub(@c).get_value{false}
-      @c.check.should == true
-      stub(@c).get_value{false}
-      @c.check.should == true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
+      allow(@c).to receive(:get_value).and_return(false)
+      expect(@c.check).to eq true
+      allow(@c).to receive(:get_value).and_return(false)
+      expect(@c.check).to eq true
 
-      stub(@c).get_value{true}
-      @c.check.should == true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
 
-      stub(@c).get_value{true}
-      @c.check.should == false
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq false
 
-      stub(@c).get_value{true}
-      @c.check.should == false
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq false
 
-      stub(@c).get_value{true}
-      @c.check.should == true
+      allow(@c).to receive(:get_value).and_return(true)
+      expect(@c.check).to eq true
     end
   end
 
@@ -148,20 +147,20 @@ describe "Eye::Checker" do
     end
 
     it "should work" do
-      stub(@c).get_value{ false }
-      @c.check.should == true
-      @c.check.should == true
-      @c.check.should == true
+      allow(@c).to receive (:get_value) { false }
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
 
       sleep 1
-      @c.check.should == true
-      @c.check.should == true
-      @c.check.should == true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
 
       sleep 1
-      @c.check.should == true
-      @c.check.should == false
-      @c.check.should == false
+      expect(@c.check).to eq true
+      expect(@c.check).to eq false
+      expect(@c.check).to eq false
     end
   end
 
@@ -171,34 +170,34 @@ describe "Eye::Checker" do
     end
 
     it "should work" do
-      stub(@c).get_value{ false }
-      @c.check.should == true
-      @c.check.should == true
+      allow(@c).to receive (:get_value) { false }
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
 
       sleep 0.1
-      @c.check.should == true
-      @c.check.should == true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
 
-      stub(@c).get_value{ true }
-      @c.check.should == true
-      @c.check.should == true
-      @c.check.should == true
+      allow(@c).to receive (:get_value) { true }
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
+      expect(@c.check).to eq true
 
-      stub(@c).get_value{ false }
-      @c.check.should == true
-      @c.check.should == false
-      @c.check.should == false
+      allow(@c).to receive (:get_value) { false }
+      expect(@c.check).to eq true
+      expect(@c.check).to eq false
+      expect(@c.check).to eq false
     end
   end
 
   it "defaults every" do
     @c = Checker1.new(nil, {:times => 3})
-    @c.every.should == 5
+    expect(@c.every).to eq 5
   end
 
   it "not defaults every" do
     @c = Checker1.new(nil, {:times => 3, :every => 10})
-    @c.every.should == 10
+    expect(@c.every).to eq 10
   end
 
   describe "validates" do
@@ -210,16 +209,16 @@ describe "Eye::Checker" do
       Checker2.validate({:bla2 => "111", :bla5 => 15.4.seconds})
 
       c = Checker2.new(nil, :bla2 => :a111)
-      c.bla.should == nil
-      c.bla2.should == :a111
-      c.bla3.should == 'hi'
-      c.bla4.should == 'hi2'
+      expect(c.bla).to eq nil
+      expect(c.bla2).to eq :a111
+      expect(c.bla3).to eq 'hi'
+      expect(c.bla4).to eq 'hi2'
 
       c = Checker2.new(nil, :bla2 => :a111, :bla3 => "ho", :bla => 'bla')
-      c.bla.should == 'bla'
-      c.bla2.should == :a111
-      c.bla3.should == 'ho'
-      c.bla4.should == 'hi2'
+      expect(c.bla).to eq 'bla'
+      expect(c.bla2).to eq :a111
+      expect(c.bla3).to eq 'ho'
+      expect(c.bla4).to eq 'hi2'
     end
 
     it "validate bad" do

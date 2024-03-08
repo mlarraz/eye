@@ -1,5 +1,5 @@
 require 'rr'
-require 'rspec/core/mocking/with_rr'
+require 'rspec/core/mocking_adapters/rr'
 
 module RR::CelluloidExt
   %w{mock stub dont_allow proxy strong}.each do |_method|
@@ -12,4 +12,4 @@ module RR::CelluloidExt
   end
 end
 
-RSpec::Core::MockFrameworkAdapter.send(:include, RR::CelluloidExt)
+# RSpec::Core::MockingAdapters::RR.include RR::CelluloidExt

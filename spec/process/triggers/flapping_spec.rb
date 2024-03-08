@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Flapping" do
+RSpec.describe "Flapping" do
   before :each do
     @c = C.p1.merge(
       :triggers => C.flapping(:times => 4, :within => 10)
@@ -11,40 +11,40 @@ describe "Flapping" do
     start_ok_process(@c)
 
     triggers = @process.triggers
-    triggers.size.should == 1
+    expect(triggers.size).to eq 1
 
-    triggers.first.class.should == Eye::Trigger::Flapping
-    triggers.first.within.should == 10
-    triggers.first.times.should == 4
-    triggers.first.inspect.size.should > 100
+    expect(triggers.first.class).to eq Eye::Trigger::Flapping
+    expect(triggers.first.within).to eq 10
+    expect(triggers.first.times).to eq 4
+    expect(triggers.first.inspect.size).to be > 100
   end
 
   it "should check speedy flapping by default" do
     start_ok_process(C.p1)
 
     triggers = @process.triggers
-    triggers.size.should == 1
+    expect(triggers.size).to eq 1
 
-    triggers.first.class.should == Eye::Trigger::Flapping
-    triggers.first.within.should == 10
-    triggers.first.times.should == 10
+    expect(triggers.first.class).to eq Eye::Trigger::Flapping
+    expect(triggers.first.within).to eq 10
+    expect(triggers.first.times).to eq 10
   end
 
   it "process flapping" do
     @process = process(@c.merge(:start_command => @c[:start_command] + " -r"))
     @process.schedule :start
 
-    stub(@process).notify(:info, anything)
-    mock(@process).notify(:error, anything)
+    allow(@process).to receive(:notify).with(:info, anything)
+    expect(@process.wrapped_object).to receive(:notify).with(:error, anything)
 
     sleep 13
 
     # check flapping happens here
 
-    @process.state_name.should == :unmonitored
-    @process.watchers.keys.should == []
-    @process.states_history.states.last(2).should == [:down, :unmonitored]
-    @process.load_pid_from_file.should == nil
+    expect(@process.state_name).to eq :unmonitored
+    expect(@process.watchers.keys).to eq []
+    expect(@process.states_history.states.last(2)).to eq [:down, :unmonitored]
+    expect(@process.load_pid_from_file).to eq nil
   end
 
   it "process flapping emulate with kill" do
@@ -57,12 +57,12 @@ describe "Flapping" do
       sleep 3
     end
 
-    @process.state_name.should == :unmonitored
-    @process.watchers.keys.should == []
+    expect(@process.state_name).to eq :unmonitored
+    expect(@process.watchers.keys).to eq []
 
     # ! should switched to unmonitored from down status
-    @process.states_history.states.last(2).should == [:down, :unmonitored]
-    @process.load_pid_from_file.should == nil
+    expect(@process.states_history.states.last(2)).to eq [:down, :unmonitored]
+    expect(@process.load_pid_from_file).to eq nil
   end
 
   it "process flapping, and then send to start and fast kill, should ok started" do
@@ -75,26 +75,26 @@ describe "Flapping" do
       sleep 3
     end
 
-    @process.state_name.should == :unmonitored
-    @process.watchers.keys.should == []
+    expect(@process.state_name).to eq :unmonitored
+    expect(@process.watchers.keys).to eq []
 
     @process.start
-    @process.state_name.should == :up
+    expect(@process.state_name).to eq :up
 
     die_process!(@process.pid)
     sleep 4
-    @process.state_name.should == :up
+    expect(@process.state_name).to eq :up
 
-    @process.load_pid_from_file.should == @process.pid
+    expect(@process.load_pid_from_file).to eq @process.pid
   end
 
   it "flapping not happens" do
     @process = process(@c)
     @process.schedule :start
 
-    proxy(@process).schedule(:command => :restore)
-    proxy(@process).schedule(:command => :check_crash)
-    dont_allow(@process).schedule(:unmonitor)
+    expect(@process.wrapped_object).to receive(:schedule).with({ :command => :restore }).and_call_original
+    expect(@process.wrapped_object).to receive(:schedule).with({ :command => :check_crash }).and_call_original
+    expect(@process.wrapped_object).not_to receive(:schedule).with(:unmonitor)
 
     sleep 2
 
@@ -105,7 +105,7 @@ describe "Flapping" do
 
     sleep 2
 
-    @process.state_name.should == :up
-    @process.load_pid_from_file.should == @process.pid
+    expect(@process.state_name).to eq :up
+    expect(@process.load_pid_from_file).to eq @process.pid
   end
 end

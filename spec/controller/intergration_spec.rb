@@ -1,14 +1,14 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Intergration" do
+RSpec.describe "Intergration" do
   before :each do
     start_controller do
       res = @controller.load_erb(fixture("dsl/integration.erb"))
-      Marshal.dump(res).should_not include("ActiveSupport")
+      expect(Marshal.dump(res)).not_to include("ActiveSupport")
     end
 
-    @processes.size.should == 3
-    @processes.map{|c| c.state_name}.uniq.should == [:up]
+    expect(@processes.size).to eq 3
+    expect(@processes.map(&:state_name).uniq).to eq [:up]
 
     @samples = @controller.all_groups.detect{|c| c.name == 'samples'}
   end
@@ -20,81 +20,81 @@ describe "Intergration" do
   it "should be ok status string" do
     str = Eye::Cli.new.send(:render_info, @controller.info_data)
     s = str.split("\n").size
-    s.should >= 6
-    s.should <= 8
-    str.strip.size.should > 100
+    expect(s).to be >= 6
+    expect(s).to be <= 8
+    expect(str.strip.size).to be > 100
   end
 
   it "stop group" do
     @controller.command(:stop, "samples")
     sleep 7 # while they stopping
 
-    @p1.state_name.should == :unmonitored
-    @p2.state_name.should == :unmonitored
-    @p3.state_name.should == :up
+    expect(@p1.state_name).to eq :unmonitored
+    expect(@p2.state_name).to eq :unmonitored
+    expect(@p3.state_name).to eq :up
 
-    Eye::System.pid_alive?(@old_pid1).should == false
-    Eye::System.pid_alive?(@old_pid2).should == false
-    Eye::System.pid_alive?(@old_pid3).should == true
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq false
+    expect(Eye::System.pid_alive?(@old_pid2)).to eq false
+    expect(Eye::System.pid_alive?(@old_pid3)).to eq true
 
     sth = @p1.states_history.last
-    sth[:reason].to_s.should == 'stop by user'
-    sth[:state].should == :unmonitored
+    expect(sth[:reason].to_s).to eq 'stop by user'
+    expect(sth[:state]).to eq :unmonitored
   end
 
   it "stop process" do
     @controller.command(:stop, "sample1")
     sleep 7 # while they stopping
 
-    @p1.state_name.should == :unmonitored
-    @p2.state_name.should == :up
-    @p3.state_name.should == :up
+    expect(@p1.state_name).to eq :unmonitored
+    expect(@p2.state_name).to eq :up
+    expect(@p3.state_name).to eq :up
 
-    Eye::System.pid_alive?(@old_pid1).should == false
-    Eye::System.pid_alive?(@old_pid2).should == true
-    Eye::System.pid_alive?(@old_pid3).should == true
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq false
+    expect(Eye::System.pid_alive?(@old_pid2)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid3)).to eq true
   end
 
   it "unmonitor process" do
-    @controller.command(:unmonitor, "sample1").should == {:result => ["int:samples:sample1"]}
+    expect(@controller.command(:unmonitor, "sample1")).to eq({:result => ["int:samples:sample1"]})
     sleep 7 # while they stopping
 
-    @p1.state_name.should == :unmonitored
-    @p2.state_name.should == :up
-    @p3.state_name.should == :up
+    expect(@p1.state_name).to eq :unmonitored
+    expect(@p2.state_name).to eq :up
+    expect(@p3.state_name).to eq :up
 
-    Eye::System.pid_alive?(@old_pid1).should == true
-    Eye::System.pid_alive?(@old_pid2).should == true
-    Eye::System.pid_alive?(@old_pid3).should == true
+    expect(Eye::System.pid_alive?(@old_pid1)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid2)).to eq true
+    expect(Eye::System.pid_alive?(@old_pid3)).to eq true
   end
 
   it "send signal to process throught all schedules" do
-    mock(@p1).signal('usr2')
-    mock(@p2).signal('usr2')
-    mock(@p3).signal('usr2')
+    expect(@p1.wrapped_object).to receive(:signal).with('usr2')
+    expect(@p2.wrapped_object).to receive(:signal).with('usr2')
+    expect(@p3.wrapped_object).to receive(:signal).with('usr2')
 
-    @controller.command(:signal, 'usr2', "int").should == {:result => ["int"]}
+    expect(@controller.command(:signal, 'usr2', "int")).to eq({:result => ["int"]})
     sleep 3 # while they gettings
 
-    @p1.scheduler_last_command.should == :signal
-    @p1.scheduler_last_reason.should == 'signal by user'
+    expect(@p1.scheduler_last_command).to eq :signal
+    expect(@p1.scheduler_last_reason).to eq 'signal by user'
 
-    mock(@p1).signal('usr1')
+    expect(@p1.wrapped_object).to receive(:signal).with('usr1')
     @controller.command(:signal, 'usr1', 'sample1')
     sleep 0.5
   end
 
   it "stop_all" do
-    @processes.map(&:state_name).uniq.should == [:up]
-    @pids.map { |p| Eye::System.pid_alive?(p) }.uniq.should == [true]
+    expect(@processes.map(&:state_name).uniq).to eq [:up]
+    expect(@pids.map { |p| Eye::System.pid_alive?(p) }.uniq).to eq [true]
 
     should_spend(4, 3.5) do
       @controller.command(:stop_all)
       @controller.command(:restart, 'all') # should not be affected
     end
 
-    @processes.map(&:state_name).uniq.should == [:unmonitored]
-    @pids.map { |p| Eye::System.pid_alive?(p) }.uniq.should == [false]
+    expect(@processes.map(&:state_name).uniq).to eq [:unmonitored]
+    expect(@pids.map { |p| Eye::System.pid_alive?(p) }.uniq).to eq [false]
   end
 
 end

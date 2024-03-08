@@ -1,21 +1,21 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Checker::Cputime" do
+RSpec.describe "Eye::Checker::Cputime" do
 
   subject do
     Eye::Checker.create(123, {:type => :cputime, :every => 5.seconds, :times => 1, :below => 10.minutes})
   end
 
   it "get_value" do
-    mock(Eye::SystemResources).cputime(123){ 65 }
-    subject.get_value.should == 65
+    expect(Eye::SystemResources).to receive(:cputime).with(123) { 65 }
+    expect(subject.get_value).to eq 65
   end
 
   it "good" do
-    stub(subject).get_value{ 5.minutes }
-    subject.check.should == true
+    allow(subject).to receive(:get_value) { 5.minutes }
+    expect(subject.check).to eq true
 
-    stub(subject).get_value{ 20.minutes }
-    subject.check.should == false
+    allow(subject).to receive(:get_value) { 20.minutes }
+    expect(subject.check).to eq false
   end
 end

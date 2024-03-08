@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl::Config" do
+RSpec.describe "Eye::Dsl::Config" do
 
   it "logger" do
     conf = <<-E
@@ -8,7 +8,7 @@ describe "Eye::Dsl::Config" do
         logger "/tmp/1.loG"
       end
     E
-    Eye::Dsl.parse(conf).to_h.should == {:applications => {}, :settings => {:logger => ["/tmp/1.loG"]}, :defaults => {}}
+    expect(Eye::Dsl.parse(conf).to_h).to eq({:applications => {}, :settings => {:logger => ["/tmp/1.loG"]}, :defaults => {}})
   end
 
   it "logger with params" do
@@ -17,7 +17,7 @@ describe "Eye::Dsl::Config" do
         logger "/tmp/1.loG", 'dayly', 1_000_000
       end
     E
-    Eye::Dsl.parse(conf).to_h.should == {:applications => {}, :settings => {:logger => ["/tmp/1.loG", 'dayly', 1_000_000]}, :defaults => {}}
+    expect(Eye::Dsl.parse(conf).to_h).to eq({:applications => {}, :settings => {:logger => ["/tmp/1.loG", 'dayly', 1_000_000]}, :defaults => {}})
   end
 
   it "should merge sections" do
@@ -32,8 +32,11 @@ describe "Eye::Dsl::Config" do
       end
 
     E
-    Eye::Dsl.parse(conf).to_h.should == {:applications => {}, :settings => {:logger => ["/tmp/2.log"],
-      :logger_level => 2}, :defaults => {}}
+    expect(Eye::Dsl.parse(conf).to_h).to eq({
+      :applications => {},
+      :settings => {:logger => ["/tmp/2.log"], :logger_level => 2},
+      :defaults => {}
+    })
   end
 
 end

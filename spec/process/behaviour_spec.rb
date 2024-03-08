@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Behaviour" do
+RSpec.describe "Behaviour" do
   before :each do
     @process = process C.p1
   end
@@ -19,8 +19,8 @@ describe "Behaviour" do
         c.wait
       end
 
-      @process.state_name.should == :up
-      @process.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process.state_name).to eq :up
+      expect(@process.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
     end
   end
 end

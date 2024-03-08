@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Controller user_command" do
+RSpec.describe "Controller user_command" do
   subject { Eye::Controller.new }
 
   it "should execute string cmd" do
@@ -20,10 +20,10 @@ describe "Controller user_command" do
     subject.load_content(cfg)
     sleep 0.5
 
-    File.exist?(C.tmp_file).should == false
+    expect(File.exist?(C.tmp_file)).to eq false
     subject.command('user_command', 'abcd', 'proc')
     sleep 0.5
-    File.exist?(C.tmp_file).should == true
+    expect(File.exist?(C.tmp_file)).to eq true
   end
 
   it "should send notify when command exitstatus != 0" do
@@ -42,7 +42,7 @@ describe "Controller user_command" do
 
     subject.load_content(cfg)
     @process = subject.process_by_name("proc")
-    mock(@process).notify(:debug, anything)
+    expect(@process.wrapped_object).to receive(:notify).with(:debug, anything)
     sleep 0.5
     subject.command('user_command', 'abcd', 'proc')
     sleep 2.0
@@ -67,12 +67,12 @@ describe "Controller user_command" do
     sleep 0.5
 
     @process = subject.process_by_name("proc")
-    Eye::System.pid_alive?(@process.pid).should == true
+    expect(Eye::System.pid_alive?(@process.pid)).to eq true
 
     subject.command('user_command', 'abcd', 'app')
     sleep 2.5
 
-    Eye::System.pid_alive?(@process.pid).should == false
+    expect(Eye::System.pid_alive?(@process.pid)).to eq false
   end
 
   it "check identity before execute user_command" do
@@ -91,12 +91,12 @@ describe "Controller user_command" do
 
     subject.load_content(cfg)
     @process = subject.process_by_name("proc")
-    File.exist?(C.tmp_file).should == false
+    expect(File.exist?(C.tmp_file)).to eq false
     sleep 1
     change_ctime(C.p1_pid, 5.days.ago)
     subject.command('user_command', 'abcd', 'proc')
     sleep 1
-    File.exist?(C.tmp_file).should == false
+    expect(File.exist?(C.tmp_file)).to eq false
   end
 
 end

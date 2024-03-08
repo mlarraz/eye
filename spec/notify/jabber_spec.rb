@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Notify::Jabber" do
+RSpec.describe "Eye::Notify::Jabber" do
   before :each do
     @message = {:message=>"something", :name=>"blocking process",
         :full_name=>"main:default:blocking process", :pid=>123,
@@ -13,12 +13,12 @@ describe "Eye::Notify::Jabber" do
 
     @m = Eye::Notify::Jabber.new(@h, @message)
 
-    ob = ""
-    mock(Jabber::Client).new(anything){ ob }
-    mock(ob).connect('mx.some.host.ru', 25)
-    mock(ob).auth('123')
-    mock(ob).send(is_a(Jabber::Message))
-    mock(ob).close
+    ob = double
+    expect(Jabber::Client).to receive(:new).with(anything){ ob }
+    expect(ob).to receive(:connect).with('mx.some.host.ru', 25)
+    expect(ob).to receive(:auth).with('123')
+    expect(ob).to receive(:send).with(kind_of(Jabber::Message))
+    expect(ob).to receive(:close)
 
     @m.execute
   end

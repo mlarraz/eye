@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "check pid identity" do
+RSpec.describe "check pid identity" do
   it "check_identity method" do
     @process = process(C.p1)
     @process.start
@@ -9,22 +9,22 @@ describe "check pid identity" do
     File.open(C.p1[:pid_file], 'w'){|f| f.write(@pid) }
     change_ctime(C.p1[:pid_file], Time.parse('2010-01-01'))
 
-    @process.state_name.should == :up
+    expect(@process.state_name).to eq :up
     @process.send :check_identity
-    @process.state_name.should == :down
-    @process.pid.should == nil
+    expect(@process.state_name).to eq :down
+    expect(@process.pid).to eq nil
   end
 
   describe "monitor new process" do
     it "no identity, no process" do
       @process = process(C.p1)
-      @process.get_identity.should be_nil
+      expect(@process.get_identity).to be_nil
 
       @process.start
-      @process.state_name.should == :up
+      expect(@process.state_name).to eq :up
 
-      @process.get_identity.should be_within(1).of(Time.now)
-      @process.compare_identity.should == :ok
+      expect(@process.get_identity).to be_within(1).of(Time.now)
+      expect(@process.compare_identity).to eq :ok
     end
 
     it "identity, process, identity is ok" do
@@ -34,11 +34,11 @@ describe "check pid identity" do
       File.open(C.p1[:pid_file], 'w'){|f| f.write(@pid) }
 
       @process.start
-      @process.state_name.should == :up
-      @process.pid.should == @pid
+      expect(@process.state_name).to eq :up
+      expect(@process.pid).to eq @pid
 
-      @process.get_identity.should be_within(5).of(Time.now)
-      @process.compare_identity.should == :ok
+      expect(@process.get_identity).to be_within(5).of(Time.now)
+      expect(@process.compare_identity).to eq :ok
     end
 
     it "identity, process, identity is bad, pid_file is very old" do
@@ -47,20 +47,20 @@ describe "check pid identity" do
       @pid = Eye::System.daemonize(C.p1[:start_command], C.p1)[:pid]
       File.open(C.p1[:pid_file], 'w'){|f| f.write(@pid) }
       change_ctime(C.p1[:pid_file], Time.parse('2010-01-01'))
-      @process.get_identity.year.should == 2010
-      @process.compare_identity.should == :no_pid
+      expect(@process.get_identity.year).to eq 2010
+      expect(@process.compare_identity).to eq :no_pid
 
       @process.start
-      @process.state_name.should == :up
-      @process.pid.should_not == @pid # !!!!
+      expect(@process.state_name).to eq :up
+      expect(@process.pid).not_to eq @pid # !!!!
 
-      Eye::System.pid_alive?(@pid).should == true
-      Eye::System.pid_alive?(@process.pid).should == true
+      expect(Eye::System.pid_alive?(@pid)).to eq true
+      expect(Eye::System.pid_alive?(@process.pid)).to eq true
 
-      @process.get_identity.should be_within(2).of(Time.now)
-      @process.compare_identity.should == :ok
+      expect(@process.get_identity).to be_within(2).of(Time.now)
+      expect(@process.compare_identity).to eq :ok
 
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
 
     it "check_identity disabled, identity, process, identity is bad, pid_file is very old" do
@@ -69,18 +69,18 @@ describe "check pid identity" do
       @pid = Eye::System.daemonize(C.p1[:start_command], C.p1)[:pid]
       File.open(C.p1[:pid_file], 'w'){|f| f.write(@pid) }
       change_ctime(C.p1[:pid_file], Time.parse('2010-01-01'))
-      @process.get_identity.year.should == 2010
-      @process.compare_identity.should == :ok
+      expect(@process.get_identity.year).to eq 2010
+      expect(@process.compare_identity).to eq :ok
 
       @process.start
-      @process.state_name.should == :up
-      @process.pid.should == @pid
+      expect(@process.state_name).to eq :up
+      expect(@process.pid).to eq @pid
 
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(@pid)).to eq true
 
-      @process.compare_identity.should == :ok
+      expect(@process.compare_identity).to eq :ok
 
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
   end
 
@@ -93,16 +93,16 @@ describe "check pid identity" do
     sleep 5
 
     # here process should mark as crash, and restart again
-    @process.states_history.states.should == [:unmonitored, :starting, :up, :down, :starting, :up]
-    @process.scheduler_history.states.should == [:check_crash, :restore]
+    expect(@process.states_history.states).to eq [:unmonitored, :starting, :up, :down, :starting, :up]
+    expect(@process.scheduler_history.states).to eq [:check_crash, :restore]
 
-    @process.state_name.should == :up
-    @process.pid.should_not == old_pid
+    expect(@process.state_name).to eq :up
+    expect(@process.pid).not_to eq old_pid
 
-    Eye::System.pid_alive?(old_pid).should == true
-    Eye::System.pid_alive?(@process.pid).should == true
+    expect(Eye::System.pid_alive?(old_pid)).to eq true
+    expect(Eye::System.pid_alive?(@process.pid)).to eq true
 
-    @process.load_pid_from_file.should == @process.pid
+    expect(@process.load_pid_from_file).to eq @process.pid
   end
 
   it "just touch should not crash process" do
@@ -116,11 +116,11 @@ describe "check pid identity" do
     sleep 5
 
     # here process should mark as crash, and restart again
-    @process.states_history.states.should == [:unmonitored, :starting, :up]
+    expect(@process.states_history.states).to eq [:unmonitored, :starting, :up]
 
-    @process.state_name.should == :up
-    @process.pid.should == old_pid
-    @process.load_pid_from_file.should == @process.pid
+    expect(@process.state_name).to eq :up
+    expect(@process.pid).to eq old_pid
+    expect(@process.load_pid_from_file).to eq @process.pid
   end
 
   it "check_identity disabled, process changed identity while running" do
@@ -132,13 +132,13 @@ describe "check pid identity" do
     sleep 5
 
     # here process should mark as crash, and restart again
-    @process.states_history.states.should == [:unmonitored, :starting, :up]
+    expect(@process.states_history.states).to eq [:unmonitored, :starting, :up]
 
-    @process.state_name.should == :up
-    @process.pid.should == old_pid
+    expect(@process.state_name).to eq :up
+    expect(@process.pid).to eq old_pid
 
-    Eye::System.pid_alive?(old_pid).should == true
-    @process.load_pid_from_file.should == @process.pid
+    expect(Eye::System.pid_alive?(old_pid)).to eq true
+    expect(@process.load_pid_from_file).to eq @process.pid
   end
 
   describe "pid_file externally changed" do
@@ -155,15 +155,15 @@ describe "check pid identity" do
       sleep 5
 
       # here process should mark as crash, and restart again
-      @process.states_history.states.should == [:unmonitored, :starting, :up]
+      expect(@process.states_history.states).to eq [:unmonitored, :starting, :up]
 
-      @process.state_name.should == :up
-      @process.pid.should == @pid
+      expect(@process.state_name).to eq :up
+      expect(@process.pid).to eq @pid
 
-      Eye::System.pid_alive?(old_pid).should == true
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(old_pid)).to eq true
+      expect(Eye::System.pid_alive?(@pid)).to eq true
 
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
 
     it "pid file was rewritten, but process with bad identity" do
@@ -181,15 +181,15 @@ describe "check pid identity" do
       sleep 7
 
       # here process should mark as crash, and restart again
-      @process.states_history.states.should == [:unmonitored, :starting, :up]
+      expect(@process.states_history.states).to eq [:unmonitored, :starting, :up]
 
-      @process.state_name.should == :up
+      expect(@process.state_name).to eq :up
 
-      Eye::System.pid_alive?(@pid).should == true
-      Eye::System.pid_alive?(@process.pid).should == true
-      @pid.should_not == @process.pid
+      expect(Eye::System.pid_alive?(@pid)).to eq true
+      expect(Eye::System.pid_alive?(@process.pid)).to eq true
+      expect(@pid).not_to eq @process.pid
 
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
   end
 
@@ -202,8 +202,8 @@ describe "check pid identity" do
       change_ctime(C.p1[:pid_file], 5.days.ago)
       sleep 2
       @process.stop
-      Eye::System.pid_alive?(old_pid).should == true
-      @process.load_pid_from_file.should == nil
+      expect(Eye::System.pid_alive?(old_pid)).to eq true
+      expect(@process.load_pid_from_file).to eq nil
     end
 
     it "restart, identity bad -> just mark as crashed and unmonitored, remove pid_file" do
@@ -215,10 +215,10 @@ describe "check pid identity" do
       sleep 2
       @process.restart
       sleep 2
-      @process.pid.should_not == old_pid
-      Eye::System.pid_alive?(old_pid).should == true
-      Eye::System.pid_alive?(@process.pid).should == true
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.pid).not_to eq old_pid
+      expect(Eye::System.pid_alive?(old_pid)).to eq true
+      expect(Eye::System.pid_alive?(@process.pid)).to eq true
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
 
     it "restart_command, identity bad -> just mark as crashed and unmonitored, remove pid_file" do
@@ -226,15 +226,15 @@ describe "check pid identity" do
       old_pid = @process.pid
       @pids << old_pid
       sleep 2
-      dont_allow(@process).execute
+      expect(@process.wrapped_object).not_to receive(:execute)
       change_ctime(C.p1[:pid_file], 5.days.ago)
       sleep 2
       @process.restart
       sleep 3
-      @process.pid.should_not == old_pid
-      Eye::System.pid_alive?(old_pid).should == true
-      Eye::System.pid_alive?(@process.pid).should == true
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.pid).not_to eq old_pid
+      expect(Eye::System.pid_alive?(old_pid)).to eq true
+      expect(Eye::System.pid_alive?(@process.pid)).to eq true
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
   end
 

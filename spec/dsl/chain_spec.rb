@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl::Chain" do
+RSpec.describe "Eye::Dsl::Chain" do
 
   it "should understand chain options" do
     conf = <<-E
@@ -37,7 +37,7 @@ describe "Eye::Dsl::Chain" do
             :application=>"bla"}}}
     }
 
-    Eye::Dsl.parse_apps(conf).should == h
+    expect(Eye::Dsl.parse_apps(conf)).to eq h
   end
 
   it "1 inner group have" do
@@ -60,7 +60,7 @@ describe "Eye::Dsl::Chain" do
           "__default__"=>{:name => "__default__", :application => "bla",
             :processes=>{"p1"=>{:pid_file=>"1", :application=>"bla", :group=>"__default__", :name=>"p1"}}}}}}
 
-    Eye::Dsl.parse_apps(conf).should == h
+    expect(Eye::Dsl.parse_apps(conf)).to eq h
   end
 
   it "1 group have, 1 not" do
@@ -85,7 +85,7 @@ describe "Eye::Dsl::Chain" do
             :chain=>{:start=>{:grace=>5, :action=>:start}, :restart=>{:grace=>5, :action=>:restart}}},
           "gr2"=>{:working_dir=>"/tmp", :name => "gr2", :application => "bla"}}}}
 
-    Eye::Dsl.parse_apps(conf).should == h
+    expect(Eye::Dsl.parse_apps(conf)).to eq h
   end
 
   it "one option" do
@@ -107,7 +107,7 @@ describe "Eye::Dsl::Chain" do
           :chain=>{:start=>{:grace=>5, :action=>:start, :type=>:async}},
           :processes=>{"3"=>{:pid_file=>"3", :application=>"bla", :group=>"__default__", :name=>"3"}}}}}}
 
-    Eye::Dsl.parse_apps(conf).should == h
+    expect(Eye::Dsl.parse_apps(conf)).to eq h
   end
 
   it "group can rewrite part of options" do
@@ -136,7 +136,7 @@ describe "Eye::Dsl::Chain" do
             :restart=>{:grace=>5, :action=>:restart}},
         :processes=>{"3"=>{:pid_file=>"3", :application=>"bla", :group=>"gr", :name=>"3"}}}}}}
 
-    Eye::Dsl.parse_apps(conf).should == h
+    expect(Eye::Dsl.parse_apps(conf)).to eq h
   end
 
 

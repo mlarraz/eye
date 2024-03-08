@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "dependency" do
+RSpec.describe "dependency" do
   after :each do
     @pids << @process_a.pid if @process_a && @process_a.alive?
     @pids << @process_b.pid if @process_b && @process_b.alive?
@@ -41,51 +41,51 @@ describe "dependency" do
       @c.load_content(conf)
       sleep 0.5
       @process_a = @c.process_by_name("a")
-      @process_a.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :unmonitored
       @pid_a = @process_a.pid
       @process_b = @c.process_by_name("b")
-      @process_b.state_name.should == :unmonitored
+      expect(@process_b.state_name).to eq :unmonitored
     end
 
     it "start :a" do
       @process_a.send_call :command => :start
       sleep 4
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :unmonitored
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored]
 
-      @process_a.scheduler_history.states.should == [:monitor, :unmonitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :unmonitor]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :unmonitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :unmonitor]
     end
 
     it "start :b" do
       @process_b.send_call :command => :start
       sleep 4.5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :unmonitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :unmonitor, :start]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :unmonitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :unmonitor, :start]
     end
 
     it "start :b, and :a not started (crashed)" do
       @process_a.config[:start_command] = "asdfasdf asf "
       @process_b.send_call :command => :start
 
-      dont_allow(@process_b).daemonize_process
+      expect(@process_b).not_to receive(:daemonize_process)
       sleep 7
 
-      @process_a.state_name.should == :unmonitored
-      @process_b.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :unmonitored
+      expect(@process_b.state_name).to eq :unmonitored
 
-      @process_b.states_history.states.should == [:unmonitored, :starting, :unmonitored]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :unmonitored]
     end
 
     it "start :b, and :a not started (crashed), than a somehow up, should reschedule and up" do
@@ -94,16 +94,16 @@ describe "dependency" do
       @process_b.config[:triggers].detect{|k, v| k.to_s =~ /wait_dep/}[1][:retry_after] = 2.seconds
       @process_b.send_call :command => :start
       sleep 6
-      @process_a.state_name.should == :unmonitored
-      @process_b.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :unmonitored
+      expect(@process_b.state_name).to eq :unmonitored
 
       @process_a.config[:start_command] = "sleep 100"
       sleep 3.5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
 
-      @process_b.states_history.states.should == [:unmonitored, :starting, :unmonitored, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :unmonitored, :starting, :up]
     end
 
     it "start :b, and :a started after big timeout (> wait_timeout)" do
@@ -112,14 +112,14 @@ describe "dependency" do
       @process_b.send_call :command => :start
       sleep 10
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :unmonitored, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :unmonitored, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :unmonitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :unmonitor, :start, :start]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :unmonitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :unmonitor, :start, :start]
     end
 
     it "start :b and should_start = false" do
@@ -129,22 +129,22 @@ describe "dependency" do
       @process_b.send_call :command => :start
       sleep 4
 
-      @process_a.state_name.should == :unmonitored
-      @process_b.state_name.should == :starting
+      expect(@process_a.state_name).to eq :unmonitored
+      expect(@process_b.state_name).to eq :starting
 
       # then somehow a :up
       @process_a.start
       sleep 3
 
       # now b should start automatically
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :unmonitored, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :unmonitored, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :unmonitor]
-      @process_b.scheduler_history.states.should == [:monitor, :unmonitor, :start, :start]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :unmonitor]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :unmonitor, :start, :start]
     end
   end
 
@@ -189,164 +189,164 @@ describe "dependency" do
       @pids << @process_a.pid
       @pids << @process_b.pid
 
-      Eye::System.pid_alive?(@pid_a).should == true
-      Eye::System.pid_alive?(@pid_b).should == true
+      expect(Eye::System.pid_alive?(@pid_a)).to eq true
+      expect(Eye::System.pid_alive?(@pid_b)).to eq true
     end
 
     it "crashed :a, should restore :a and restart :b" do
       Eye::System.send_signal(@process_a.pid, 9)
       sleep 6
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
 
-      @process_a.pid.should_not == @pid_a
-      @process_b.pid.should_not == @pid_b
+      expect(@process_a.pid).not_to eq @pid_a
+      expect(@process_b.pid).not_to eq @pid_b
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :down, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :down, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
 
-      @process_a.scheduler_history.states[0,4].should == [:monitor, :start, :check_crash, :restore]
-      @process_b.scheduler_history.states.should == [:monitor, :restart]
+      expect(@process_a.scheduler_history.states[0,4]).to eq [:monitor, :start, :check_crash, :restore]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :restart]
     end
 
     it "crashed :b, should only restore :b" do
       Eye::System.send_signal(@process_b.pid, 9)
       sleep 2
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
 
-      Eye::System.pid_alive?(@pid_a).should == true
-      Eye::System.pid_alive?(@pid_b).should == false
-      Eye::System.pid_alive?(@process_b.pid).should == true
+      expect(Eye::System.pid_alive?(@pid_a)).to eq true
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
+      expect(Eye::System.pid_alive?(@process_b.pid)).to eq true
 
-      @pid_a.should == @process_a.pid
-      @pid_b.should_not == @process_b.pid
+      expect(@pid_a).to eq @process_a.pid
+      expect(@pid_b).not_to eq @process_b.pid
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :down, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :down, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :check_crash, :restore]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :check_crash, :restore]
     end
 
     it "stop :a, should stop :b" do
       @process_a.stop
       sleep 1
 
-      @process_a.state_name.should == :unmonitored
-      @process_b.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :unmonitored
+      expect(@process_b.state_name).to eq :unmonitored
 
-      Eye::System.pid_alive?(@pid_a).should == false
-      Eye::System.pid_alive?(@pid_b).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :stopping, :down, :unmonitored]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :stopping, :down, :unmonitored]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :stopping, :down, :unmonitored]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :stopping, :down, :unmonitored]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :stop]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :stop]
     end
 
     it "stop :b" do
       @process_b.stop
       sleep 1
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :unmonitored
 
-      Eye::System.pid_alive?(@pid_a).should == true
-      Eye::System.pid_alive?(@pid_b).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq true
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :stopping, :down, :unmonitored]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :stopping, :down, :unmonitored]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor]
     end
 
     it "unmonitor :a, should unmonitor :b" do
       @process_a.unmonitor
       sleep 1
 
-      @process_a.state_name.should == :unmonitored
-      @process_b.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :unmonitored
+      expect(@process_b.state_name).to eq :unmonitored
 
-      Eye::System.pid_alive?(@pid_a).should == true
-      Eye::System.pid_alive?(@pid_b).should == true
+      expect(Eye::System.pid_alive?(@pid_a)).to eq true
+      expect(Eye::System.pid_alive?(@pid_b)).to eq true
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :unmonitored]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :unmonitored]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :unmonitored]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :unmonitored]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :unmonitor]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :unmonitor]
     end
 
     it "unmonitor :b" do
       @process_b.unmonitor
       sleep 1
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :unmonitored
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :unmonitored
 
-      Eye::System.pid_alive?(@pid_a).should == true
-      Eye::System.pid_alive?(@pid_b).should == true
+      expect(Eye::System.pid_alive?(@pid_a)).to eq true
+      expect(Eye::System.pid_alive?(@pid_b)).to eq true
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :unmonitored]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :unmonitored]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor]
     end
 
     it "restart :a, should restart :b" do
       @process_a.restart
       sleep 2
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
 
-      Eye::System.pid_alive?(@pid_a).should == false
-      Eye::System.pid_alive?(@pid_b).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :down, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :down, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start, :start, :check_crash, :restore]
-      @process_b.scheduler_history.states.should == [:monitor, :restart]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start, :start, :check_crash, :restore]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :restart]
     end
 
     it "restart :b" do
       @process_b.restart
       sleep 1
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
 
-      Eye::System.pid_alive?(@pid_a).should == true
-      Eye::System.pid_alive?(@pid_b).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq true
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor]
     end
 
     it "restart send to group" do
       @c.command :restart, 'app'
       sleep 3.5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
 
-      Eye::System.pid_alive?(@pid_a).should == false
-      Eye::System.pid_alive?(@pid_b).should == false
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
 
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
 
-      @process_a.scheduler_history.states.should == [:monitor, :start, :restart, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :restart]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start, :restart, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :restart]
     end
 
     it ":a was deleted, should successfully restart :b" do
@@ -355,10 +355,10 @@ describe "dependency" do
       @process_b.restart
       sleep 1
 
-      @process_b.state_name.should == :up
-      Eye::System.pid_alive?(@pid_b).should == false
-      @process_b.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_b.scheduler_history.states.should == [:monitor]
+      expect(@process_b.state_name).to eq :up
+      expect(Eye::System.pid_alive?(@pid_b)).to eq false
+      expect(@process_b.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_b.scheduler_history.states).to eq [:monitor]
     end
 
     it ":b was deleted, should successfully restart :a" do
@@ -367,10 +367,10 @@ describe "dependency" do
       @process_a.restart
       sleep 1
 
-      @process_a.state_name.should == :up
-      Eye::System.pid_alive?(@pid_a).should == false
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_a.scheduler_history.states.should == [:monitor, :start]
+      expect(@process_a.state_name).to eq :up
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start]
     end
 
     it ":b was unmonitored, should successfully restart :a, and not restart :b" do
@@ -380,12 +380,12 @@ describe "dependency" do
       @process_a.restart
       sleep 1.5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :unmonitored
-      Eye::System.pid_alive?(@pid_a).should == false
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_a.scheduler_history.states.should == [:monitor, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :unmonitor]
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :unmonitored
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :unmonitor]
     end
 
     it ":b was unmonitored, when restart group, should restart a and b" do
@@ -395,12 +395,12 @@ describe "dependency" do
       @c.command :restart, 'app'
       sleep 2.5
 
-      @process_a.state_name.should == :up
-      @process_b.state_name.should == :up
-      Eye::System.pid_alive?(@pid_a).should == false
-      @process_a.states_history.states.should == [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
-      @process_a.scheduler_history.states.should == [:monitor, :start, :restart, :start]
-      @process_b.scheduler_history.states.should == [:monitor, :unmonitor, :restart]
+      expect(@process_a.state_name).to eq :up
+      expect(@process_b.state_name).to eq :up
+      expect(Eye::System.pid_alive?(@pid_a)).to eq false
+      expect(@process_a.states_history.states).to eq [:unmonitored, :starting, :up, :restarting, :stopping, :down, :starting, :up]
+      expect(@process_a.scheduler_history.states).to eq [:monitor, :start, :restart, :start]
+      expect(@process_b.scheduler_history.states).to eq [:monitor, :unmonitor, :restart]
     end
   end
 end

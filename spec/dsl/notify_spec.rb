@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl notify" do
+RSpec.describe "Eye::Dsl notify" do
   it "integration" do
     conf = <<-E
       Eye.config do
@@ -27,7 +27,7 @@ describe "Eye::Dsl notify" do
     E
     res = Eye::Dsl.parse(conf).to_h
 
-    res.should == {
+    expect(res).to eq({
       :applications => {
         "bla"=>{:name=>"bla",
           :notify=>{"vasya"=>:warn, "idiots"=>:fatal},
@@ -41,7 +41,8 @@ describe "Eye::Dsl notify" do
           "petya"=>{:name=>"petya", :type=>:mail, :contact=>"petya@mail.ru", :opts=>{:port=>1111}},
           'idiots'=>[{:name=>"idiot1", :type=>:mail, :contact=>"idiot1@mail.ru", :opts=>{}}, {:name=>"idiot2", :type=>:mail, :contact=>"idiot1@mail.ru", :opts=>{:port=>1111}}],
           "idiot1"=>{:name=>"idiot1", :type=>:mail, :contact=>"idiot1@mail.ru", :opts=>{}},
-          "idiot2"=>{:name=>"idiot2", :type=>:mail, :contact=>"idiot1@mail.ru", :opts=>{:port=>1111}}}}}
+          "idiot2"=>{:name=>"idiot2", :type=>:mail, :contact=>"idiot1@mail.ru", :opts=>{:port=>1111}}}}
+    })
   end
 
   it "valid contact type" do
@@ -50,8 +51,11 @@ describe "Eye::Dsl notify" do
         contact :vasya, :mail, "vasya@mail.ru", :port => 25, :host => "localhost"
       end
     E
-    Eye::Dsl.parse(conf).settings.should == {:contacts=>{
-      "vasya"=>{:name=>"vasya", :type=>:mail, :contact=>"vasya@mail.ru", :opts=>{:port => 25, :host => "localhost"}}}}
+    expect(Eye::Dsl.parse(conf).settings).to eq({
+      :contacts=>{
+        "vasya"=>{:name=>"vasya", :type=>:mail, :contact=>"vasya@mail.ru", :opts=>{:port => 25, :host => "localhost"}}
+      }
+    })
   end
 
   it "raise on unknown contact type" do
@@ -90,11 +94,12 @@ describe "Eye::Dsl notify" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {
+    expect(Eye::Dsl.parse_apps(conf)).to eq({
       "bla" => {:name=>"bla",
         :notify=>{"vasya"=>:warn},
         :groups=>{"bla"=>{:name=>"bla",
-          :notify=>{"vasya"=>:warn}, :application=>"bla"}}}}
+          :notify=>{"vasya"=>:warn}, :application=>"bla"}}}
+    })
   end
 
   it "raise on unknown level" do
@@ -116,10 +121,11 @@ describe "Eye::Dsl notify" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {
+    expect(Eye::Dsl.parse_apps(conf)).to eq({
       "bla" => {:name=>"bla",
         :notify=>{"vasya"=>:warn},
-        :groups=>{"bla"=>{:name=>"bla", :notify=>{}, :application=>"bla"}}}}
+        :groups=>{"bla"=>{:name=>"bla", :notify=>{}, :application=>"bla"}}}
+    })
   end
 
   it "add custom notify" do
@@ -139,8 +145,10 @@ describe "Eye::Dsl notify" do
     E
     res = Eye::Dsl.parse(conf).to_h
 
-    res.should == {:applications => {"bla"=>{:name=>"bla", :notify=>{"vasya"=>:warn}}},
+    expect(res).to eq({
+      :applications => {"bla"=>{:name=>"bla", :notify=>{"vasya"=>:warn}}},
       :defaults => {},
-      :settings => {:cnot=>{:bla=>"some", :type=>:cnot}, :contacts=>{"vasya"=>{:name=>"vasya", :type=>:cnot, :contact=>"some", :opts=>{}}}}}
+      :settings => {:cnot=>{:bla=>"some", :type=>:cnot}, :contacts=>{"vasya"=>{:name=>"vasya", :type=>:cnot, :contact=>"some", :opts=>{}}}}
+    })
   end
 end

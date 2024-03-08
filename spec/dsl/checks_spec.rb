@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl checks" do
+RSpec.describe "Eye::Dsl checks" do
 
   it "ok checks" do
     conf = <<-E
@@ -13,7 +13,7 @@ describe "Eye::Dsl checks" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}, :cpu=>{:below=>100, :every=>20, :type=>:cpu}}, :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}, :cpu=>{:below=>100, :every=>20, :type=>:cpu}}, :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
   end
 
   it "inherit checks" do
@@ -33,7 +33,7 @@ describe "Eye::Dsl checks" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:name => "bla", :checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :processes=>{"1"=>{:checks=>{:memory=>{:below=>94371840, :every=>5, :type=>:memory}, :cpu=>{:below=>100, :every=>20, :type=>:cpu}}, :pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}, "2"=>{:checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"2"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name => "bla", :checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :processes=>{"1"=>{:checks=>{:memory=>{:below=>94371840, :every=>5, :type=>:memory}, :cpu=>{:below=>100, :every=>20, :type=>:cpu}}, :pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"}, "2"=>{:checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"2"}}}}}})
   end
 
   it "no valid checks" do
@@ -59,7 +59,7 @@ describe "Eye::Dsl checks" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :triggers=>{:flapping=>{:times=>2, :within=>15, :type=>:flapping}}, :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :triggers=>{:flapping=>{:times=>2, :within=>15, :type=>:flapping}}, :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
   end
 
   it "no valid trigger" do
@@ -89,14 +89,15 @@ describe "Eye::Dsl checks" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {
+    expect(Eye::Dsl.parse_apps(conf)).to eq({
       "bla" => {:name => "bla", :checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}},
       :groups=>{
         "__default__"=>{:name => "__default__", :application => "bla",
           :checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}},
           :processes=>{
             "1"=>{:checks=>{}, :pid_file=>"1.pid", :application=>"bla", :group=>"__default__", :name=>"1"},
-            "2"=>{:checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"2"}}}}}}
+            "2"=>{:checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"2"}}}}}
+    })
   end
 
   it "empty nocheck do nothing and inherit" do
@@ -119,7 +120,7 @@ describe "Eye::Dsl checks" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {
+    expect(Eye::Dsl.parse_apps(conf)).to eq({
       "bla" => {:name => "bla",
         :checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}},
         :groups=>{
@@ -128,7 +129,8 @@ describe "Eye::Dsl checks" do
           "__default__"=>{:name =>
             "__default__", :application => "bla",
             :checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :processes=>{
-              "2"=>{:checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"2"}}}}}}
+              "2"=>{:checks=>{:memory=>{:below=>104857600, :every=>10, :type=>:memory}}, :pid_file=>"2.pid", :application=>"bla", :group=>"__default__", :name=>"2"}}}}}
+    })
   end
 
   it "process with unknown checker type" do
@@ -182,12 +184,12 @@ describe "Eye::Dsl checks" do
     E
     res = Eye::Dsl.parse_apps(conf)
     proc = res['bla'][:groups]['__default__'][:processes]['1'][:checks][:socket][:expect_data]
-    proc[0].should == false
-    proc[1].should == true
+    expect(proc[0]).to eq false
+    expect(proc[1]).to eq true
 
     proc = res['bla'][:groups]['__default__'][:processes]['2'][:checks][:socket][:expect_data]
-    proc[0].should == false
-    proc[1].should == true
+    expect(proc[0]).to eq false
+    expect(proc[1]).to eq true
   end
 
   it "checker with fires" do
@@ -200,7 +202,7 @@ describe "Eye::Dsl checks" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid", :checks=>{:memory=>{:fires=>[:stop, :start], :below=>10, :type=>:memory}}}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid", :checks=>{:memory=>{:fires=>[:stop, :start], :below=>10, :type=>:memory}}}}}}}})
   end
 
   it "checker with fires" do
@@ -213,7 +215,7 @@ describe "Eye::Dsl checks" do
         end
       end
     E
-    Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid", :checks=>{:memory=>{:fires=>:stop, :below=>10, :type=>:memory}}}}}}}}
+    expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"2.pid", :checks=>{:memory=>{:fires=>:stop, :below=>10, :type=>:memory}}}}}}}})
   end
 
   it "checker with fires" do
@@ -246,7 +248,7 @@ describe "Eye::Dsl checks" do
     conf = <<-E
       class Cpu2 < Eye::Checker::CustomDefer
         # checks :cpu2, :every => 3.seconds, :below => 80, :times => [3,5]
-        param :below, [Fixnum, Float], true
+        param :below, [Integer, Float], true
 
         def check_name
           @check_name ||= "cpu2(\#{human_value(below)})"
@@ -275,10 +277,12 @@ describe "Eye::Dsl checks" do
     E
 
     res = Eye::Dsl.parse_apps(conf)
-    res.should == {"bla"=>{:name=>"bla", :groups=>{
+    expect(res).to eq({
+      "bla"=>{:name=>"bla", :groups=>{
       "__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{
         "1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid",
-          :checks=>{:cpu2=>{:times=>2, :below=>80, :every=>30, :type=>:cpu2}}}}}}}}
+          :checks=>{:cpu2=>{:times=>2, :below=>80, :every=>30, :type=>:cpu2}}}}}}}
+    })
   end
 
   it "define custom check in Checker scope" do
@@ -317,10 +321,11 @@ describe "Eye::Dsl checks" do
     E
 
     res = Eye::Dsl.parse_apps(conf)
-    res.should == {"bla" => {:name=>"bla", :groups=>{
+    expect(res).to eq({"bla" => {:name=>"bla", :groups=>{
       "__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{
         "1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid",
-          :triggers=>{:delete_file=>{:file=>"/tmp/111111", :type=>:delete_file}}}}}}}}
+          :triggers=>{:delete_file=>{:file=>"/tmp/111111", :type=>:delete_file}}}}}}}
+    })
   end
 
   describe "two checks with the same type" do
@@ -337,14 +342,15 @@ describe "Eye::Dsl checks" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {
+      expect(Eye::Dsl.parse_apps(conf)).to eq({
         "bla" => {:name=>"bla", :groups=>{
           "__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{
             "1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid",
               :checks=>{
                 :memory=>{:below=>104857600, :every=>10, :type=>:memory},
                 :memory2=>{:below=>100, :every=>20, :type=>:memory},
-                :memory_3=>{:below=>100, :every=>20, :type=>:memory}}}}}}}}
+                :memory_3=>{:below=>100, :every=>20, :type=>:memory}}}}}}}
+      })
     end
 
     it "with nochecks" do
@@ -360,20 +366,21 @@ describe "Eye::Dsl checks" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {
+      expect(Eye::Dsl.parse_apps(conf)).to eq({
         "bla" => {:name=>"bla", :checks=>{:memory=>{:below=>100, :type=>:memory}}, :groups=>{
           "__default__"=>{:name=>"__default__",
             :checks=>{
               :memory=>{:below=>100, :type=>:memory}}, :application=>"bla", :processes=>{
                 "1"=>{:name=>"1", :checks=>{
                   :memory2=>{:below=>100, :every=>20, :type=>:memory}},
-                  :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}}}}}}
+                  :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}}}}}
+      })
     end
 
     it "do not cross if there custom checker already" do
       conf = <<-E
         class Cpu2 < Eye::Checker::CustomDefer
-          param :below, [Fixnum, Float], true
+          param :below, [Integer, Float], true
         end
 
         Eye.application("bla") do
@@ -385,14 +392,15 @@ describe "Eye::Dsl checks" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {
+      expect(Eye::Dsl.parse_apps(conf)).to eq({
         "bla" => {:name=>"bla", :groups=>{
           "__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{
             "1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid",
               :checks=>{
                 :cpu=>{:below=>104857600, :every=>10, :type=>:cpu},
                 :cpu2=>{:below=>100, :every=>20, :type=>:cpu2},
-                :cpu3=>{:below=>100, :every=>20, :type=>:cpu}}}}}}}}
+                :cpu3=>{:below=>100, :every=>20, :type=>:cpu}}}}}}}
+      })
     end
 
     it "errored cases" do
@@ -426,13 +434,14 @@ describe "Eye::Dsl checks" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {
+      expect(Eye::Dsl.parse_apps(conf)).to eq({
         "bla" => {:name=>"bla", :groups=>{
           "__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{
             "1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid", :triggers=>{
               :transition=>{:from=>:a, :type=>:transition},
               :transition2=>{:to=>:b, :type=>:transition},
-              :transition_3=>{:event=>:c, :type=>:transition}}}}}}}}
+              :transition_3=>{:event=>:c, :type=>:transition}}}}}}}
+      })
     end
 
     it "with notriggers" do
@@ -448,12 +457,13 @@ describe "Eye::Dsl checks" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {
+      expect(Eye::Dsl.parse_apps(conf)).to eq({
         "bla" => {:name=>"bla", :triggers=>{:transition=>{:type=>:transition}}, :groups=>{
           "__default__"=>{:name=>"__default__",
             :triggers=>{:transition=>{:type=>:transition}}, :application=>"bla", :processes=>{
               "1"=>{:name=>"1", :triggers=>{:transition2=>{:to=>:up, :type=>:transition}},
-              :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}}}}}}
+              :application=>"bla", :group=>"__default__", :pid_file=>"1.pid"}}}}}
+      })
     end
 
     it "errored cases" do

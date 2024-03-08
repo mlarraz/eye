@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Dsl" do
+RSpec.describe "Eye::Dsl" do
   describe "child process" do
     it "ok child monitor" do
       conf = <<-E
@@ -11,7 +11,7 @@ describe "Eye::Dsl" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :monitor_children=>{:restart_command=>"kill"}, :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :monitor_children=>{:restart_command=>"kill"}, :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
     end
 
     it "child invalid command" do
@@ -52,7 +52,7 @@ describe "Eye::Dsl" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :monitor_children=>{:checks=>{:cpu=>{:below=>100, :every=>20, :type=>:cpu}}}, :application=>"bla", :group=>"__default__", :name=>"1"}}}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name => "bla", :groups=>{"__default__"=>{:name => "__default__", :application => "bla", :processes=>{"1"=>{:pid_file=>"1.pid", :monitor_children=>{:checks=>{:cpu=>{:below=>100, :every=>20, :type=>:cpu}}}, :application=>"bla", :group=>"__default__", :name=>"1"}}}}}})
     end
 
     it "child should not inherit checks" do
@@ -66,7 +66,7 @@ describe "Eye::Dsl" do
           end
         end
       E
-      Eye::Dsl.parse_apps(conf).should == {"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid", :checks=>{:cpu=>{:below=>100, :every=>20, :type=>:cpu}}, :monitor_children=>{}}}}}}}
+      expect(Eye::Dsl.parse_apps(conf)).to eq({"bla" => {:name=>"bla", :groups=>{"__default__"=>{:name=>"__default__", :application=>"bla", :processes=>{"1"=>{:name=>"1", :application=>"bla", :group=>"__default__", :pid_file=>"1.pid", :checks=>{:cpu=>{:below=>100, :every=>20, :type=>:cpu}}, :monitor_children=>{}}}}}}})
     end
 
     it "trigger should raise" do

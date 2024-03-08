@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Process Monitoring" do
+RSpec.describe "Process Monitoring" do
 
   [C.p1, C.p2].each do |cfg|
 
@@ -9,20 +9,20 @@ describe "Process Monitoring" do
       old_pid = @pid
 
       die_process!(@pid)
-      mock(@process).notify(:info, anything)
+      expect(@process.wrapped_object).to receive(:notify).with(:info, anything)
 
       sleep 7 # wait until monitor upping process
 
       @pid = @process.pid
-      @pid.should_not == old_pid
+      expect(@pid).not_to eq old_pid
 
-      Eye::System.pid_alive?(old_pid).should == false
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(old_pid)).to eq false
+      expect(Eye::System.pid_alive?(@pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.states_history.states.should seq(:down, :starting, :up)
-      @process.watchers.keys.should == [:check_alive, :check_identity]
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.state_name).to eq :up
+      expect(@process.states_history.states).to seq(:down, :starting, :up)
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
 
     it "process crashed, should restart #{cfg[:name]} in restore_in interval" do
@@ -30,20 +30,20 @@ describe "Process Monitoring" do
       old_pid = @pid
 
       die_process!(@pid)
-      mock(@process).notify(:info, anything)
+      expect(@process.wrapped_object).to receive(:notify).with(:info, anything)
 
       sleep 10 # wait until monitor upping process
 
       @pid = @process.pid
-      @pid.should_not == old_pid
+      expect(@pid).not_to eq old_pid
 
-      Eye::System.pid_alive?(old_pid).should == false
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(old_pid)).to eq false
+      expect(Eye::System.pid_alive?(@pid)).to eq true
 
-      @process.state_name.should == :up
-      @process.states_history.states.should seq(:down, :starting, :up)
-      @process.watchers.keys.should == [:check_alive, :check_identity]
-      @process.load_pid_from_file.should == @process.pid
+      expect(@process.state_name).to eq :up
+      expect(@process.states_history.states).to seq(:down, :starting, :up)
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
+      expect(@process.load_pid_from_file).to eq @process.pid
     end
   end
 
@@ -55,13 +55,13 @@ describe "Process Monitoring" do
 
     sleep 7 # wait until monitor upping process
 
-    @process.pid.should == nil
-    Eye::System.pid_alive?(@pid).should == false
+    expect(@process.pid).to eq nil
+    expect(Eye::System.pid_alive?(@pid)).to eq false
 
-    @process.state_name.should == :unmonitored
-    @process.watchers.keys.should == []
-    @process.states_history.states.should end_with(:up, :down, :unmonitored)
-    @process.load_pid_from_file.should == nil
+    expect(@process.state_name).to eq :unmonitored
+    expect(@process.watchers.keys).to eq []
+    expect(@process.states_history.states).to end_with(:up, :down, :unmonitored)
+    expect(@process.load_pid_from_file).to eq nil
   end
 
   it "process in status unmonitored should not up automatically" do
@@ -69,19 +69,19 @@ describe "Process Monitoring" do
     old_pid = @pid
 
     @process.unmonitor
-    @process.state_name.should == :unmonitored
+    expect(@process.state_name).to eq :unmonitored
 
     die_process!(@pid)
 
     sleep 7 # wait until monitor upping process
 
-    @process.pid.should == nil
+    expect(@process.pid).to eq nil
 
-    Eye::System.pid_alive?(old_pid).should == false
+    expect(Eye::System.pid_alive?(old_pid)).to eq false
 
-    @process.state_name.should == :unmonitored
-    @process.watchers.keys.should == []
-    @process.load_pid_from_file.should == old_pid
+    expect(@process.state_name).to eq :unmonitored
+    expect(@process.watchers.keys).to eq []
+    expect(@process.load_pid_from_file).to eq old_pid
   end
 
   it "EMULATE UNICORN hard understanding restart case" do
@@ -98,23 +98,23 @@ describe "Process Monitoring" do
 
     # both processes exists now
     # and in pid_file writed second pid
-    @process.load_pid_from_file.should == @pid
-    @process.pid.should == old_pid
+    expect(@process.load_pid_from_file).to eq @pid
+    expect(@process.pid).to eq old_pid
 
     die_process!(old_pid)
 
     sleep 5 # wait until monitor upping process
 
-    @process.pid.should == @pid
-    old_pid.should_not == @pid
-    @process.load_pid_from_file.should == @pid
+    expect(@process.pid).to eq @pid
+    expect(old_pid).not_to eq @pid
+    expect(@process.load_pid_from_file).to eq @pid
 
-    Eye::System.pid_alive?(old_pid).should == false
-    Eye::System.pid_alive?(@pid).should == true
+    expect(Eye::System.pid_alive?(old_pid)).to eq false
+    expect(Eye::System.pid_alive?(@pid)).to eq true
 
-    @process.state_name.should == :up
-    @process.watchers.keys.should == [:check_alive, :check_identity]
-    @process.load_pid_from_file.should == @process.pid
+    expect(@process.state_name).to eq :up
+    expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
+    expect(@process.load_pid_from_file).to eq @process.pid
   end
 
 end

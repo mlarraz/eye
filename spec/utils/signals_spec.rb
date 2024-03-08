@@ -9,7 +9,7 @@ class TestEnumerable
   end
 end
 
-describe "signals methods" do
+RSpec.describe "signals methods" do
   before(:each) do
     @actor = TestEnumerable.new
   end
@@ -25,7 +25,7 @@ describe "signals methods" do
           @actor.async.bla(1, s)
         end
 
-        res.should == :ok
+        expect(res).to eq :ok
       end
     end
 
@@ -34,7 +34,7 @@ describe "signals methods" do
         res = Eye::Utils.wait_signal(0.5) do |s|
           @actor.async.bla(1, s)
         end
-        res.should == :timeouted
+        expect(res).to eq :timeouted
       end
     end
   end

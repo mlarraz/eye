@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Eye::Notify::Slack" do
+RSpec.describe "Eye::Notify::Slack" do
   before :each do
     @time = Time.new 2015, 2, 25, 12
     @message = {:message=>"something", :name=>"blocking process",
@@ -15,12 +15,12 @@ describe "Eye::Notify::Slack" do
 
     @m = Eye::Notify::Slack.new(@h, @message)
 
-    slack = ::Slack::Notifier.new @h[:webhook_url], channel: "#default", username: "eye"
-    mock(::Slack::Notifier).new(@h[:webhook_url], channel: "#default", username: "eye"){ slack }
+    slack = ::Slack::Notifier.new(@h[:webhook_url], { channel: "#default", username: "eye" })
+    expect(::Slack::Notifier).to receive(:new).with(@h[:webhook_url], { channel: "#default", username: "eye" }) { slack }
 
-    mock(slack).ping("@channel: *host1* _main:default:blocking process_ at 25 Feb 12:00\n> something") { nil }
+    expect(slack).to receive(:ping).with("@channel: *host1* _main:default:blocking process_ at 25 Feb 12:00\n> something") { nil }
 
-    @m.message_body.should == "@channel: *host1* _main:default:blocking process_ at 25 Feb 12:00\n> something"
+    expect(@m.message_body).to eq "@channel: *host1* _main:default:blocking process_ at 25 Feb 12:00\n> something"
 
     @m.execute
   end

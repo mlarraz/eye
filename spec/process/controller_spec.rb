@@ -1,16 +1,16 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "Process Controller" do
+RSpec.describe "Process Controller" do
 
   describe "monitor" do
     it "monitor should call start, as the auto_start is default" do
       @process = process C.p1
 
-      proxy(@process).start
+      expect(@process.wrapped_object).to receive(:start).and_call_original
       @process.monitor
       sleep 1
 
-      @process.state_name.should == :up
+      expect(@process.state_name).to eq :up
     end
 
     it "without auto_start and process not running" do
@@ -18,12 +18,12 @@ describe "Process Controller" do
       @process.monitor
       sleep 1
 
-      @process.state_name.should == :unmonitored
+      expect(@process.state_name).to eq :unmonitored
     end
 
     it "without auto_start and process already running" do
       @pid = Eye::System.daemonize(C.p1[:start_command], C.p1)[:pid]
-      Eye::System.pid_alive?(@pid).should == true
+      expect(Eye::System.pid_alive?(@pid)).to eq true
       File.open(C.p1[:pid_file], 'w'){|f| f.write(@pid) }
       sleep 2
 
@@ -31,8 +31,8 @@ describe "Process Controller" do
       @process.monitor
       sleep 1
 
-      @process.state_name.should == :up
-      @process.pid.should == @pid
+      expect(@process.state_name).to eq :up
+      expect(@process.pid).to eq @pid
     end
 
   end
@@ -45,13 +45,13 @@ describe "Process Controller" do
 
         @process.unmonitor
 
-        Eye::System.pid_alive?(old_pid).should == true
+        expect(Eye::System.pid_alive?(old_pid)).to eq true
 
-        @process.pid.should == nil
-        @process.state_name.should == :unmonitored
+        expect(@process.pid).to eq nil
+        expect(@process.state_name).to eq :unmonitored
 
-        @process.watchers.keys.should == []
-        @process.load_pid_from_file.should == old_pid
+        expect(@process.watchers.keys).to eq []
+        expect(@process.load_pid_from_file).to eq old_pid
 
         sleep 1
 
@@ -61,8 +61,8 @@ describe "Process Controller" do
         # nothing try to up it
         sleep 5
 
-        @process.state_name.should == :unmonitored
-        @process.load_pid_from_file.should == old_pid
+        expect(@process.state_name).to eq :unmonitored
+        expect(@process.load_pid_from_file).to eq old_pid
       end
     end
   end
@@ -73,9 +73,9 @@ describe "Process Controller" do
       old_pid = @process.pid
 
       @process.delete
-      Eye::System.pid_alive?(old_pid).should == true
+      expect(Eye::System.pid_alive?(old_pid)).to eq true
       sleep 0.3
-      @process.alive?.should == false
+      expect(@process.alive?).to eq false
 
       @process = nil
     end
@@ -85,9 +85,9 @@ describe "Process Controller" do
       old_pid = @process.pid
 
       @process.delete
-      Eye::System.pid_alive?(old_pid).should == false
+      expect(Eye::System.pid_alive?(old_pid)).to eq false
       sleep 0.3
-      @process.alive?.should == false
+      expect(@process.alive?).to eq false
 
       @process = nil
     end
@@ -99,28 +99,28 @@ describe "Process Controller" do
 
       @process.stop
 
-      Eye::System.pid_alive?(@pid).should == false
-      @process.state_name.should == :unmonitored
-      @process.states_history.states.should end_with(:down, :unmonitored)
+      expect(Eye::System.pid_alive?(@pid)).to eq false
+      expect(@process.state_name).to eq :unmonitored
+      expect(@process.states_history.states).to end_with(:down, :unmonitored)
 
       # should clear pid
-      @process.pid.should == nil
+      expect(@process.pid).to eq nil
     end
 
     it "if cant kill process, moving to unmonitored too" do
       start_ok_process(C.p1.merge(:stop_command => "which ruby"))
 
-      @process.watchers.keys.should == [:check_alive, :check_identity]
+      expect(@process.watchers.keys).to eq [:check_alive, :check_identity]
 
       @process.stop
 
-      Eye::System.pid_alive?(@pid).should == true
-      @process.state_name.should == :unmonitored
-      @process.states_history.states.should end_with(:stopping, :unmonitored)
+      expect(Eye::System.pid_alive?(@pid)).to eq true
+      expect(@process.state_name).to eq :unmonitored
+      expect(@process.states_history.states).to end_with(:stopping, :unmonitored)
 
       # should clear pid
-      @process.pid.should == nil
-      @process.watchers.keys.should == []
+      expect(@process.pid).to eq nil
+      expect(@process.watchers.keys).to eq []
     end
   end
 
@@ -139,7 +139,7 @@ describe "Process Controller" do
       sleep 7
 
       # process should be stopped here
-      @process.state_name.should == :unmonitored
+      expect(@process.state_name).to eq :unmonitored
     end
 
     it "we send command to unmonitor it" do
@@ -151,7 +151,7 @@ describe "Process Controller" do
       sleep 7
 
       # process should be stopped here
-      @process.state_name.should == :unmonitored
+      expect(@process.state_name).to eq :unmonitored
     end
   end
 
@@ -162,10 +162,10 @@ describe "Process Controller" do
     end
 
     it "mock send_signal" do
-      mock(@process).send_signal(9)
+      expect(@process.wrapped_object).to receive(:send_signal).with(9)
       @process.signal(9)
 
-      mock(@process).send_signal('9')
+      expect(@process.wrapped_object).to receive(:send_signal).with('9')
       @process.signal('9')
     end
   end
@@ -184,18 +184,18 @@ describe "Process Controller" do
           end
         end
       D
-      File.exist?(C.tmp_file).should == false
+      expect(File.exist?(C.tmp_file)).to eq false
       @c.load_content(conf)
       @process = @c.process_by_name(:a)
       sleep 4.5
     end
 
     it "should ok up process" do
-      @process.state_name.should == :up
-      File.exist?(C.tmp_file).should == true
+      expect(@process.state_name).to eq :up
+      expect(File.exist?(C.tmp_file)).to eq true
       args = Eye::SystemResources.args(@process.pid)
-      args.should start_with('ruby')
-      args.should_not include('sh')
+      expect(args).to start_with('ruby')
+      expect(args).not_to include('sh')
     end
   end
 
