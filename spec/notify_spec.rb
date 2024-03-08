@@ -68,7 +68,7 @@ describe "Eye::Notify" do
     end
 
     it "create and intall async task" do
-      n = Eye::Notify::Not1.new(@h, @message)
+      n = Not1.new(@h, @message)
 
       $wo = nil
       expect(n).to receive(:execute) do
