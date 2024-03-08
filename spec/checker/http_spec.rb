@@ -38,9 +38,9 @@ describe "Eye::Checker::Http" do
     end
 
     it "get_value exception" do
-      a = ""
+      a = double
       allow(subject).to receive(:session) { a }
-      allow(subject.session).to receive(:start) { raise Timeout::Error, "timeout" }
+      allow(a).to receive(:start) { raise Timeout::Error, "timeout" }
       mes = RUBY_VERSION < '2.0' ? "Timeout<3.0,2.0>" : "ReadTimeout<2.0>"
 
       expect(subject.get_value).to eq({:exception => mes})
@@ -49,9 +49,9 @@ describe "Eye::Checker::Http" do
 
     if defined?(Net::OpenTimeout)
       it "get_value OpenTimeout exception" do
-        a = ""
+        a = double
         allow(subject).to receive(:session) { a }
-        allow(subject.session).to receive(:start) { raise Net::OpenTimeout, "open timeout" }
+        allow(a).to receive(:start) { raise Net::OpenTimeout, "open timeout" }
 
         expect(subject.get_value).to eq({:exception => "OpenTimeout<3.0>"})
         expect(subject.human_value(subject.get_value)).to eq "OpenTimeout<3.0>"
@@ -59,9 +59,9 @@ describe "Eye::Checker::Http" do
     end
 
     it "get_value raised" do
-      a = ""
+      a = double
       allow(subject).to receive(:session) { a }
-      allow(subject.session).to receive(:start) { raise "something" }
+      allow(a).to receive(:start) { raise "something" }
       expect(subject.get_value).to eq({:exception => "Error<something>"})
 
       expect(subject.human_value(subject.get_value)).to eq "Error<something>"

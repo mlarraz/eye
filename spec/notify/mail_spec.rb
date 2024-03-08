@@ -14,7 +14,7 @@ describe "Eye::Notify::Mail" do
     smtp = Net::SMTP.new 'mx.some.host.ru', 25
     expect(Net::SMTP).to receive(:new).with('mx.some.host.ru', 25) { smtp }
 
-    ob = ""
+    ob = double
     expect(smtp).to receive(:start).with('some.host', nil, nil, nil) { ob }
 
     @m.execute

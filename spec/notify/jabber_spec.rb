@@ -13,7 +13,7 @@ describe "Eye::Notify::Jabber" do
 
     @m = Eye::Notify::Jabber.new(@h, @message)
 
-    ob = ""
+    ob = double
     expect(Jabber::Client).to receive(:new).with(anything){ ob }
     expect(ob).to receive(:connect).with('mx.some.host.ru', 25)
     expect(ob).to receive(:auth).with('123')
