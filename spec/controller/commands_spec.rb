@@ -76,22 +76,22 @@ RSpec.describe "command spec" do
 
     it "nothing" do
       expect(subject.load(fixture("dsl/load.eye"))).to be_ok
-      expect(subject.apply(["2341234"], :command => :start)).to eq({:result => []})
+      expect(subject.apply(["2341234"], { :command => :start })).to eq({:result => []})
     end
 
     it "unknown" do
       expect(subject.load(fixture("dsl/load.eye"))).to be_ok
-      expect(subject.apply(["2341234"], :command => :st33art)).to eq({:result=>[]})
+      expect(subject.apply(["2341234"], { :command => :st33art })).to eq({:result=>[]})
     end
 
     [:start, :stop, :restart, :unmonitor].each do |cmd|
       it "should user_schedule #{cmd}" do
         sleep 0.3
-        expect_any_instance_of(Eye::Process).not_to receive(:user_schedule).with(:command => cmd)
+        expect_any_instance_of(Eye::Process).not_to receive(:user_schedule).with({ :command => cmd })
 
-        expect(@p1.wrapped_object).to receive(:user_schedule).with(:command => cmd)
+        expect(@p1.wrapped_object).to receive(:user_schedule).with({ :command => cmd })
 
-        subject.apply %w{p1}, :command => cmd, :some_flag => true
+        subject.apply(%w{p1}, { :command => cmd, :some_flag => true })
       end
     end
 
@@ -99,7 +99,7 @@ RSpec.describe "command spec" do
       sleep 0.5
       cmd = :unmonitor
 
-      subject.apply %w{gr1}, :command => cmd
+      subject.apply(%w{gr1}, { :command => cmd })
       sleep 0.5
 
       expect(@p1.scheduler_history.states).to eq [:monitor, :unmonitor]
@@ -113,7 +113,7 @@ RSpec.describe "command spec" do
 
       allow(@p2).to receive(:skip_group_action?).with(:stop) { true }
 
-      subject.apply %w{gr1}, :command => cmd
+      subject.apply(%w{gr1}, { :command => cmd })
       sleep 0.5
 
       expect(@p1.scheduler_history.states).to eq [:monitor, :stop]
@@ -123,18 +123,18 @@ RSpec.describe "command spec" do
 
     it "delete obj" do
       sleep 0.5
-      expect_any_instance_of(Eye::Process).not_to receive(:send_call).with(:command => :delete)
+      expect_any_instance_of(Eye::Process).not_to receive(:send_call).with({ :command => :delete })
 
-      expect(@p1.wrapped_object).to receive(:send_call).with(:command => :delete)
-      subject.apply %w{p1}, :command => :delete
+      expect(@p1.wrapped_object).to receive(:send_call).with({ :command => :delete })
+      subject.apply(%w{p1}, { :command => :delete })
 
       expect(subject.all_processes).not_to include(@p1)
       expect(subject.all_processes).to include(@p2)
     end
 
     it "user_command" do
-      expect(@p1.wrapped_object).to receive(:send_call).with(:command => :user_command, :args => %w{jopa})
-      subject.apply %w{p1}, :command => :user_command, :args => %w{jopa}
+      expect(@p1.wrapped_object).to receive(:send_call).with({ :command => :user_command, :args => %w{jopa} })
+      subject.apply(%w{p1}, { :command => :user_command, :args => %w{jopa} })
     end
   end
 end

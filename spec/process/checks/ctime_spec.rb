@@ -32,7 +32,7 @@ RSpec.describe "Check CTime" do
   it "if ctime not changed should restart" do
     start_ok_process(@c)
 
-    expect(@process.wrapped_object).to receive(:schedule).with(:command => :restart)
+    expect(@process.wrapped_object).to receive(:schedule).with({ :command => :restart })
 
     sleep 3
 

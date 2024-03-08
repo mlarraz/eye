@@ -62,7 +62,7 @@ RSpec.describe "ChildProcess" do
 
       @children.each do |child|
         expect(child.watchers.keys).to eq [:check_memory, :check_cpu]
-        expect(child).not_to receive(:schedule).with(:command => :restart)
+        expect(child).not_to receive(:schedule).with({ :command => :restart })
       end
 
       allow(Eye::SystemResources).to receive(:cpu).with(crazy.pid){ 55 }
@@ -70,7 +70,7 @@ RSpec.describe "ChildProcess" do
 
       expect(crazy.watchers.keys).to eq [:check_memory, :check_cpu]
       expect(crazy).to receive(:notify).with(:warn, "Bounded cpu(<50%): [*55%, *55%] send to [:restart]")
-      expect(crazy).to receive(:schedule).with(:command => :restart)
+      expect(crazy).to receive(:schedule).with({ :command => :restart })
 
       sleep 4
       crazy.remove_watchers # for safe end spec
