@@ -26,8 +26,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'kostya-sigar', '~> 2.0.0'
 
   gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'rspec-core', '< 2.14'
-  gem.add_development_dependency 'rr', '1.1.2'
+  gem.add_development_dependency 'rspec', '~> 3.13'
+  gem.add_development_dependency 'rr', '~> 3.1'
   gem.add_development_dependency 'ruby-graphviz'
   gem.add_development_dependency 'forking'
   gem.add_development_dependency 'fakeweb'
@@ -36,10 +36,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'thin'
   gem.add_development_dependency 'xmpp4r'
   gem.add_development_dependency 'slack-notifier'
-  gem.add_development_dependency 'coveralls'
-  gem.add_development_dependency 'tins', '1.6.0' # for coveralls
-  gem.add_development_dependency 'simplecov', '>= 0.8.1'
-  gem.add_development_dependency 'parallel_tests', '<= 1.3.1'
+  gem.add_development_dependency 'simplecov', '~> 0.22'
+  gem.add_development_dependency 'parallel_tests', '~> 4.0'
   gem.add_development_dependency 'parallel_split_test'
   gem.add_development_dependency 'rubocop', '~> 1.20.0'
   gem.add_development_dependency 'rubocop-performance'
