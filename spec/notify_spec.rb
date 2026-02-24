@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-class Not1 < Eye::Notify
-  param :port, Fixnum
+class Not1 < Eye::Notify::Custom
+  param :port, Integer
 
   def execute
   end

@@ -24,6 +24,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'state_machines'
   gem.add_dependency 'thor'
   gem.add_dependency 'kostya-sigar', '~> 2.0.0'
+  gem.add_dependency 'ostruct'
 
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec', '~> 3.13'
@@ -36,6 +37,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'thin'
   gem.add_development_dependency 'xmpp4r'
   gem.add_development_dependency 'slack-notifier'
+  gem.add_development_dependency 'net-smtp'
   gem.add_development_dependency 'simplecov', '~> 0.22'
   gem.add_development_dependency 'parallel_tests', '~> 4.0'
   gem.add_development_dependency 'parallel_split_test'
