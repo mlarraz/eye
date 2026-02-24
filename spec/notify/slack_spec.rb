@@ -16,7 +16,7 @@ describe "Eye::Notify::Slack" do
     @m = Eye::Notify::Slack.new(@h, @message)
 
     slack = ::Slack::Notifier.new @h[:webhook_url], channel: "#default", username: "eye"
-    mock(::Slack::Notifier).new(@h[:webhook_url], channel: "#default", username: "eye"){ slack }
+    mock(::Slack::Notifier).new(@h[:webhook_url], {channel: "#default", username: "eye"}){ slack }
 
     mock(slack).ping("@channel: *host1* _main:default:blocking process_ at 25 Feb 12:00\n> something") { nil }
 

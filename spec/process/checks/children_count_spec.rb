@@ -8,7 +8,7 @@ describe "Eye::Checker::ChildrenCount" do
     stub(Eye::SystemResources).children(@process.pid){ @pids }
     @process.add_children
 
-    dont_allow(@process).schedule(:command => :restart)
+    dont_allow(@process).schedule(hash_including(:command => :restart))
 
     sleep 5
   end
@@ -20,7 +20,7 @@ describe "Eye::Checker::ChildrenCount" do
     stub(Eye::SystemResources).children(@process.pid){ @pids }
     @process.add_children
 
-    mock(@process).schedule(:command => :restart)
+    mock(@process).schedule(hash_including(:command => :restart))
 
     sleep 5
   end

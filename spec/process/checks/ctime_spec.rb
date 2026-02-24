@@ -32,7 +32,7 @@ describe "Check CTime" do
   it "if ctime not changed should restart" do
     start_ok_process(@c)
 
-    mock(@process).schedule(:command => :restart)
+    mock(@process).schedule(hash_including(:command => :restart))
 
     sleep 3
 
