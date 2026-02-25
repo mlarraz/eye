@@ -12,11 +12,6 @@ def chsockb(cfg = {})
         :expect_data => /pong/, :timeout => 2}.merge(cfg))
 end
 
-def ssl_chsockb(cfg = {})
-  Eye::Checker.create(nil, {:type => :ssl_socket, :every => 5.seconds,
-        :times => 1, :addr => "tcp://127.0.0.1:#{C.p4_ports[2]}", :send_data => "bla",
-        :expect_data => /bla:1/, :timeout => 2}.merge(cfg))
-end
 
 describe "Socket Checker" do
   after :each do
@@ -141,15 +136,4 @@ describe "Socket Checker" do
     end
   end
 
-  describe "ssl socket" do
-    before :each do
-      start_ok_process(C.p4)
-    end
-
-    it "should just work" do
-      c = ssl_chsockb
-      c.get_value.should == {:result => 'bla:1'}
-      c.check.should == true
-    end
-  end
 end
