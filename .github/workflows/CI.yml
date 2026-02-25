@@ -25,10 +25,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: |
-          bundle exec rake
-        env:
-          N: 15
+      - run: bundle exec rspec spec
   RuboCop:
     runs-on: ubuntu-latest
     steps:

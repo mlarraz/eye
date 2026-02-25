@@ -39,8 +39,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'slack-notifier'
   gem.add_development_dependency 'net-smtp'
   gem.add_development_dependency 'simplecov', '~> 0.22'
-  gem.add_development_dependency 'parallel_tests', '~> 4.0'
-  gem.add_development_dependency 'parallel_split_test'
   gem.add_development_dependency 'rubocop', '~> 1.20.0'
   gem.add_development_dependency 'rubocop-performance'
 end
