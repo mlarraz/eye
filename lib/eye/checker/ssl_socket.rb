@@ -2,15 +2,15 @@ require 'openssl'
 
 class Eye::Checker::SslSocket < Eye::Checker::Socket
 
-  # ctx params from http://ruby-doc.org/stdlib-1.9.3/libdoc/openssl/rdoc/OpenSSL/SSL/SSLContext.html
+  # ctx params from https://ruby-doc.org/3.3/exts/openssl/OpenSSL/SSL/SSLContext.html
   #
   # examples:
   #
   #   check :ssl_socket, :addr => "tcp://127.0.0.1:443", :every => 5.seconds, :times => 1, :timeout => 1.second,
-  #     :ctx => {ssl_version: :SSLv23, verify_mode: OpenSSL::SSL::VERIFY_NONE}
+  #     :ctx => {verify_mode: OpenSSL::SSL::VERIFY_NONE}
   #
 
-  param :ctx, Hash, nil, ssl_version: :SSLv23, verify_mode: OpenSSL::SSL::VERIFY_NONE
+  param :ctx, Hash, nil, verify_mode: OpenSSL::SSL::VERIFY_NONE
 
 private
 
